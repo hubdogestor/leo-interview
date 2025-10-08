@@ -1,21 +1,32 @@
 # Node
 node_modules/
 
+
+# Node modules
+node_modules/
+
 # Build output
 /dist/
 
 # Vite cache
 /node_modules/.vite/
 
+# Lockfile (optional to ignore)
+# pnpm-lock.yaml
+
 # Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# OS
+# macOS
 .DS_Store
 
-# Local env
+# Local env files
 .env
 
-node_modules
+# VS Code
+.vscode/
+
+# Coverage
+coverage/
