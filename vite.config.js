@@ -11,4 +11,9 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  base: '/leo-interview/',
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+  },
 })
