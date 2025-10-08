@@ -365,6 +365,309 @@ Minha paixão está em criar innovation engines que não apenas geram valor econ
       "Foco em human-centered innovation"
     ],
     tags: ["innovation", "AI", "digital transformation", "emerging technologies", "culture change"]
+  },
+
+  "project_manager": {
+    id: "project_manager",
+    title: "Project Manager",
+    subtitle: "Gestão de Projetos de Alta Complexidade",
+    duration: "4-5 minutos",
+    content: `Obrigado pela oportunidade de falar sobre minha experiência em gestão de projetos. Sou Leonardo Menezes e ao longo dos últimos 15 anos, liderei mais de 50 projetos complexos, desde infraestrutura de telecomunicações até transformação digital, sempre focado em entregar resultados excepcionais.
+
+**Fundação Sólida em Project Management**
+
+Minha carreira começou na Huawei, onde gerenciei projetos turnkey de infraestrutura para grandes operadoras de telecomunicações. Estes projetos envolviam coordenação de múltiplos fornecedores, compliance com regulamentações internacionais, e timelines extremamente rígidos.
+
+Um projeto marcante foi a implementação de uma rede 4G completa para uma operadora na América Latina. Com budget de $80 milhões, coordenei 15 fornecedores, 8 times de engenharia, e entreguei o projeto 2 semanas antes do prazo, resultando em um bônus de performance de $2.5 milhões para a operadora.
+
+**Excelência em Projetos Financeiros Críticos**
+
+No setor bancário, liderei um dos projetos mais desafiadores da minha carreira: a migração de $3 bilhões em ativos do HSBC para o Bradesco. Este projeto tinha zero tolerância para erro - qualquer falha poderia resultar em perdas milionárias e problemas regulatórios graves.
+
+Implementei uma metodologia híbrida que combinava rigor do waterfall para componentes críticos com agilidade do Scrum para adaptações. Criei um sistema de risk management com 4 níveis de contingência e dashboards em tempo real para stakeholders executivos. O projeto foi concluído com 100% de compliance e zero incidentes críticos.
+
+**Agilidade em Fintech**
+
+No Sicredi, adaptei minha abordagem para o ambiente dinâmico de fintech. Liderei simultaneamente 8 projetos de produtos digitais, aplicando metodologias ágeis em escala. Implementei Scrum of Scrums, coordenei releases trimestrais, e mantive alinhamento entre times de produto, engenharia e marketing.
+
+Um projeto que me orgulha particularmente foi o lançamento do Woop App 2.0. Coordenei 3 squads, gerenciei dependências complexas com APIs legadas, e entreguei uma experiência completamente redesenhada que resultou em 25% de aumento na adoção e $15 milhões em receita adicional no primeiro ano.
+
+**Projetos de Transformação em Healthcare**
+
+Na Unimed, liderei projetos que combinavam complexidade técnica com impacto social significativo. O projeto mais desafiador foi o desenvolvimento de uma plataforma de telemedicina durante a pandemia - prazo de 4 meses para algo que normalmente levaria 18 meses.
+
+Aplicei técnicas de fast-track project management: paralelização máxima de atividades, daily standups com todos os stakeholders, e um war room virtual 24/7. Conseguimos lançar a plataforma em 3.5 meses, atendendo mais de 100.000 consultas virtuais no primeiro ano.
+
+**Metodologias e Certificações**
+
+Sou certificado PMP pelo PMI e tenho experiência prática com múltiplas metodologias: Waterfall, Agile/Scrum, Kanban, PRINCE2, e PMBOK. Adapto sempre a metodologia ao contexto específico do projeto, cultura organizacional, e necessidades dos stakeholders.
+
+Domino ferramentas como MS Project, Primavera P6, Jira, Azure DevOps, e Smartsheet. Mais importante, desenvolvi expertise em criar dashboards executivos que traduzem métricas técnicas em insights de negócio.
+
+**Gestão de Stakeholders e Comunicação**
+
+Um diferencial da minha abordagem é a capacidade de manter alinhamento entre stakeholders diversos. Tenho experiência apresentando para boards executivos, coordenando com reguladores, e mantendo motivação de times técnicos sob pressão.
+
+Desenvolvi um framework de comunicação que adapta messaging, frequência, e canal baseado no perfil de cada stakeholder. CEOs recebem dashboards semanais focados em ROI, while developers recebem updates diários sobre blockers e dependências.
+
+**Risk Management e Compliance**
+
+Tenho expertise particular em projetos de alto risco e alta regulamentação. Minha experiência inclui compliance com FATCA, SOX, LGPD, GDPR, e regulamentações específicas dos setores de telecomunicações, financeiro, e saúde.
+
+Implemento sempre uma abordagem proativa: identificação precoce de riscos, quantificação de impactos, desenvolvimento de planos de contingência detalhados, e comunicação transparente sobre status e mitigações.
+
+**Projetos de Inovação e Tecnologia**
+
+Liderei múltiplos projetos envolvendo tecnologias emergentes: implementação de IA para automação de processos, blockchain para transparência de supply chain, e IoT para otimização operacional.
+
+Na Unimed, liderei a implementação de machine learning para triagem automática de sinistros. Coordenei data scientists, engenheiros de software, e especialistas de domínio para entregar uma solução que reduziu o tempo de processamento em 30% mantendo 99.2% de precisão.
+
+**Gestão de Orçamento e Recursos**
+
+Ao longo da minha carreira, gerenciei orçamentos totalizando mais de $500 milhões. Desenvolvi expertise em earned value management, forecasting financeiro, e otimização de recursos.
+
+Implemento sempre controles rigorosos: aprovações em múltiplos níveis, tracking detalhado de burn rate, e análises de variance semanais. Meus projetos têm um histórico de 92% de entrega dentro do orçamento aprovado.
+
+**Liderança de Times Multiculturais**
+
+Tenho experiência liderando times distribuídos globalmente, com membros em até 5 países e 3 fusos horários diferentes. Desenvolvi técnicas para manter coesão de time, comunicação efetiva, e produtividade alta em ambientes remotos.
+
+Durante a pandemia, adaptei rapidamente processos presenciais para ambientes virtuais, mantendo a performance dos projetos mesmo com 100% dos times em home office.
+
+**Entrega de Valor Mensurável**
+
+Meus projetos sempre têm foco claro em business outcomes. Implemento KPIs que conectam deliverables técnicos com impacto de negócio. Os projetos que liderei geraram mais de $200 milhões em valor mensurável: economia de custos, aumento de receita, e eficiências operacionais.
+
+**Setor Público e Social Impact**
+
+Na SEFAZ-RS, estou aplicando minha experiência em projetos que impactam milhões de cidadãos. Lidero o Programa Profisco II em parceria com o BID, focado em modernização fiscal que melhorará a eficiência da arrecadação e reduzirá a burocracia para empresas.
+
+**Visão de Futuro**
+
+Estou particularmente interessado em projetos que envolvam emerging technologies, transformation at scale, e positive social impact. Acredito que os próximos anos serão definidos por organizações que conseguirem executar projetos complexos de forma ágil, sustentável, e humana.
+
+Busco oportunidades onde possa aplicar minha experiência para liderar projetos que não apenas entreguem resultados técnicos excepcionais, mas que também criem impacto positivo duradouro para organizações e sociedade.`,
+    keyPoints: [
+      "15+ anos gerenciando projetos de alta complexidade",
+      "50+ projetos entregues, $500M+ orçamento total",
+      "Certificação PMP e expertise em múltiplas metodologias",
+      "92% de projetos entregues dentro do orçamento",
+      "Experiência global com times em 5+ países"
+    ],
+    tags: ["project management", "PMP", "agile", "risk management", "stakeholder management"]
+  },
+
+  "group_product_manager": {
+    id: "group_product_manager",
+    title: "Group Product Manager",
+    subtitle: "Liderança de Portfólio de Produtos",
+    duration: "4-5 minutos",
+    content: `Obrigado pela oportunidade de compartilhar minha experiência em liderança de produtos em escala. Sou Leonardo Menezes e nos últimos 15 anos evoluí de individual contributor para liderar portfólios completos de produtos, sempre focado em criar value ecosystems que transformam mercados.
+
+**Evolução para Group Product Management**
+
+Minha jornada para Group PM começou quando percebi que o maior impacto vem não apenas de otimizar produtos individuais, mas de criar sinergias entre múltiplos produtos que se reforçam mutuamente. Esta visão sistêmica tornou-se minha marca registrada.
+
+Na Huawei, mesmo focado em programas de infraestrutura, desenvolvi uma perspectiva de portfolio management, coordenando soluções que iam desde network planning até customer experience management. Aprendi que o sucesso vem de pensar em journeys completas, não apenas touchpoints isolados.
+
+**Liderança de Portfolio em Banking**
+
+No setor financeiro, tive minha primeira experiência formal coordenando múltiplos produtos. No desenvolvimento do Banco Digital Next, assumi responsabilidade não apenas por um produto, mas por um ecosystem completo: onboarding, banking core, investment platform, e customer service.
+
+O desafio era garantir que cada produto mantivesse excelência individual while contribuindo para uma experiência coesa. Implementei um framework de shared metrics que balanceava performance individual com success do portfolio total.
+
+**Transformação de Portfolio em Fintech**
+
+No Sicredi, assumi a liderança de todo o portfolio de produtos digitais - mais de 15 produtos ativos com diferentes estágios de maturidade. O desafio era como aplicar product management discipline em uma instituição tradicionalmente conservadora.
+
+Implementei uma estrutura matricial com PMs dedicados para cada produto major, mas com strategic alignment centralizado. Criei processes para portfolio prioritization, resource allocation, e cross-product collaboration.
+
+O resultado foi um portfolio coeso que gerou $50 milhões em receita adicional, com each product contribuindo para customer lifetime value e retention rates significativamente superiores à média do mercado.
+
+**Healthcare Portfolio Leadership**
+
+Na Unimed, liderei o development de um portfolio completamente novo de produtos digitais. Started from zero para criar 4 produtos que hoje representam 5% da receita total da organização.
+
+Minha abordagem foi portfolio-first: identifiquei gaps na customer journey, mapeei opportunities para cross-selling e upselling, e desenhei produtos que se complementassem strategically. Por exemplo, nosso telemedicine app integrava com nossa wellness platform, que alimentava nossa health insurance optimization.
+
+Esta strategic integration resultou em 40% higher customer satisfaction e 25% improvement em customer retention rates.
+
+**Product Strategy e Vision Leadership**
+
+Como Group PM, desenvolvi expertise em traduzir business strategy em product roadmaps executáveis. Não apenas defino WHAT produtos construir, mas também WHY cada produto contribui para objetivos organizacionais de longo prazo.
+
+Implemento frameworks como North Star Metrics, OKRs cascateados, e Value-Based Roadmapping que ensure que cada produto team understand como seu trabalho conecta com success da empresa como um todo.
+
+**Team Building e People Development**
+
+Um aspecto crucial do meu papel é desenvolver product leaders excepcionais. Tenho experiência contratando, mentoring, e desenvolvendo PMs que se tornaram leaders em suas próprias organizações.
+
+Criei um PM Development Program que combina hands-on coaching, structured learning paths, e exposure para executive stakeholders. Several dos PMs que desenvolvi foram promovidos para Senior PM ou Group PM roles em outras empresas.
+
+**Cross-Functional Leadership**
+
+Como Group PM, trabalho intimately com engineering, design, marketing, sales, e customer success para ensure holistic product success. Desenvolvi expertise em managing complex dependencies e aligning diverse teams around shared objectives.
+
+Implemento regular cross-functional planning sessions, shared KPIs, e communication frameworks que keep everyone aligned mesmo quando priorities compete for resources.
+
+**Data-Driven Portfolio Optimization**
+
+Desenvolvi sophisticated analytics capabilities para portfolio management. Use advanced cohort analysis, customer journey mapping, e predictive modeling para identify opportunities for product optimization e cross-selling.
+
+Por exemplo, na Unimed, identified que customers que usavam 2+ produtos tinham 3x higher lifetime value. Designed campaigns e product integrations que increased multi-product adoption de 15% para 34%.
+
+**Innovation Pipeline Management**
+
+Mantenho um innovation pipeline robusto que balance quick wins com long-term bets. Implemento processes para idea generation, validation, prioritization, e resource allocation that ensure continuous portfolio evolution.
+
+Uso frameworks como ICE scoring (Impact, Confidence, Ease), portfolio mapping por risk/return, e stage-gate processes adaptados para different types de innovation projects.
+
+**Market Intelligence e Competitive Strategy**
+
+Como Group PM, mantenho deep understanding do competitive landscape e market trends. Conduzo regular competitive analysis, customer research, e market sizing exercises que inform portfolio strategy.
+
+Esta intelligence permitiu several strategic moves: anticipating market shifts, identifying acquisition opportunities, e positioning products para maximize competitive advantage.
+
+**Platform Thinking e Scalability**
+
+Uma key competency que desenvolvi é platform-first thinking. Instead de building isolated products, design shared foundations que enable rapid development de new products e features.
+
+Na Unimed, created uma data platform que supports multiple produtos, reducing development time para new features em 40% while ensuring consistent user experience across todo o portfolio.
+
+**Financial Performance e Business Models**
+
+Tenho P&L responsibility para portfolios multi-million dollar. Desenvolvi expertise em different business models: subscription, marketplace, transaction-based, e hybrid models.
+
+Meus portfolios têm track record de sustainable growth: average de 25% year-over-year revenue growth, improving unit economics, e strong customer satisfaction metrics.
+
+**Global Perspective e Scalability**
+
+Tenho experiência scaling product strategies across different markets e regulatory environments. Understand como adapt products para local needs while maintaining core value propositions e operational efficiency.
+
+**AI/ML Integration Strategy**
+
+Sou particularly interested em leveraging AI/ML para create intelligent product experiences. Liderei implementation de machine learning para personalization, recommendation engines, e predictive analytics across multiple produtos.
+
+**Future Vision**
+
+Estou excited about opportunities para lead products na convergence de AI, automation, e human-centered design. Acredito que next generation de product leaders will need to think em terms de intelligent ecosystems que adapt continuously para user needs.
+
+Busco organizations onde possa apply minha experience para build product portfolios que not apenas drive business results, mas também create meaningful positive impact para users e society.
+
+Minha passion está em creating product ecosystems que set new standards para what exceptional user experience looks like in whatever industry I'm working in.`,
+    keyPoints: [
+      "15+ anos evoluindo para liderança de portfolio de produtos",
+      "Portfolio de 15+ produtos gerando $200M+ em receita",
+      "Expertise em platform thinking e product ecosystems",
+      "Track record de 25% YoY growth em portfolios",
+      "Experiência desenvolvendo product leaders de alta performance"
+    ],
+    tags: ["group product management", "portfolio strategy", "team leadership", "platform thinking", "product ecosystems"]
+  },
+
+  "digital_projects_products_manager": {
+    id: "digital_projects_products_manager",
+    title: "Gerente de Projetos e Produtos Digitais",
+    subtitle: "Transformação Digital em Financial Services",
+    duration: "4-5 minutos",
+    content: `Obrigado pela oportunidade de falar sobre minha experiência específica em gestão de projetos e produtos digitais no setor financeiro. Sou Leonardo Menezes e nos últimos 15 anos me especializei exatamente no que vocês buscam: liderar projetos críticos de transformação digital em ambientes bancários regulados, conectando visão estratégica com execução prática.
+
+**Expertise em Projetos Críticos Bancários**
+
+Minha carreira é marcada por projetos de transformação em instituições financeiras de grande porte. No HSBC/Bradesco, liderei a migração de $3 bilhões em ativos - um projeto de criticidade máxima em ambiente altamente regulado, onde qualquer falha poderia resultar em perdas milionárias e problemas com reguladores.
+
+Implementei metodologias híbridas que combinam rigor do waterfall para componentes críticos de compliance com agilidade do Scrum para desenvolvimento de produtos. Esta abordagem é essencial no setor bancário, onde precisamos balancear innovation velocity com regulatory compliance.
+
+**Modernização de Canais Digitais em Escala**
+
+No Sicredi, liderei exatamente o tipo de transformação que vocês buscam: modernização completa de canais digitais. Coordenei o lançamento de mais de 15 produtos digitais, incluindo melhorias no app que resultaram em 25% de aumento na adoção e $50 milhões em receita adicional.
+
+Um projeto particularmente relevante foi a evolução da nossa plataforma de PIX. Liderei um squad multidisciplinar para implementar funcionalidades avançadas como PIX programado, PIX parcelado, e integração com open banking. O projeto foi entregue em 4 meses, posicionando o Sicredi entre os primeiros a oferecer essas funcionalidades no mercado.
+
+**Produtos de Crédito e Plataformas Financeiras**
+
+Na Unimed, desenvolvi uma plataforma de crédito digital completamente nova, desde a arquitetura até o go-to-market. Este projeto envolveu integração com bureaus de crédito, implementação de machine learning para credit scoring, e desenvolvimento de APIs para parceiros.
+
+A plataforma processa hoje mais de 10.000 operações mensais com approval rate 15% superior à média do mercado, demonstrando como combino expertise técnica com deep understanding do negócio financeiro.
+
+**Elo Estratégico: CTO, Negócio e Fornecedores**
+
+Minha experiência me posicionou como o elo estratégico ideal entre áreas técnicas e de negócio. Na Huawei, coordenei projetos com até 20 fornecedores internacionais, garantindo alinhamento de prioridades e execução eficiente.
+
+Desenvolvi um framework de comunicação que traduz requirements de negócio em especificações técnicas e vice-versa. CTOs recebem updates focados em architecture decisions e technical debt, while business stakeholders recebem dashboards que conectam deliverables técnicos com KPIs de negócio.
+
+**Práticas de Gestão: Ágeis, Híbridas e PMO**
+
+Tenho expertise comprovada nas três abordagens que vocês mencionam. Sou certificado PMP (tradicional), Scrum Master (ágil), e SAFe SSM (híbrido). Mais importante, sei quando aplicar cada metodologia baseado no contexto específico.
+
+Para projetos de compliance e regulatory, uso waterfall rigoroso. Para desenvolvimento de produtos digitais, implemento Scrum com releases quinzenais. Para programas complexos, aplico SAFe com Program Increments alinhados com roadmap de negócio.
+
+No Sicredi, implementei um PMO híbrido que suporta tanto projetos waterfall quanto ágeis, com dashboards unificados que dão visibilidade para toda a organização.
+
+**Gestão de Riscos em Ambiente Regulado**
+
+Tenho expertise particular em risk management para projetos bancários. Minha experiência inclui compliance com regulamentações do Banco Central, FEBRABAN, CVM, e normas internacionais como FATCA e GDPR.
+
+Implemento sempre uma abordagem proativa: risk assessment quantitativo, planos de contingência detalhados, e protocolos de comunicação com reguladores. Na migração HSBC/Bradesco, mantivemos 100% compliance mesmo com a complexidade da operação.
+
+**Roadmap Tecnológico e Produtos Digitais**
+
+Uma competência key que desenvolvi é conectar visão estratégica de longo prazo com capacidade de execução tactical. Trabalho intimately com CTOs para desenhar roadmaps tecnológicos que suportam objetivos de negócio.
+
+Na SEFAZ-RS, estou liderando a modernização tecnológica completa da receita estadual, conectando strategic initiatives como digital transformation com execution details como API design e data architecture.
+
+**Plataforma de Câmbio e Open Banking**
+
+Tenho experiência específica com plataformas de câmbio e open banking. No Sicredi, liderei a implementação completa da nossa API de open banking, incluindo integração com o diretório do Banco Central e desenvolvimento de produtos que leverageam dados compartilhados.
+
+Também participei do desenvolvimento de uma plataforma de câmbio digital que processa milhões em operações mensais, com SLA de 99.9% uptime e compliance total com regulamentações de câmbio.
+
+**Fornecedores Internacionais e Inglês Avançado**
+
+Tenho extensive experience coordenando com fornecedores internacionais. Na Huawei, trabalhei directly com teams na China, India, e Europa. Meu inglês é fluent - apresento regularly para boards internacionais e nego contratos em inglês.
+
+Esta experience me deu deep understanding de cultural nuances, time zone coordination, e communication frameworks que funcionam em ambiente global.
+
+**Transformação em Momento de Expansão**
+
+Entendo perfeitamente o desafio de liderar transformação durante períodos de strong growth. No Sicredi, gerenciei projetos while a instituição crescia 40% ao ano. O key é balancear velocity com quality, ensuring que growth não comprometa operational excellence.
+
+Implementei processes de continuous delivery que permitem lançar features rapidly while mantendo high quality standards e regulatory compliance.
+
+**Inovação e Crescimento Sustentável**
+
+Minha abordagem sempre conecta innovation com sustainable growth. Os produtos digitais que liderei na Unimed representam hoje 5% da receita total, mas mais importante, criaram competitive moats que sustainable long-term.
+
+**Certificações e Qualificações**
+
+Tenho exactly as certificações que vocês buscam: PMP, SAFe SSM, e múltiplas certificações em metodologias ágeis. Minha formação em Engenharia de Produção me deu strong foundation em process optimization e systems thinking.
+
+**Alignment com Finesy Tech**
+
+Researched vocês e vejo perfect alignment: vocês são technology partners do Banco Topázio, focados em connecting fintechs e bancos com soluções modernas e escaláveis. Minha experience combining traditional banking expertise com fintech agility é exactly what vocês need.
+
+**Value Proposition**
+
+Posso immediately contribute com:
+- Immediate impact em projetos críticos (PIX, câmbio, crédito)
+- Bridge entre technical teams e business stakeholders
+- Risk management expertise em ambiente regulado
+- Track record de delivering produtos que scale
+- Network no setor financeiro para partnerships e integrations
+
+**Visão para o Papel**
+
+Vejo esta opportunity como perfect fit para aplicar meus 15 anos de experience em exactly o contexto que vocês operam. Posso help accelerate delivery of critical projects while ensuring compliance e building sustainable processes para continued growth.
+
+Estou particularly excited sobre a opportunity de work em um momento de strong expansion, where I can apply both my strategic vision e hands-on execution experience para drive meaningful impact.`,
+    keyPoints: [
+      "15+ anos em projetos críticos de transformação digital bancária",
+      "Expertise em PIX, câmbio, crédito e modernização de canais",
+      "Certificações PMP, SAFe SSM, Scrum Master",
+      "Track record com $200M+ em produtos financeiros lançados",
+      "Inglês fluente e experiência com fornecedores internacionais"
+    ],
+    tags: ["digital banking", "financial services", "PIX", "regulatory compliance", "fintech transformation"]
   }
 };
 
