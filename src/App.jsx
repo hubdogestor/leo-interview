@@ -254,7 +254,7 @@ function App() {
                         {renderItemIcon(item)}
                         <div>
                           <CardTitle className="text-xl text-slate-900 group-hover:text-blue-600 transition-colors">
-                            {item.name || (typeof item.title === 'string' ? item.title : t(item.title, language)) || item.question}
+                            {item.name || (typeof item.title === 'string' ? item.title : t(item.title, language)) || (typeof item.question === 'string' ? item.question : t(item.question, language))}
                           </CardTitle>
                           <CardDescription className="text-slate-600 mt-1">
                             {renderItemSubtitle(item)}
@@ -907,42 +907,20 @@ function App() {
                 </CardHeader>
                 <CardContent>
                   <div className="prose prose-slate max-w-none">
-                    {(() => {
-                      const raw = t(selectedItem.content, language) || '';
-                      const paragraphs = raw.split(/\n\s*\n/);
-                      const boldify = (text) => {
-                        // Split by **bold** markers retaining order
-                        const parts = text.split(/(\*\*[^*]+\*\*)/g).filter(Boolean);
-                        return parts.map((part, i) => {
-                          if (/^\*\*[^*]+\*\*$/.test(part)) {
-                            return <strong key={i}>{part.slice(2, -2)}</strong>;
-                          }
-                          // Preserve single line breaks inside part
-                          const lines = part.split(/\n/);
-                          return lines.reduce((acc, line, li) => {
-                            acc.push(<React.Fragment key={li}>{line}</React.Fragment>);
-                            if (li < lines.length - 1) acc.push(<br key={li+'br'} />);
-                            return acc;
-                          }, []);
-                        });
-                      };
-                      return paragraphs.map((p, idx) => {
-                        const trimmed = p.trim();
-                        const headingMatch = /^\*\*(.+)\*\*$/.exec(trimmed);
-                        if (headingMatch) {
-                          return (
-                            <h3 key={idx} className="text-xl font-bold text-slate-900 mt-6 first:mt-0 mb-3">
-                              {headingMatch[1]}
-                            </h3>
-                          );
-                        }
+                    {t(selectedItem.content, language).split('\n\n').map((paragraph, index) => {
+                      if (paragraph.startsWith('**') && paragraph.endsWith('**')) {
                         return (
-                          <p key={idx} className="text-slate-700 leading-relaxed mb-4">
-                            {boldify(p)}
-                          </p>
+                          <h3 key={index} className="text-xl font-bold text-slate-900 mt-6 mb-3">
+                            {paragraph.replace(/\*\*/g, '')}
+                          </h3>
                         );
-                      });
-                    })()}
+                      }
+                      return (
+                        <p key={index} className="text-slate-700 leading-relaxed mb-4">
+                          {paragraph}
+                        </p>
+                      );
+                    })}
                   </div>
                 </CardContent>
               </Card>
