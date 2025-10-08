@@ -1,487 +1,898 @@
-import { useState, useEffect } from 'react';
-import { Search, Timer, User, Briefcase, Target, Lightbulb, Settings, Play, Pause, RotateCcw } from 'lucide-react';
-import { Button } from '@/components/ui/button.jsx';
-import { Input } from '@/components/ui/input.jsx';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.jsx';
-import { Badge } from '@/components/ui/badge.jsx';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.jsx';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.jsx';
+import React, { useState, useEffect } from 'react';
+import { Search, Timer, Globe, User, Briefcase, Target, MessageCircle, FileText, ChevronRight, Play, Pause, RotateCcw, Star, Clock, Building, Calendar, Award, TrendingUp } from 'lucide-react';
+import { Button } from './components/ui/button';
+import { Input } from './components/ui/input';
+import { Badge } from './components/ui/badge';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './components/ui/tabs';
+import { Separator } from './components/ui/separator';
+import { ScrollArea } from './components/ui/scroll-area';
 
-import { experiences, experiencesList } from './data/experiences.js';
-import { competencies, competenciesList } from './data/competencies.js';
-import { profiles, profilesList } from './data/profiles.js';
-import personalData from './data/personalData.js';
-import { questionsToExperiencesMapping, findCasesByQuestion } from './data/questionsToExperiencesMapping.js';
-import { interviewContexts, recommendProfile, getContextualQuestions } from './data/interviewContexts.js';
-
-import './App.css';
+// Import data
+import { experiencesData } from './data/experiences';
+import { competenciesData } from './data/competencies';
+import { profilesData } from './data/profiles';
+import icebreakerData from './data/icebreaker';
+import speechFullCVData from './data/speechFullCV';
 
 function App() {
-  const [activeTab, setActiveTab] = useState('experiences');
+  const [activeSection, setActiveSection] = useState('experiences');
   const [selectedItem, setSelectedItem] = useState(null);
   const [selectedCase, setSelectedCase] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [language, setLanguage] = useState('pt');
-  const [selectedProfile, setSelectedProfile] = useState('product_manager');
-  const [interviewContext, setInterviewContext] = useState({
-    companyType: '',
-    industry: '',
-    positionLevel: '',
-    interviewType: 'behavioral'
-  });
-  
-  // Timer states
-  const [timerMinutes, setTimerMinutes] = useState(2);
-  const [timeLeft, setTimeLeft] = useState(120);
+  const [timerSeconds, setTimerSeconds] = useState(0);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
-  const [timerMode, setTimerMode] = useState('answer'); // 'answer' or 'question'
 
-  // Timer effect
+  // Timer functionality
   useEffect(() => {
     let interval = null;
-    if (isTimerRunning && timeLeft > 0) {
+    if (isTimerRunning) {
       interval = setInterval(() => {
-        setTimeLeft(timeLeft => timeLeft - 1);
+        setTimerSeconds(seconds => seconds + 1);
       }, 1000);
-    } else if (timeLeft === 0) {
-      setIsTimerRunning(false);
+    } else if (!isTimerRunning && timerSeconds !== 0) {
+      clearInterval(interval);
     }
     return () => clearInterval(interval);
-  }, [isTimerRunning, timeLeft]);
+  }, [isTimerRunning, timerSeconds]);
 
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  const startTimer = () => {
-    setTimeLeft(timerMinutes * 60);
-    setIsTimerRunning(true);
-  };
-
-  const pauseTimer = () => {
-    setIsTimerRunning(false);
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
   const resetTimer = () => {
+    setTimerSeconds(0);
     setIsTimerRunning(false);
-    setTimeLeft(timerMinutes * 60);
   };
 
-  const handleItemSelect = (item, type) => {
-    setSelectedItem({ ...item, type });
-    setSelectedCase(null);
-  };
-
-  const handleCaseSelect = (caseItem) => {
-    setSelectedCase(caseItem);
-  };
-
-  const getFilteredItems = () => {
-    let items = [];
-    
-    switch (activeTab) {
+  // Get current data based on active section
+  const getCurrentData = () => {
+    switch (activeSection) {
       case 'experiences':
-        items = experiencesList;
-        break;
+        return experiencesData;
       case 'competencies':
-        items = competenciesList;
-        break;
+        return competenciesData;
       case 'profiles':
-        items = profilesList;
-        break;
+        return profilesData;
+      case 'icebreaker':
+        return icebreakerData;
+      case 'speechcv':
+        return speechFullCVData;
       default:
-        items = [];
+        return experiencesData;
     }
-
-    if (searchTerm) {
-      items = items.filter(item =>
-        item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.subtitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (item.keyAchievements && item.keyAchievements.some(achievement =>
-          achievement.toLowerCase().includes(searchTerm.toLowerCase())
-        )) ||
-        (item.skills && item.skills.some(skill =>
-          skill.toLowerCase().includes(searchTerm.toLowerCase())
-        ))
-      );
-    }
-
-    return items;
   };
 
-  const renderItemCard = (item) => {
-    const isSelected = selectedItem?.id === item.id;
+  // Filter data based on search term
+  const getFilteredData = () => {
+    const data = getCurrentData();
+    if (!searchTerm) return Object.values(data);
     
+    return Object.values(data).filter(item => {
+      const searchLower = searchTerm.toLowerCase();
+      return (
+        item.name?.toLowerCase().includes(searchLower) ||
+        item.title?.toLowerCase().includes(searchLower) ||
+        item.question?.toLowerCase().includes(searchLower) ||
+        item.sector?.toLowerCase().includes(searchLower) ||
+        item.description?.toLowerCase().includes(searchLower) ||
+        item.tags?.some(tag => tag.toLowerCase().includes(searchLower))
+      );
+    });
+  };
+
+  // Render sidebar menu
+  const renderSidebar = () => {
+    const menuItems = [
+      { id: 'experiences', icon: Briefcase, label: 'Experiências', count: Object.keys(experiencesData).length },
+      { id: 'competencies', icon: Target, label: 'Competências', count: Object.keys(competenciesData).length },
+      { id: 'profiles', icon: User, label: 'Perfis', count: Object.keys(profilesData).length },
+      { id: 'icebreaker', icon: MessageCircle, label: 'Icebreaker', count: Object.keys(icebreakerData).length },
+      { id: 'speechcv', icon: FileText, label: 'Speech Full CV', count: Object.keys(speechFullCVData).length }
+    ];
+
     return (
-      <Card 
-        key={item.id}
-        className={`cursor-pointer transition-all hover:shadow-md ${
-          isSelected ? 'ring-2 ring-blue-500 bg-blue-50' : ''
-        }`}
-        onClick={() => handleItemSelect(item, activeTab)}
-      >
-        <CardHeader className="pb-3">
-          <div className="flex items-center gap-3">
-            <div className={`w-10 h-10 rounded-lg ${item.color} flex items-center justify-center text-white text-lg`}>
-              {item.icon}
+      <div className="w-80 bg-gradient-to-b from-slate-50 to-white border-r border-slate-200 flex flex-col h-screen">
+        {/* Header */}
+        <div className="p-6 border-b border-slate-200">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold text-xl">
+              L
             </div>
-            <div className="flex-1">
-              <CardTitle className="text-lg">{item.title}</CardTitle>
-              <CardDescription>{item.subtitle}</CardDescription>
-              {item.period && (
-                <Badge variant="outline" className="mt-1">
-                  {item.period}
-                </Badge>
-              )}
+            <div>
+              <h1 className="text-xl font-bold text-slate-900">Leo Interview Prep</h1>
+              <p className="text-sm text-slate-600">Preparação Universal para Entrevistas</p>
             </div>
           </div>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-gray-600 mb-3">{item.summary || item.description}</p>
-          {item.keyAchievements && (
-            <div className="space-y-1">
-              {item.keyAchievements.slice(0, 3).map((achievement, index) => (
-                <div key={index} className="text-xs text-gray-500 flex items-center gap-1">
-                  <span className="w-1 h-1 bg-green-500 rounded-full"></span>
-                  {achievement}
-                </div>
-              ))}
+          
+          {/* Timer */}
+          <div className={`bg-white rounded-lg border border-slate-200 p-4 ${isTimerRunning ? 'timer-pulse running' : ''}`}>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-slate-700">Timer</span>
+              <div className="flex items-center gap-1">
+                <Clock className={`w-4 h-4 ${isTimerRunning ? 'text-blue-500' : 'text-slate-500'}`} />
+                <span className={`text-lg font-mono font-bold ${isTimerRunning ? 'text-blue-600' : 'text-slate-900'}`}>{formatTime(timerSeconds)}</span>
+              </div>
             </div>
-          )}
-          {item.skills && (
-            <div className="flex flex-wrap gap-1 mt-2">
-              {item.skills.slice(0, 4).map((skill, index) => (
-                <Badge key={index} variant="secondary" className="text-xs">
-                  {skill}
-                </Badge>
-              ))}
+            <div className="flex gap-2">
+              <Button
+                size="sm"
+                variant={isTimerRunning ? "destructive" : "default"}
+                onClick={() => setIsTimerRunning(!isTimerRunning)}
+                className="flex-1 btn-ripple micro-bounce"
+              >
+                {isTimerRunning ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+              </Button>
+              <Button size="sm" variant="outline" onClick={resetTimer} className="btn-ripple micro-bounce">
+                <RotateCcw className="w-4 h-4" />
+              </Button>
             </div>
-          )}
-        </CardContent>
-      </Card>
+          </div>
+        </div>
+
+        {/* Search */}
+        <div className="p-6 border-b border-slate-200">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+            <Input
+              placeholder="Buscar..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 bg-white border-slate-200 focus:border-blue-500 focus:ring-blue-500"
+            />
+          </div>
+        </div>
+
+        {/* Navigation */}
+        <div className="p-6">
+          <nav className="space-y-2">
+            {menuItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = activeSection === item.id;
+              
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => {
+                    setActiveSection(item.id);
+                    setSelectedItem(null);
+                    setSelectedCase(null);
+                  }}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left sidebar-item btn-ripple micro-bounce ${
+                    isActive
+                      ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg active'
+                      : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
+                  }`}
+                >
+                  <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-slate-500 group-hover:text-slate-700'}`} />
+                  <span className="font-medium flex-1">{item.label}</span>
+                  <Badge variant={isActive ? "secondary" : "outline"} className={`${isActive ? 'bg-white/20 text-white border-white/30' : ''}`}>
+                    {item.count}
+                  </Badge>
+                </button>
+              );
+            })}
+          </nav>
+        </div>
+
+        {/* Language Toggle */}
+        <div className="mt-auto p-6 border-t border-slate-200">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setLanguage(language === 'pt' ? 'en' : 'pt')}
+            className="w-full flex items-center gap-2 btn-ripple micro-bounce hover-scale"
+          >
+            <Globe className="w-4 h-4" />
+            {language === 'pt' ? 'PT' : 'EN'}
+          </Button>
+        </div>
+      </div>
     );
   };
 
-  const renderDetailPanel = () => {
-    if (!selectedItem) {
-      return (
-        <div className="flex items-center justify-center h-full text-gray-500">
-          <div className="text-center">
-            <Briefcase className="w-16 h-16 mx-auto mb-4 opacity-50" />
-            <p>Selecione um item para ver os detalhes</p>
-          </div>
-        </div>
-      );
+  // Render main content based on active section
+  const renderMainContent = () => {
+    if (selectedCase) {
+      return renderCaseDetail();
+    }
+    
+    if (selectedItem) {
+      return renderItemDetail();
     }
 
-    if (selectedItem.type === 'experiences' && selectedCase) {
-      return (
-        <div className="p-6 space-y-6">
-          <div className="flex items-center gap-2 mb-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setSelectedCase(null)}
-            >
-              ← Voltar
-            </Button>
-            <Badge className="bg-green-100 text-green-800">
-              Score: {selectedCase.score}
-            </Badge>
-          </div>
-          
-          <div>
-            <h2 className="text-2xl font-bold mb-2">{selectedCase.title}</h2>
-            <div className="flex flex-wrap gap-2 mb-4">
-              {selectedCase.tags.map((tag, index) => (
-                <Badge key={index} variant="outline">
-                  {tag}
-                </Badge>
-              ))}
-            </div>
-          </div>
+    return renderItemsList();
+  };
 
-          <div className="space-y-4">
-            <div>
-              <h3 className="font-semibold text-lg text-blue-600 mb-2">Situação</h3>
-              <p className="text-gray-700">{selectedCase.situation}</p>
-            </div>
-            
-            <div>
-              <h3 className="font-semibold text-lg text-green-600 mb-2">Tarefa</h3>
-              <p className="text-gray-700">{selectedCase.task}</p>
-            </div>
-            
-            <div>
-              <h3 className="font-semibold text-lg text-orange-600 mb-2">Ação</h3>
-              <p className="text-gray-700">{selectedCase.action}</p>
-            </div>
-            
-            <div>
-              <h3 className="font-semibold text-lg text-purple-600 mb-2">Resultado</h3>
-              <p className="text-gray-700">{selectedCase.result}</p>
-            </div>
-            
-            <div>
-              <h3 className="font-semibold text-lg text-red-600 mb-2">Aprendizado</h3>
-              <p className="text-gray-700">{selectedCase.learning}</p>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
+  // Render items list
+  const renderItemsList = () => {
+    const filteredData = getFilteredData();
+    
     return (
-      <div className="p-6 space-y-6">
-        <div className="flex items-center gap-3 mb-6">
-          <div className={`w-12 h-12 rounded-lg ${selectedItem.color} flex items-center justify-center text-white text-xl`}>
-            {selectedItem.icon}
-          </div>
-          <div>
-            <h2 className="text-2xl font-bold">{selectedItem.title}</h2>
-            <p className="text-gray-600">{selectedItem.subtitle}</p>
-            {selectedItem.period && (
-              <Badge variant="outline" className="mt-1">
-                {selectedItem.period} • {selectedItem.location}
-              </Badge>
-            )}
-          </div>
-        </div>
-
-        {selectedItem.type === 'experiences' && (
-          <div>
-            <h3 className="font-semibold text-lg mb-3">Principais Conquistas</h3>
-            <div className="space-y-2 mb-6">
-              {selectedItem.keyAchievements.map((achievement, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-                  <span className="text-sm">{achievement}</span>
-                </div>
-              ))}
+      <div className="flex-1 overflow-hidden">
+        <ScrollArea className="h-full">
+          <div className="p-8">
+            <div className="mb-8">
+              <h2 className="text-3xl font-bold text-slate-900 mb-2">
+                {getSectionTitle()}
+              </h2>
+              <p className="text-slate-600">
+                {getSectionDescription()}
+              </p>
             </div>
 
-            <h3 className="font-semibold text-lg mb-3">Casos STAR</h3>
-            <div className="grid gap-3">
-              {selectedItem.cases.map((caseItem, index) => (
+            <div className="grid gap-6">
+              {filteredData.map((item, index) => (
                 <Card 
-                  key={index}
-                  className="cursor-pointer hover:shadow-md transition-all"
-                  onClick={() => handleCaseSelect(caseItem)}
+                  key={item.id} 
+                  className="group cursor-pointer card-hover hover-lift animate-fade-in-up border-slate-200 hover:border-blue-300"
+                  onClick={() => setSelectedItem(item)}
+                  style={{ animationDelay: `${index * 0.1}s` }}
                 >
-                  <CardHeader className="pb-2">
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-base">{caseItem.title}</CardTitle>
-                      <Badge className="bg-green-100 text-green-800">
-                        {caseItem.score}
-                      </Badge>
+                  <CardHeader className="pb-4">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-4">
+                        {renderItemIcon(item)}
+                        <div>
+                          <CardTitle className="text-xl text-slate-900 group-hover:text-blue-600 transition-colors">
+                            {item.name || item.title || item.question}
+                          </CardTitle>
+                          <CardDescription className="text-slate-600 mt-1">
+                            {renderItemSubtitle(item)}
+                          </CardDescription>
+                        </div>
+                      </div>
+                      <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-blue-600 transition-colors" />
                     </div>
                   </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-gray-600 mb-2">
-                      {caseItem.situation.substring(0, 150)}...
+                  
+                  <CardContent className="pt-0">
+                    <p className="text-slate-700 mb-4 line-clamp-3">
+                      {item.description || item.content || (item.versions && item.versions[0]?.content?.substring(0, 200) + '...')}
                     </p>
-                    <div className="flex flex-wrap gap-1">
-                      {caseItem.tags.slice(0, 3).map((tag, tagIndex) => (
-                        <Badge key={tagIndex} variant="outline" className="text-xs">
-                          {tag}
-                        </Badge>
-                      ))}
-                    </div>
+                    
+                    {renderItemMetrics(item)}
+                    
+                    {item.tags && (
+                      <div className="flex flex-wrap gap-2 mt-4">
+                        {item.tags.slice(0, 4).map((tag, index) => (
+                          <Badge key={index} variant="secondary" className="text-xs">
+                            {tag}
+                          </Badge>
+                        ))}
+                        {item.tags.length > 4 && (
+                          <Badge variant="outline" className="text-xs">
+                            +{item.tags.length - 4} mais
+                          </Badge>
+                        )}
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               ))}
             </div>
           </div>
-        )}
+        </ScrollArea>
+      </div>
+    );
+  };
 
-        {selectedItem.type === 'competencies' && (
-          <div className="space-y-6">
-            <div>
-              <h3 className="font-semibold text-lg mb-3">Habilidades</h3>
-              <div className="flex flex-wrap gap-2">
-                {selectedItem.skills.map((skill, index) => (
-                  <Badge key={index} variant="secondary">
-                    {skill}
-                  </Badge>
-                ))}
+  // Helper functions for rendering
+  const getSectionTitle = () => {
+    const titles = {
+      experiences: 'Experiências Profissionais',
+      competencies: 'Competências Técnicas',
+      profiles: 'Perfis Personalizados',
+      icebreaker: 'Perguntas Icebreaker',
+      speechcv: 'Speech Full CV'
+    };
+    return titles[activeSection] || 'Seção';
+  };
+
+  const getSectionDescription = () => {
+    const descriptions = {
+      experiences: 'Explore 15+ anos de experiência em transformação digital e gestão de programas complexos',
+      competencies: 'Competências técnicas estruturadas com habilidades, ferramentas e certificações',
+      profiles: 'Perfis personalizados para diferentes tipos de vaga e contextos de entrevista',
+      icebreaker: 'Respostas estruturadas para perguntas típicas de RH e apresentação pessoal',
+      speechcv: 'Apresentações completas do CV adaptadas por tipo de vaga e contexto'
+    };
+    return descriptions[activeSection] || 'Descrição da seção';
+  };
+
+  const renderItemIcon = (item) => {
+    const iconClass = "w-12 h-12 rounded-lg flex items-center justify-center text-white font-bold text-lg";
+    
+    if (activeSection === 'experiences') {
+      return <div className={`${iconClass} bg-gradient-to-br from-blue-600 to-blue-700`}>🏢</div>;
+    } else if (activeSection === 'competencies') {
+      return <div className={`${iconClass} bg-gradient-to-br from-purple-600 to-purple-700`}>🎯</div>;
+    } else if (activeSection === 'profiles') {
+      return <div className={`${iconClass} bg-gradient-to-br from-green-600 to-green-700`}>👤</div>;
+    } else if (activeSection === 'icebreaker') {
+      return <div className={`${iconClass} bg-gradient-to-br from-orange-600 to-orange-700`}>💬</div>;
+    } else if (activeSection === 'speechcv') {
+      return <div className={`${iconClass} bg-gradient-to-br from-red-600 to-red-700`}>📄</div>;
+    }
+    return <div className={`${iconClass} bg-gradient-to-br from-gray-600 to-gray-700`}>📋</div>;
+  };
+
+  const renderItemSubtitle = (item) => {
+    if (activeSection === 'experiences') {
+      return `${item.sector} • ${item.period}`;
+    } else if (activeSection === 'competencies') {
+      return item.description;
+    } else if (activeSection === 'profiles') {
+      return item.description;
+    } else if (activeSection === 'icebreaker') {
+      return `${item.category} • ${item.versions?.length || 0} versões`;
+    } else if (activeSection === 'speechcv') {
+      return `${item.subtitle} • ${item.duration}`;
+    }
+    return '';
+  };
+
+  const renderItemMetrics = (item) => {
+    if (activeSection === 'experiences' && item.achievements) {
+      return (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {item.achievements.slice(0, 2).map((achievement, index) => (
+            <div key={index} className="flex items-center gap-2 text-sm text-slate-600">
+              <TrendingUp className="w-4 h-4 text-green-600" />
+              <span>{achievement}</span>
+            </div>
+          ))}
+        </div>
+      );
+    } else if (activeSection === 'competencies' && item.skills) {
+      return (
+        <div className="flex items-center gap-4 text-sm text-slate-600">
+          <div className="flex items-center gap-1">
+            <Award className="w-4 h-4" />
+            <span>{item.skills.length} habilidades</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <Target className="w-4 h-4" />
+            <span>{item.tools?.length || 0} ferramentas</span>
+          </div>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  // Render item detail (when an item is selected)
+  const renderItemDetail = () => {
+    if (activeSection === 'experiences') {
+      return renderExperienceDetail();
+    } else if (activeSection === 'competencies') {
+      return renderCompetencyDetail();
+    } else if (activeSection === 'profiles') {
+      return renderProfileDetail();
+    } else if (activeSection === 'icebreaker') {
+      return renderIcebreakerDetail();
+    } else if (activeSection === 'speechcv') {
+      return renderSpeechCVDetail();
+    }
+    return null;
+  };
+
+  // Render experience detail
+  const renderExperienceDetail = () => {
+    return (
+      <div className="flex-1 overflow-hidden">
+        <ScrollArea className="h-full">
+          <div className="p-8">
+            {/* Header */}
+            <div className="mb-8">
+              <Button 
+                variant="ghost" 
+                onClick={() => setSelectedItem(null)}
+                className="mb-4 text-slate-600 hover:text-slate-900 btn-ripple micro-bounce animate-fade-in-left"
+              >
+                ← Voltar
+              </Button>
+              
+              <div className="flex items-center gap-4 mb-6">
+                {renderItemIcon(selectedItem)}
+                <div>
+                  <h1 className="text-3xl font-bold text-slate-900">{selectedItem.name}</h1>
+                  <p className="text-lg text-slate-600">{selectedItem.sector}</p>
+                  <div className="flex items-center gap-4 mt-2 text-sm text-slate-500">
+                    <span className="flex items-center gap-1">
+                      <Calendar className="w-4 h-4" />
+                      {selectedItem.period}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Building className="w-4 h-4" />
+                      {selectedItem.location || 'Porto Alegre, Brasil'}
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div>
-              <h3 className="font-semibold text-lg mb-3">Ferramentas</h3>
-              <div className="flex flex-wrap gap-2">
-                {selectedItem.tools.map((tool, index) => (
-                  <Badge key={index} variant="outline">
-                    {tool}
-                  </Badge>
-                ))}
+            {/* Main Achievements */}
+            <Card className="mb-8">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <TrendingUp className="w-5 h-5 text-green-600" />
+                  Principais Conquistas
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid gap-3">
+                  {selectedItem.achievements?.map((achievement, index) => (
+                    <div key={index} className="flex items-start gap-3 p-3 bg-green-50 rounded-lg">
+                      <div className="w-2 h-2 bg-green-600 rounded-full mt-2"></div>
+                      <span className="text-slate-700">{achievement}</span>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* STAR Cases */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Star className="w-5 h-5 text-yellow-600" />
+                  Casos STAR
+                </CardTitle>
+                <CardDescription>
+                  Casos estruturados com Situação, Tarefa, Ação, Resultado e Aprendizado
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid gap-4">
+                  {selectedItem.cases?.map((case_item) => (
+                    <Card 
+                      key={case_item.id}
+                      className="cursor-pointer transition-all duration-200 hover:shadow-md hover:border-blue-300"
+                      onClick={() => setSelectedCase(case_item)}
+                    >
+                      <CardHeader className="pb-3">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <CardTitle className="text-lg text-slate-900 hover:text-blue-600 transition-colors">
+                              {case_item.title}
+                            </CardTitle>
+                            <CardDescription className="mt-1">
+                              {case_item.situation?.substring(0, 150)}...
+                            </CardDescription>
+                          </div>
+                          <div className="flex items-center gap-2 ml-4">
+                            <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
+                              Score: {case_item.score}
+                            </Badge>
+                            <ChevronRight className="w-4 h-4 text-slate-400" />
+                          </div>
+                        </div>
+                      </CardHeader>
+                      
+                      {case_item.tags && (
+                        <CardContent className="pt-0">
+                          <div className="flex flex-wrap gap-2">
+                            {case_item.tags.map((tag, index) => (
+                              <Badge key={index} variant="outline" className="text-xs">
+                                {tag}
+                              </Badge>
+                            ))}
+                          </div>
+                        </CardContent>
+                      )}
+                    </Card>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </ScrollArea>
+      </div>
+    );
+  };
+
+  // Render case detail (STAR format)
+  const renderCaseDetail = () => {
+    return (
+      <div className="flex-1 overflow-hidden">
+        <ScrollArea className="h-full">
+          <div className="p-8">
+            {/* Header */}
+            <div className="mb-8">
+              <Button 
+                variant="ghost" 
+                onClick={() => setSelectedCase(null)}
+                className="mb-4 text-slate-600 hover:text-slate-900"
+              >
+                ← Voltar
+              </Button>
+              
+              <div className="flex items-start justify-between mb-6">
+                <div>
+                  <h1 className="text-3xl font-bold text-slate-900 mb-2">{selectedCase.title}</h1>
+                  <div className="flex items-center gap-4">
+                    <Badge className="bg-yellow-100 text-yellow-800 border-yellow-300">
+                      Score: {selectedCase.score}
+                    </Badge>
+                    {selectedCase.tags?.map((tag, index) => (
+                      <Badge key={index} variant="outline">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div>
-              <h3 className="font-semibold text-lg mb-3">Certificações</h3>
-              <div className="flex flex-wrap gap-2">
-                {selectedItem.certifications.map((cert, index) => (
-                  <Badge key={index} className="bg-blue-100 text-blue-800">
-                    {cert}
-                  </Badge>
-                ))}
-              </div>
+            {/* STAR Content */}
+            <div className="space-y-6">
+              {/* Situação */}
+              <Card className="border-l-4 border-l-blue-600">
+                <CardHeader>
+                  <CardTitle className="text-blue-600">Situação</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-slate-700 leading-relaxed">{selectedCase.situation}</p>
+                </CardContent>
+              </Card>
+
+              {/* Tarefa */}
+              <Card className="border-l-4 border-l-green-600">
+                <CardHeader>
+                  <CardTitle className="text-green-600">Tarefa</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-slate-700 leading-relaxed">{selectedCase.task}</p>
+                </CardContent>
+              </Card>
+
+              {/* Ação */}
+              <Card className="border-l-4 border-l-orange-600">
+                <CardHeader>
+                  <CardTitle className="text-orange-600">Ação</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-slate-700 leading-relaxed">{selectedCase.action}</p>
+                </CardContent>
+              </Card>
+
+              {/* Resultado */}
+              <Card className="border-l-4 border-l-purple-600">
+                <CardHeader>
+                  <CardTitle className="text-purple-600">Resultado</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-slate-700 leading-relaxed">{selectedCase.result}</p>
+                </CardContent>
+              </Card>
+
+              {/* Aprendizado */}
+              <Card className="border-l-4 border-l-red-600">
+                <CardHeader>
+                  <CardTitle className="text-red-600">Aprendizado</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-slate-700 leading-relaxed">{selectedCase.learned}</p>
+                </CardContent>
+              </Card>
             </div>
           </div>
-        )}
+        </ScrollArea>
+      </div>
+    );
+  };
 
-        {selectedItem.type === 'profiles' && (
-          <div className="space-y-6">
-            <div>
-              <h3 className="font-semibold text-lg mb-3">Elevator Pitch</h3>
-              <p className="text-gray-700 bg-gray-50 p-4 rounded-lg">
-                {selectedItem.elevatorPitch[language]}
-              </p>
+  // Render competency detail
+  const renderCompetencyDetail = () => {
+    return (
+      <div className="flex-1 overflow-hidden">
+        <ScrollArea className="h-full">
+          <div className="p-8">
+            <Button 
+              variant="ghost" 
+              onClick={() => setSelectedItem(null)}
+              className="mb-4 text-slate-600 hover:text-slate-900"
+            >
+              ← Voltar
+            </Button>
+            
+            <div className="flex items-center gap-4 mb-8">
+              {renderItemIcon(selectedItem)}
+              <div>
+                <h1 className="text-3xl font-bold text-slate-900">{selectedItem.name}</h1>
+                <p className="text-lg text-slate-600">{selectedItem.description}</p>
+              </div>
             </div>
 
-            <div>
-              <h3 className="font-semibold text-lg mb-3">Principais Forças</h3>
-              <div className="grid grid-cols-2 gap-2">
-                {selectedItem.keyStrengths.map((strength, index) => (
-                  <div key={index} className="flex items-center gap-2">
-                    <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                    <span className="text-sm">{strength}</span>
+            <div className="grid gap-6">
+              {/* Habilidades */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Habilidades</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    {selectedItem.skills?.map((skill, index) => (
+                      <Badge key={index} variant="secondary" className="justify-center py-2">
+                        {skill}
+                      </Badge>
+                    ))}
                   </div>
-                ))}
-              </div>
-            </div>
+                </CardContent>
+              </Card>
 
-            <div>
-              <h3 className="font-semibold text-lg mb-3">Principais Conquistas</h3>
-              <div className="space-y-2">
-                {selectedItem.achievements.map((achievement, index) => (
-                  <div key={index} className="flex items-center gap-2">
-                    <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-                    <span className="text-sm">{achievement}</span>
+              {/* Ferramentas */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Ferramentas</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    {selectedItem.tools?.map((tool, index) => (
+                      <Badge key={index} variant="outline" className="justify-center py-2">
+                        {tool}
+                      </Badge>
+                    ))}
                   </div>
-                ))}
-              </div>
-            </div>
+                </CardContent>
+              </Card>
 
-            <div>
-              <h3 className="font-semibold text-lg mb-3">Tecnologias</h3>
-              <div className="flex flex-wrap gap-2">
-                {selectedItem.technologies.map((tech, index) => (
-                  <Badge key={index} variant="outline">
-                    {tech}
-                  </Badge>
-                ))}
-              </div>
+              {/* Certificações */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Certificações</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid gap-3">
+                    {selectedItem.certifications?.map((cert, index) => (
+                      <Badge key={index} className="justify-center py-3 bg-blue-100 text-blue-800 border-blue-300">
+                        {cert}
+                      </Badge>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
-        )}
+        </ScrollArea>
+      </div>
+    );
+  };
+
+  // Render profile detail
+  const renderProfileDetail = () => {
+    return (
+      <div className="flex-1 overflow-hidden">
+        <ScrollArea className="h-full">
+          <div className="p-8">
+            <Button 
+              variant="ghost" 
+              onClick={() => setSelectedItem(null)}
+              className="mb-4 text-slate-600 hover:text-slate-900"
+            >
+              ← Voltar
+            </Button>
+            
+            <div className="flex items-center gap-4 mb-8">
+              {renderItemIcon(selectedItem)}
+              <div>
+                <h1 className="text-3xl font-bold text-slate-900">{selectedItem.name}</h1>
+                <p className="text-lg text-slate-600">{selectedItem.description}</p>
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              {/* Elevator Pitch */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Elevator Pitch</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-slate-700 leading-relaxed">{selectedItem.elevatorPitch}</p>
+                </CardContent>
+              </Card>
+
+              {/* Principais Forças */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Principais Forças</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {selectedItem.strengths?.map((strength, index) => (
+                      <div key={index} className="flex items-center gap-2 p-3 bg-blue-50 rounded-lg">
+                        <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                        <span className="text-slate-700">{strength}</span>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Principais Conquistas */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Principais Conquistas</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid gap-3">
+                    {selectedItem.achievements?.map((achievement, index) => (
+                      <div key={index} className="flex items-start gap-3 p-3 bg-green-50 rounded-lg">
+                        <div className="w-2 h-2 bg-green-600 rounded-full mt-2"></div>
+                        <span className="text-slate-700">{achievement}</span>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Tecnologias */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Tecnologias</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedItem.technologies?.map((tech, index) => (
+                      <Badge key={index} variant="outline">
+                        {tech}
+                      </Badge>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </ScrollArea>
+      </div>
+    );
+  };
+
+  // Render icebreaker detail
+  const renderIcebreakerDetail = () => {
+    return (
+      <div className="flex-1 overflow-hidden">
+        <ScrollArea className="h-full">
+          <div className="p-8">
+            <Button 
+              variant="ghost" 
+              onClick={() => setSelectedItem(null)}
+              className="mb-4 text-slate-600 hover:text-slate-900"
+            >
+              ← Voltar
+            </Button>
+            
+            <div className="mb-8">
+              <h1 className="text-3xl font-bold text-slate-900 mb-2">{selectedItem.question}</h1>
+              <Badge variant="secondary">{selectedItem.category}</Badge>
+            </div>
+
+            <div className="space-y-6">
+              {selectedItem.versions?.map((version) => (
+                <Card key={version.id} className="border-l-4 border-l-blue-600">
+                  <CardHeader>
+                    <CardTitle className="text-blue-600">{version.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="prose prose-slate max-w-none">
+                      {version.content.split('\n\n').map((paragraph, index) => (
+                        <p key={index} className="text-slate-700 leading-relaxed mb-4">
+                          {paragraph}
+                        </p>
+                      ))}
+                    </div>
+                    
+                    {version.tags && (
+                      <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-slate-200">
+                        {version.tags.map((tag, index) => (
+                          <Badge key={index} variant="outline" className="text-xs">
+                            {tag}
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </ScrollArea>
+      </div>
+    );
+  };
+
+  // Render speech CV detail
+  const renderSpeechCVDetail = () => {
+    return (
+      <div className="flex-1 overflow-hidden">
+        <ScrollArea className="h-full">
+          <div className="p-8">
+            <Button 
+              variant="ghost" 
+              onClick={() => setSelectedItem(null)}
+              className="mb-4 text-slate-600 hover:text-slate-900"
+            >
+              ← Voltar
+            </Button>
+            
+            <div className="flex items-center gap-4 mb-8">
+              {renderItemIcon(selectedItem)}
+              <div>
+                <h1 className="text-3xl font-bold text-slate-900">{selectedItem.title}</h1>
+                <p className="text-lg text-slate-600">{selectedItem.subtitle}</p>
+                <div className="flex items-center gap-4 mt-2">
+                  <Badge variant="secondary">{selectedItem.duration}</Badge>
+                  {selectedItem.tags?.map((tag, index) => (
+                    <Badge key={index} variant="outline">
+                      {tag}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              {/* Key Points */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Pontos-Chave</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid gap-3">
+                    {selectedItem.keyPoints?.map((point, index) => (
+                      <div key={index} className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
+                        <div className="w-2 h-2 bg-blue-600 rounded-full mt-2"></div>
+                        <span className="text-slate-700">{point}</span>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Full Speech */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Speech Completo</CardTitle>
+                  <CardDescription>
+                    Apresentação estruturada do CV para {selectedItem.title}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="prose prose-slate max-w-none">
+                    {selectedItem.content.split('\n\n').map((paragraph, index) => {
+                      // Check if paragraph is a header (starts with **)
+                      if (paragraph.startsWith('**') && paragraph.endsWith('**')) {
+                        return (
+                          <h3 key={index} className="text-xl font-bold text-slate-900 mt-6 mb-3">
+                            {paragraph.replace(/\*\*/g, '')}
+                          </h3>
+                        );
+                      }
+                      
+                      return (
+                        <p key={index} className="text-slate-700 leading-relaxed mb-4">
+                          {paragraph}
+                        </p>
+                      );
+                    })}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </ScrollArea>
       </div>
     );
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold">
-              L
-            </div>
-            <div>
-              <h1 className="text-xl font-bold">Leo Interview Prep</h1>
-              <p className="text-sm text-gray-600">Preparação Universal para Entrevistas</p>
-            </div>
-          </div>
-          
-          <div className="flex items-center gap-4">
-            {/* Timer */}
-            <div className="flex items-center gap-2 bg-gray-100 rounded-lg p-2">
-              <Timer className="w-4 h-4" />
-              <span className="font-mono text-sm">{formatTime(timeLeft)}</span>
-              <div className="flex gap-1">
-                <Button size="sm" variant="ghost" onClick={startTimer}>
-                  <Play className="w-3 h-3" />
-                </Button>
-                <Button size="sm" variant="ghost" onClick={pauseTimer}>
-                  <Pause className="w-3 h-3" />
-                </Button>
-                <Button size="sm" variant="ghost" onClick={resetTimer}>
-                  <RotateCcw className="w-3 h-3" />
-                </Button>
-              </div>
-            </div>
-            
-            <Select value={language} onValueChange={setLanguage}>
-              <SelectTrigger className="w-20">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="pt">PT</SelectItem>
-                <SelectItem value="en">EN</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-      </header>
-
-      <div className="flex h-[calc(100vh-80px)]">
-        {/* Sidebar */}
-        <div className="w-80 bg-white border-r border-gray-200 flex flex-col">
-          {/* Search */}
-          <div className="p-4 border-b border-gray-200">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <Input
-                placeholder="Buscar..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-          </div>
-
-          {/* Tabs */}
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
-            <TabsList className="grid w-full grid-cols-3 m-4 mb-2">
-              <TabsTrigger value="experiences" className="text-xs">
-                <Briefcase className="w-3 h-3 mr-1" />
-                Experiências
-              </TabsTrigger>
-              <TabsTrigger value="competencies" className="text-xs">
-                <Target className="w-3 h-3 mr-1" />
-                Competências
-              </TabsTrigger>
-              <TabsTrigger value="profiles" className="text-xs">
-                <User className="w-3 h-3 mr-1" />
-                Perfis
-              </TabsTrigger>
-            </TabsList>
-
-            <div className="flex-1 overflow-y-auto">
-              <TabsContent value="experiences" className="p-4 pt-0 space-y-3">
-                {getFilteredItems().map(renderItemCard)}
-              </TabsContent>
-              
-              <TabsContent value="competencies" className="p-4 pt-0 space-y-3">
-                {getFilteredItems().map(renderItemCard)}
-              </TabsContent>
-              
-              <TabsContent value="profiles" className="p-4 pt-0 space-y-3">
-                {getFilteredItems().map(renderItemCard)}
-              </TabsContent>
-            </div>
-          </Tabs>
-        </div>
-
-        {/* Main Content */}
-        <div className="flex-1 overflow-y-auto">
-          {renderDetailPanel()}
-        </div>
-      </div>
+    <div className="flex h-screen bg-slate-50">
+      {renderSidebar()}
+      {renderMainContent()}
     </div>
   );
 }

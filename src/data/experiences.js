@@ -1,7 +1,7 @@
 // Experiências Profissionais do Leonardo Menezes
 // Baseado no Playbook e CV
 
-export const experiences = {
+export const experiencesData = {
   huawei: {
     id: 'huawei',
     title: 'Huawei',
@@ -218,4 +218,4 @@ export const experiences = {
   }
 };
 
-export const experiencesList = Object.values(experiences);
+export const experiencesList = Object.values(experiencesData);

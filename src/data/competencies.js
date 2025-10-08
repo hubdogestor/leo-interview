@@ -1,6 +1,6 @@
 // Competências Técnicas do Leonardo Menezes
 
-export const competencies = {
+export const competenciesData = {
   program_management: {
     id: 'program_management',
     title: 'Program Management & PMO',

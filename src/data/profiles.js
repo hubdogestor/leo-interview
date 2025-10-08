@@ -1,6 +1,6 @@
 // Perfis Personalizados para Diferentes Tipos de Vaga
 
-export const profiles = {
+export const profilesData = {
   product_manager: {
     id: 'product_manager',
     title: 'Product Manager',
