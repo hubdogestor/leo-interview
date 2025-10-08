@@ -186,4 +186,4 @@ export const competenciesData = {
   }
 };
 
-export const competenciesList = Object.values(competencies);
+export const competenciesList = Object.values(competenciesData);

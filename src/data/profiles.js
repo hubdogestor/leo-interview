@@ -207,4 +207,4 @@ export const profilesData = {
   }
 };
 
-export const profilesList = Object.values(profiles);
+export const profilesList = Object.values(profilesData);

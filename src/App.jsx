@@ -16,6 +16,14 @@ import icebreakerData from './data/icebreaker';
 import speechFullCVData from './data/speechFullCV';
 
 function App() {
+  // Debug imports
+  console.log('Checking imports...');
+  console.log('experiencesData:', typeof experiencesData, Object.keys(experiencesData || {}).length);
+  console.log('competenciesData:', typeof competenciesData, Object.keys(competenciesData || {}).length);
+  console.log('profilesData:', typeof profilesData, Object.keys(profilesData || {}).length);
+  console.log('icebreakerData:', typeof icebreakerData, Object.keys(icebreakerData || {}).length);
+  console.log('speechFullCVData:', typeof speechFullCVData, Object.keys(speechFullCVData || {}).length);
+
   const [activeSection, setActiveSection] = useState('experiences');
   const [selectedItem, setSelectedItem] = useState(null);
   const [selectedCase, setSelectedCase] = useState(null);
