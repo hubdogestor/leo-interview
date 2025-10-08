@@ -1,6 +1,6 @@
 // src/hooks/usePrinciplesData.js
 import { useMemo } from 'react';
-import principlesDataRaw from '../data_principles.js';
+import principlesDataRaw from '../data/principles.js';
 
 /**
  * Hook otimizado para processar dados dos princípios

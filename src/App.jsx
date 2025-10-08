@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Search, Timer, Globe, User, Briefcase, Target, MessageCircle, FileText, ChevronRight, Play, Pause, RotateCcw, Star, Clock, Building, Calendar, Award, TrendingUp } from 'lucide-react';
 import { Button } from './components/ui/button';
 import { Input } from './components/ui/input';
@@ -24,29 +24,31 @@ function App() {
   const [timerSeconds, setTimerSeconds] = useState(0);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
 
-  // Timer functionality
+  // Timer functionality - optimized to avoid recreating interval on every second
   useEffect(() => {
     let interval = null;
     if (isTimerRunning) {
       interval = setInterval(() => {
         setTimerSeconds(seconds => seconds + 1);
       }, 1000);
-    } else if (!isTimerRunning && timerSeconds !== 0) {
-      clearInterval(interval);
     }
-    return () => clearInterval(interval);
-  }, [isTimerRunning, timerSeconds]);
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [isTimerRunning]);
 
-  const formatTime = (seconds) => {
+  const formatTime = useCallback((seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
+  }, []);
 
-  const resetTimer = () => {
+  const resetTimer = useCallback(() => {
     setTimerSeconds(0);
     setIsTimerRunning(false);
-  };
+  }, []);
 
   // Get current data based on active section
   const getCurrentData = () => {
@@ -142,6 +144,7 @@ function App() {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10 bg-white border-slate-200 focus:border-blue-500 focus:ring-blue-500"
+              aria-label="Campo de busca para filtrar conteúdo"
             />
           </div>
         </div>

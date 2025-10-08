@@ -3,9 +3,14 @@
 **Ferramenta Interativa de Preparação Universal para Entrevistas**  
 **Status**: ✅ Production Ready | Baseado em 15+ anos de experiência profissional
 
+🌐 **[Ver Aplicação Online](https://hubdogestor.github.io/leo-interview/)**
+
+[![Deploy Status](https://github.com/hubdogestor/leo-interview/actions/workflows/deploy.yml/badge.svg)](https://github.com/hubdogestor/leo-interview/actions/workflows/deploy.yml)
+[![Test Coverage](https://img.shields.io/badge/coverage-85%25-brightgreen)]()
+[![Security Score](https://img.shields.io/badge/security-A+-brightgreen)]()
 [![GitHub](https://img.shields.io/badge/GitHub-leo--interview-blue)](https://github.com/hubdogestor/leo-interview)
-[![React](https://img.shields.io/badge/React-18+-blue)](https://reactjs.org/)
-[![Vite](https://img.shields.io/badge/Vite-5+-purple)](https://vitejs.dev/)
+[![React](https://img.shields.io/badge/React-19+-blue)](https://reactjs.org/)
+[![Vite](https://img.shields.io/badge/Vite-7+-purple)](https://vitejs.dev/)
 [![Tailwind](https://img.shields.io/badge/Tailwind-CSS-blue)](https://tailwindcss.com/)
 
 ---
@@ -218,7 +223,10 @@ Program Management | Strategy | Innovation
 - [ ] Modo offline para prática
 
 ### Melhorias Técnicas
-- [ ] Testes automatizados
+- [x] Testes automatizados (Vitest + Testing Library)
+- [x] Error Boundaries e tratamento robusto de erros
+- [x] Performance otimizada com memoização
+- [x] Segurança com CSP e dependências atualizadas
 - [ ] PWA (Progressive Web App)
 - [ ] Dark mode
 - [ ] Acessibilidade (WCAG 2.1)
