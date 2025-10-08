@@ -17,6 +17,7 @@ import { profilesData } from '../src/data/profiles.js';
 import { competenciesData } from '../src/data/competencies.js';
 import personalData from '../src/data/personalData.js';
 import icebreakerData from '../src/data/icebreaker.js';
+import questionsToExperiencesMapping from '../src/data/questionsToExperiencesMapping.js';
 
 /** @param {any} v */
 const isObj = (v)=> v && typeof v === 'object' && !Array.isArray(v);
@@ -170,6 +171,20 @@ function validateIcebreaker(data){
   return errors;
 }
 
+function validateQuestionsMapping(list){
+  const errors=[];
+  list.forEach((m,i)=>{
+    if(m.tags){
+      if(Array.isArray(m.tags)){
+        // legacy ok
+      } else {
+        validateArrayBilingual(m.tags, `questionsMapping[${i}].tags`, errors);
+      }
+    }
+  });
+  return errors;
+}
+
 const allErrors = [
   ...validateSpeech(speechFullCVData),
   ...validateExperiences(experiencesData),
@@ -177,6 +192,7 @@ const allErrors = [
   ...validateCompetencies(competenciesData),
   ...validatePersonal(personalData),
   ...validateIcebreaker(icebreakerData)
+  ,...validateQuestionsMapping(questionsToExperiencesMapping)
 ];
 
 if(allErrors.length){

@@ -7,21 +7,21 @@ export const questionsToExperiencesMapping = [
     experienceId: "huawei",
     caseId: "huawei-sla-reduction",
     score: 95,
-    tags: ["leadership", "crisis-management", "team-building"]
+  tags: { pt: ["liderança", "gestão de crise", "construção de equipe"], en: ["leadership", "crisis-management", "team-building"] }
   },
   {
     question: "Describe a situation where you had to manage multiple stakeholders with conflicting interests",
     experienceId: "hsbc_bradesco",
     caseId: "hsbc-bradesco-migration",
     score: 94,
-    tags: ["stakeholder-management", "conflict-resolution", "negotiation"]
+  tags: { pt: ["gestão de stakeholders", "resolução de conflitos", "negociação"], en: ["stakeholder-management", "conflict-resolution", "negotiation"] }
   },
   {
     question: "Give me an example of how you developed your team members",
     experienceId: "huawei",
     caseId: "huawei-sla-reduction",
     score: 90,
-    tags: ["team-development", "mentoring", "coaching"]
+  tags: { pt: ["desenvolvimento de equipe", "mentoria", "coaching"], en: ["team-development", "mentoring", "coaching"] }
   },
 
   // Innovation & Problem Solving
@@ -30,21 +30,21 @@ export const questionsToExperiencesMapping = [
     experienceId: "unimed",
     caseId: "unimed-ai-claims",
     score: 96,
-    tags: ["innovation", "problem-solving", "ai-implementation"]
+  tags: { pt: ["inovação", "resolução de problemas", "implementação de IA"], en: ["innovation", "problem-solving", "ai-implementation"] }
   },
   {
     question: "Describe a situation where you implemented new technology to improve processes",
     experienceId: "sicredi",
     caseId: "sicredi-ml-credit",
     score: 87,
-    tags: ["technology-implementation", "process-improvement", "machine-learning"]
+  tags: { pt: ["implementação tecnológica", "melhoria de processos", "machine-learning"], en: ["technology-implementation", "process-improvement", "machine-learning"] }
   },
   {
     question: "Give me an example of how you approached a problem that had no obvious solution",
     experienceId: "sefaz",
     caseId: "sefaz-ai-readiness",
     score: 89,
-    tags: ["creative-thinking", "ambiguity", "strategic-planning"]
+  tags: { pt: ["pensamento criativo", "ambiguidade", "planejamento estratégico"], en: ["creative-thinking", "ambiguity", "strategic-planning"] }
   },
 
   // Results & Impact
@@ -53,21 +53,21 @@ export const questionsToExperiencesMapping = [
     experienceId: "huawei",
     caseId: "huawei-sla-reduction",
     score: 95,
-    tags: ["achievement", "impact", "process-optimization"]
+  tags: { pt: ["realização", "impacto", "otimização de processos"], en: ["achievement", "impact", "process-optimization"] }
   },
   {
     question: "Describe a time when you delivered results under pressure",
     experienceId: "huawei",
     caseId: "huawei-4g-pioneer",
     score: 92,
-    tags: ["pressure", "deadline", "execution"]
+  tags: { pt: ["pressão", "prazo", "execução"], en: ["pressure", "deadline", "execution"] }
   },
   {
     question: "Give me an example of how you measured and improved performance",
     experienceId: "unimed",
     caseId: "unimed-digital-products",
     score: 96,
-    tags: ["performance-measurement", "improvement", "metrics"]
+  tags: { pt: ["medição de performance", "melhoria", "métricas"], en: ["performance-measurement", "improvement", "metrics"] }
   },
 
   // Change Management & Transformation
@@ -76,21 +76,21 @@ export const questionsToExperiencesMapping = [
     experienceId: "hsbc_bradesco",
     caseId: "bradesco-next-launch",
     score: 88,
-    tags: ["change-management", "transformation", "culture"]
+  tags: { pt: ["gestão de mudança", "transformação", "cultura"], en: ["change-management", "transformation", "culture"] }
   },
   {
     question: "Describe how you handled resistance to change",
     experienceId: "sefaz",
     caseId: "sefaz-profisco-pmo",
     score: 91,
-    tags: ["resistance-management", "communication", "influence"]
+  tags: { pt: ["gestão de resistência", "comunicação", "influência"], en: ["resistance-management", "communication", "influence"] }
   },
   {
     question: "Give me an example of how you modernized legacy processes",
     experienceId: "hsbc_bradesco",
     caseId: "hsbc-bradesco-migration",
     score: 94,
-    tags: ["modernization", "legacy-systems", "migration"]
+  tags: { pt: ["modernização", "sistemas legados", "migração"], en: ["modernization", "legacy-systems", "migration"] }
   },
 
   // Customer Focus & Product
@@ -99,21 +99,21 @@ export const questionsToExperiencesMapping = [
     experienceId: "unimed",
     caseId: "unimed-digital-products",
     score: 96,
-    tags: ["customer-focus", "user-experience", "product-development"]
+  tags: { pt: ["foco no cliente", "experiência do usuário", "desenvolvimento de produto"], en: ["customer-focus", "user-experience", "product-development"] }
   },
   {
     question: "Describe how you improved customer satisfaction",
     experienceId: "sicredi",
     caseId: "sicredi-woop-growth",
     score: 90,
-    tags: ["customer-satisfaction", "product-improvement", "growth"]
+  tags: { pt: ["satisfação do cliente", "melhoria de produto", "crescimento"], en: ["customer-satisfaction", "product-improvement", "growth"] }
   },
   {
     question: "Give me an example of how you gathered and acted on customer feedback",
     experienceId: "unimed",
     caseId: "unimed-digital-products",
     score: 93,
-    tags: ["feedback", "iteration", "customer-research"]
+  tags: { pt: ["feedback", "iteração", "pesquisa com clientes"], en: ["feedback", "iteration", "customer-research"] }
   },
 
   // Strategic Thinking
@@ -122,21 +122,21 @@ export const questionsToExperiencesMapping = [
     experienceId: "unimed",
     caseId: "unimed-digital-products",
     score: 96,
-    tags: ["strategic-thinking", "business-strategy", "planning"]
+  tags: { pt: ["pensamento estratégico", "estratégia de negócio", "planejamento"], en: ["strategic-thinking", "business-strategy", "planning"] }
   },
   {
     question: "Describe how you identified and pursued a new opportunity",
     experienceId: "sicredi",
     caseId: "sicredi-woop-growth",
     score: 90,
-    tags: ["opportunity-identification", "market-analysis", "growth"]
+  tags: { pt: ["identificação de oportunidades", "análise de mercado", "crescimento"], en: ["opportunity-identification", "market-analysis", "growth"] }
   },
   {
     question: "Give me an example of long-term planning you've done",
     experienceId: "sefaz",
     caseId: "sefaz-ai-readiness",
     score: 89,
-    tags: ["long-term-planning", "roadmap", "vision"]
+  tags: { pt: ["planejamento de longo prazo", "roadmap", "visão"], en: ["long-term-planning", "roadmap", "vision"] }
   },
 
   // Risk Management & Compliance
@@ -145,21 +145,21 @@ export const questionsToExperiencesMapping = [
     experienceId: "hsbc_bradesco",
     caseId: "hsbc-bradesco-migration",
     score: 94,
-    tags: ["risk-management", "compliance", "mitigation"]
+  tags: { pt: ["gestão de riscos", "compliance", "mitigação"], en: ["risk-management", "compliance", "mitigation"] }
   },
   {
     question: "Describe how you ensured compliance in a complex project",
     experienceId: "hsbc_bradesco",
     caseId: "hsbc-bradesco-migration",
     score: 94,
-    tags: ["compliance", "governance", "audit"]
+  tags: { pt: ["compliance", "governança", "auditoria"], en: ["compliance", "governance", "audit"] }
   },
   {
     question: "Give me an example of how you handled a crisis situation",
     experienceId: "huawei",
     caseId: "huawei-sla-reduction",
     score: 95,
-    tags: ["crisis-management", "problem-solving", "leadership"]
+  tags: { pt: ["gestão de crise", "resolução de problemas", "liderança"], en: ["crisis-management", "problem-solving", "leadership"] }
   },
 
   // Data-Driven Decision Making
@@ -168,21 +168,21 @@ export const questionsToExperiencesMapping = [
     experienceId: "unimed",
     caseId: "unimed-ai-claims",
     score: 93,
-    tags: ["data-driven", "analytics", "decision-making"]
+  tags: { pt: ["orientado a dados", "analytics", "tomada de decisão"], en: ["data-driven", "analytics", "decision-making"] }
   },
   {
     question: "Describe how you implemented analytics to improve operations",
     experienceId: "sicredi",
     caseId: "sicredi-ml-credit",
     score: 87,
-    tags: ["analytics", "operations", "machine-learning"]
+  tags: { pt: ["analytics", "operações", "machine-learning"], en: ["analytics", "operations", "machine-learning"] }
   },
   {
     question: "Give me an example of how you measured success",
     experienceId: "unimed",
     caseId: "unimed-digital-products",
     score: 96,
-    tags: ["success-metrics", "kpi", "measurement"]
+  tags: { pt: ["métricas de sucesso", "kpi", "mensuração"], en: ["success-metrics", "kpi", "measurement"] }
   },
 
   // Collaboration & Communication
@@ -191,21 +191,21 @@ export const questionsToExperiencesMapping = [
     experienceId: "huawei",
     caseId: "huawei-sla-reduction",
     score: 90,
-    tags: ["stakeholder-management", "communication", "influence"]
+  tags: { pt: ["gestão de stakeholders", "comunicação", "influência"], en: ["stakeholder-management", "communication", "influence"] }
   },
   {
     question: "Describe how you built consensus among diverse groups",
     experienceId: "sefaz",
     caseId: "sefaz-profisco-pmo",
     score: 91,
-    tags: ["consensus-building", "collaboration", "influence"]
+  tags: { pt: ["construção de consenso", "colaboração", "influência"], en: ["consensus-building", "collaboration", "influence"] }
   },
   {
     question: "Give me an example of effective cross-functional collaboration",
     experienceId: "unimed",
     caseId: "unimed-digital-products",
     score: 93,
-    tags: ["cross-functional", "collaboration", "teamwork"]
+  tags: { pt: ["multifuncional", "colaboração", "trabalho em equipe"], en: ["cross-functional", "collaboration", "teamwork"] }
   },
 
   // Continuous Learning & Adaptation
@@ -214,21 +214,21 @@ export const questionsToExperiencesMapping = [
     experienceId: "sefaz",
     caseId: "sefaz-ai-readiness",
     score: 89,
-    tags: ["learning", "adaptation", "growth"]
+  tags: { pt: ["aprendizado", "adaptação", "crescimento"], en: ["learning", "adaptation", "growth"] }
   },
   {
     question: "Describe how you stay current with industry trends",
     experienceId: "unimed",
     caseId: "unimed-ai-claims",
     score: 93,
-    tags: ["continuous-learning", "trends", "innovation"]
+  tags: { pt: ["aprendizado contínuo", "tendências", "inovação"], en: ["continuous-learning", "trends", "innovation"] }
   },
   {
     question: "Give me an example of how you adapted to changing requirements",
     experienceId: "hsbc_bradesco",
     caseId: "hsbc-bradesco-migration",
     score: 88,
-    tags: ["adaptability", "flexibility", "change-management"]
+  tags: { pt: ["adaptabilidade", "flexibilidade", "gestão de mudança"], en: ["adaptability", "flexibility", "change-management"] }
   },
 
   // Vendor & Partner Management
@@ -237,14 +237,14 @@ export const questionsToExperiencesMapping = [
     experienceId: "huawei",
     caseId: "huawei-sla-reduction",
     score: 95,
-    tags: ["vendor-management", "partnerships", "negotiation"]
+  tags: { pt: ["gestão de fornecedores", "parcerias", "negociação"], en: ["vendor-management", "partnerships", "negotiation"] }
   },
   {
     question: "Describe how you improved vendor performance",
     experienceId: "huawei",
     caseId: "huawei-sla-reduction",
     score: 90,
-    tags: ["performance-improvement", "vendor-management", "optimization"]
+  tags: { pt: ["melhoria de performance", "gestão de fornecedores", "otimização"], en: ["performance-improvement", "vendor-management", "optimization"] }
   },
 
   // International & Cultural
@@ -253,30 +253,36 @@ export const questionsToExperiencesMapping = [
     experienceId: "huawei",
     caseId: "huawei-sla-reduction",
     score: 88,
-    tags: ["multicultural", "global-teams", "cultural-awareness"]
+  tags: { pt: ["multicultural", "times globais", "consciência cultural"], en: ["multicultural", "global-teams", "cultural-awareness"] }
   },
   {
     question: "Describe how you managed global teams",
     experienceId: "hsbc_bradesco",
     caseId: "hsbc-bradesco-migration",
     score: 92,
-    tags: ["global-management", "remote-teams", "coordination"]
+  tags: { pt: ["gestão global", "times remotos", "coordenação"], en: ["global-management", "remote-teams", "coordination"] }
   }
 ];
 
 // Função para buscar casos por pergunta
 export const findCasesByQuestion = (question) => {
-  return questionsToExperiencesMapping.filter(mapping => 
-    mapping.question.toLowerCase().includes(question.toLowerCase()) ||
-    mapping.tags.some(tag => question.toLowerCase().includes(tag.replace('-', ' ')))
-  ).sort((a, b) => b.score - a.score);
+  const qLower = question.toLowerCase();
+  return questionsToExperiencesMapping.filter(mapping => {
+    const tagList = Array.isArray(mapping.tags) ? mapping.tags : [...(mapping.tags.pt||[]), ...(mapping.tags.en||[])];
+    return (
+      mapping.question.toLowerCase().includes(qLower) ||
+      tagList.some(tag => qLower.includes(tag.replace('-', ' ')))
+    );
+  }).sort((a, b) => b.score - a.score);
 };
 
 // Função para buscar casos por tag
 export const findCasesByTag = (tag) => {
-  return questionsToExperiencesMapping.filter(mapping => 
-    mapping.tags.includes(tag)
-  ).sort((a, b) => b.score - a.score);
+  const tLower = tag.toLowerCase();
+  return questionsToExperiencesMapping.filter(mapping => {
+    const tagList = Array.isArray(mapping.tags) ? mapping.tags : [...(mapping.tags.pt||[]), ...(mapping.tags.en||[])];
+    return tagList.some(t => t.toLowerCase() === tLower);
+  }).sort((a, b) => b.score - a.score);
 };
 
 // Função para obter perguntas por experiência
