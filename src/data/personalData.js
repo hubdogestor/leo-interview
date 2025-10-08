@@ -1,16 +1,28 @@
-// Dados Pessoais e Icebreaker do Leonardo Menezes
+// @ts-check
+// Dados Pessoais e Icebreaker (bilíngue)
+/** @typedef {{pt:string,en:string}} Bilingual */
+/**
+ * @typedef {Object} PersonalData
+ * @property {{ name:string; title:Bilingual; location:Bilingual; phone:string; email:string; linkedin:string; summary:Bilingual }} basic
+ * @property {{ pt:{ intro:string; questions:{q:string,a:string}[] }, en:{ intro:string; questions:{q:string,a:string}[] } }} icebreaker
+ * @property {{ degree:Bilingual; focus:Bilingual; institution:Bilingual; year:string }[]} education
+ * @property {string[]} certifications
+ * @property {{ language:Bilingual; level:Bilingual }[]} languages
+ * @property {string[]} recentTraining
+ */
 
+/** @type {PersonalData} */
 export const personalData = {
   basic: {
     name: 'Leonardo Menezes de Souza',
-    title: 'Program Management | Strategy | Innovation',
-    location: 'Porto Alegre, RS, Brasil',
+    title: { pt: 'Program Management | Strategy | Innovation', en: 'Program Management | Strategy | Innovation' },
+    location: { pt: 'Porto Alegre, RS, Brasil', en: 'Porto Alegre, RS, Brazil' },
     phone: '+55 51 9 9961 2787',
     email: 'leon4rdo@gmail.com',
     linkedin: 'https://www.linkedin.com/in/menezesleonardo/',
     summary: {
-      pt: 'Líder executivo com mais de 15 anos de experiência liderando transformação digital, otimização de processos com IA e governança estratégica nos setores de pagamentos, serviços financeiros, saúde, telecom e governo. Reconhecido por alinhar estratégia, inovação e execução para entregar valor mensurável de negócio.',
-      en: 'Executive leader with 15+ years of experience driving digital transformation, AI-powered process optimization, and strategic governance across payments, financial services, healthcare, telecom, and government sectors. Recognized for aligning strategy, innovation, and execution to deliver measurable business value.'
+      pt: 'Líder executivo com 15+ anos em transformação digital, otimização de processos com IA e governança estratégica (pagamentos, financial services, saúde, telecom, governo).',
+      en: 'Executive leader with 15+ years in digital transformation, AI-driven process optimization and strategic governance (payments, financial services, healthcare, telecom, government).'
     }
   },
 
@@ -63,36 +75,11 @@ export const personalData = {
   },
 
   education: [
-    {
-      degree: 'MSc, Business Management',
-      focus: 'Innovation & Sustainability',
-      institution: 'Unisinos',
-      year: '2022'
-    },
-    {
-      degree: 'Postgraduate',
-      focus: 'Cooperative Financial Institutions Management',
-      institution: 'Escoop',
-      year: '2021'
-    },
-    {
-      degree: 'MBA',
-      focus: 'Digital Product Leadership',
-      institution: 'TERA',
-      year: '2019'
-    },
-    {
-      degree: 'MBA',
-      focus: 'Project Management',
-      institution: 'FGV',
-      year: '2012'
-    },
-    {
-      degree: 'BSc',
-      focus: 'Business Administration',
-      institution: 'Unicruz',
-      year: '2009'
-    }
+    { degree: { pt: 'MSc', en: 'MSc' }, focus: { pt: 'Gestão de Negócios (Inovação & Sustentabilidade)', en: 'Business Management (Innovation & Sustainability)' }, institution: { pt: 'Unisinos', en: 'Unisinos' }, year: '2022' },
+    { degree: { pt: 'Pós-graduação', en: 'Postgraduate' }, focus: { pt: 'Gestão de Instituições Financeiras Cooperativas', en: 'Cooperative Financial Institutions Management' }, institution: { pt: 'Escoop', en: 'Escoop' }, year: '2021' },
+    { degree: { pt: 'MBA', en: 'MBA' }, focus: { pt: 'Liderança de Produtos Digitais', en: 'Digital Product Leadership' }, institution: { pt: 'TERA', en: 'TERA' }, year: '2019' },
+    { degree: { pt: 'MBA', en: 'MBA' }, focus: { pt: 'Gestão de Projetos', en: 'Project Management' }, institution: { pt: 'FGV', en: 'FGV' }, year: '2012' },
+    { degree: { pt: 'Bacharelado', en: 'BSc' }, focus: { pt: 'Administração de Empresas', en: 'Business Administration' }, institution: { pt: 'Unicruz', en: 'Unicruz' }, year: '2009' }
   ],
 
   certifications: [
@@ -101,9 +88,9 @@ export const personalData = {
   ],
 
   languages: [
-    { language: 'Português', level: 'Nativo' },
-    { language: 'English', level: 'Fluente' },
-    { language: 'Mandarim', level: 'Básico' }
+    { language: { pt: 'Português', en: 'Portuguese' }, level: { pt: 'Nativo', en: 'Native' } },
+    { language: { pt: 'Inglês', en: 'English' }, level: { pt: 'Fluente', en: 'Fluent' } },
+    { language: { pt: 'Mandarim', en: 'Mandarin' }, level: { pt: 'Básico', en: 'Basic' } }
   ],
 
   recentTraining: [

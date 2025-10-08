@@ -14,6 +14,8 @@ import { competenciesData } from './data/competencies';
 import { profilesData } from './data/profiles';
 import icebreakerData from './data/icebreaker';
 import speechFullCVData from './data/speechFullCV';
+import { t, tArray } from './lib/i18n';
+import { tr } from './locales/strings';
 
 function App() {
   const [activeSection, setActiveSection] = useState('experiences');
@@ -71,18 +73,29 @@ function App() {
   // Filter data based on search term
   const getFilteredData = () => {
     const data = getCurrentData();
-    if (!searchTerm) return Object.values(data);
-    
-    return Object.values(data).filter(item => {
-      const searchLower = searchTerm.toLowerCase();
-      return (
-        item.name?.toLowerCase().includes(searchLower) ||
-        item.title?.toLowerCase().includes(searchLower) ||
-        item.question?.toLowerCase().includes(searchLower) ||
-        item.sector?.toLowerCase().includes(searchLower) ||
-        item.description?.toLowerCase().includes(searchLower) ||
-        item.tags?.some(tag => tag.toLowerCase().includes(searchLower))
-      );
+    const values = Object.values(data);
+    if (!searchTerm) return values;
+    const searchLower = searchTerm.toLowerCase();
+    return values.filter(item => {
+      // Considerar campos bilíngues comuns (title, subtitle, summary, description)
+      const candidates = [
+        typeof item.title === 'string' ? item.title : (item.title?.pt || '') + ' ' + (item.title?.en || ''),
+        typeof item.subtitle === 'string' ? item.subtitle : (item.subtitle?.pt || '') + ' ' + (item.subtitle?.en || ''),
+        typeof item.summary === 'string' ? item.summary : (item.summary?.pt || '') + ' ' + (item.summary?.en || ''),
+        typeof item.description === 'string' ? item.description : (item.description?.pt || '') + ' ' + (item.description?.en || ''),
+        typeof item.question === 'string' ? item.question : (item.question?.pt || '') + ' ' + (item.question?.en || ''),
+        typeof item.category === 'string' ? item.category : (item.category?.pt || '') + ' ' + (item.category?.en || ''),
+      ];
+      if (candidates.some(c => c.toLowerCase().includes(searchLower))) return true;
+      // Tags podem ser string[] ou bilíngues {pt:[],en:[]}
+      if (item.tags) {
+        if (Array.isArray(item.tags) && item.tags.some(tag => tag.toLowerCase().includes(searchLower))) return true;
+        if (!Array.isArray(item.tags) && (item.tags.pt || item.tags.en)) {
+          const allTags = [...(item.tags.pt || []), ...(item.tags.en || [])];
+            if (allTags.some(tag => tag.toLowerCase().includes(searchLower))) return true;
+        }
+      }
+      return false;
     });
   };
 
@@ -113,7 +126,7 @@ function App() {
           {/* Timer */}
           <div className={`bg-white rounded-lg border border-slate-200 p-4 ${isTimerRunning ? 'timer-pulse running' : ''}`}>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-slate-700">Timer</span>
+              <span className="text-sm font-medium text-slate-700">{tr('timer', language)}</span>
               <div className="flex items-center gap-1">
                 <Clock className={`w-4 h-4 ${isTimerRunning ? 'text-blue-500' : 'text-slate-500'}`} />
                 <span className={`text-lg font-mono font-bold ${isTimerRunning ? 'text-blue-600' : 'text-slate-900'}`}>{formatTime(timerSeconds)}</span>
@@ -140,7 +153,7 @@ function App() {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
             <Input
-              placeholder="Buscar..."
+              placeholder={tr('search_placeholder', language)}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10 bg-white border-slate-200 focus:border-blue-500 focus:ring-blue-500"
@@ -241,7 +254,7 @@ function App() {
                         {renderItemIcon(item)}
                         <div>
                           <CardTitle className="text-xl text-slate-900 group-hover:text-blue-600 transition-colors">
-                            {item.name || item.title || item.question}
+                            {item.name || (typeof item.title === 'string' ? item.title : t(item.title, language)) || item.question}
                           </CardTitle>
                           <CardDescription className="text-slate-600 mt-1">
                             {renderItemSubtitle(item)}
@@ -254,21 +267,23 @@ function App() {
                   
                   <CardContent className="pt-0">
                     <p className="text-slate-700 mb-4 line-clamp-3">
-                      {item.description || item.content || (item.versions && item.versions[0]?.content?.substring(0, 200) + '...')}
+                      {(typeof item.description === 'string' ? item.description : t(item.description, language)) || t(item.content, language) || (item.versions && item.versions[0]?.content?.substring(0, 200) + '...')}
                     </p>
                     
                     {renderItemMetrics(item)}
                     
                     {item.tags && (
                       <div className="flex flex-wrap gap-2 mt-4">
-                        {item.tags.slice(0, 4).map((tag, index) => (
-                          <Badge key={index} variant="secondary" className="text-xs">
-                            {tag}
-                          </Badge>
-                        ))}
-                        {item.tags.length > 4 && (
+                        {(Array.isArray(item.tags) ? item.tags : (item.tags[language] || []))
+                          .slice(0,4)
+                          .map((tag, index) => (
+                            <Badge key={index} variant="secondary" className="text-xs">
+                              {tag}
+                            </Badge>
+                          ))}
+                        {(() => { const len = Array.isArray(item.tags) ? item.tags.length : (item.tags[language]||[]).length; return len>4; })() && (
                           <Badge variant="outline" className="text-xs">
-                            +{item.tags.length - 4} mais
+                            +{(Array.isArray(item.tags)? item.tags.length : (item.tags[language]||[]).length) - 4} {language==='pt'?'mais':'more'}
                           </Badge>
                         )}
                       </div>
@@ -286,24 +301,24 @@ function App() {
   // Helper functions for rendering
   const getSectionTitle = () => {
     const titles = {
-      experiences: 'Experiências Profissionais',
-      competencies: 'Competências Técnicas',
-      profiles: 'Perfis Personalizados',
-      icebreaker: 'Perguntas Icebreaker',
-      speechcv: 'Speech Full CV'
+      experiences: tr('experiences_title', language),
+      competencies: tr('competencies_title', language),
+      profiles: tr('profiles_title', language),
+      icebreaker: tr('icebreaker_title', language),
+      speechcv: tr('speechcv_title', language)
     };
     return titles[activeSection] || 'Seção';
   };
 
   const getSectionDescription = () => {
     const descriptions = {
-      experiences: 'Explore 15+ anos de experiência em transformação digital e gestão de programas complexos',
-      competencies: 'Competências técnicas estruturadas com habilidades, ferramentas e certificações',
-      profiles: 'Perfis personalizados para diferentes tipos de vaga e contextos de entrevista',
-      icebreaker: 'Respostas estruturadas para perguntas típicas de RH e apresentação pessoal',
-      speechcv: 'Apresentações completas do CV adaptadas por tipo de vaga e contexto'
+      experiences: tr('experiences_desc', language),
+      competencies: tr('competencies_desc', language),
+      profiles: tr('profiles_desc', language),
+      icebreaker: tr('icebreaker_desc', language),
+      speechcv: tr('speechcv_desc', language)
     };
-    return descriptions[activeSection] || 'Descrição da seção';
+    return descriptions[activeSection] || 'Descrição';
   };
 
   const renderItemIcon = (item) => {
@@ -325,24 +340,25 @@ function App() {
 
   const renderItemSubtitle = (item) => {
     if (activeSection === 'experiences') {
-      return `${item.sector} • ${item.period}`;
+      return `${t(item.subtitle, language)} • ${item.period}`;
     } else if (activeSection === 'competencies') {
-      return item.description;
+      return t(item.subtitle, language);
     } else if (activeSection === 'profiles') {
-      return item.description;
+      return t(item.subtitle, language);
     } else if (activeSection === 'icebreaker') {
-      return `${item.category} • ${item.versions?.length || 0} versões`;
+  return `${t(item.category, language)}`;
     } else if (activeSection === 'speechcv') {
-      return `${item.subtitle} • ${item.duration}`;
+      return `${t(item.subtitle, language)} • ${t(item.duration, language)}`;
     }
     return '';
   };
 
   const renderItemMetrics = (item) => {
-    if (activeSection === 'experiences' && item.achievements) {
+    if (activeSection === 'experiences' && item.keyAchievements) {
+      const arr = tArray(item.keyAchievements, language);
       return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {item.achievements.slice(0, 2).map((achievement, index) => (
+          {arr.slice(0, 2).map((achievement, index) => (
             <div key={index} className="flex items-center gap-2 text-sm text-slate-600">
               <TrendingUp className="w-4 h-4 text-green-600" />
               <span>{achievement}</span>
@@ -351,16 +367,30 @@ function App() {
         </div>
       );
     } else if (activeSection === 'competencies' && item.skills) {
+      const skills = tArray(item.skills, language);
+      const tools = tArray(item.tools, language);
       return (
         <div className="flex items-center gap-4 text-sm text-slate-600">
           <div className="flex items-center gap-1">
             <Award className="w-4 h-4" />
-            <span>{item.skills.length} habilidades</span>
+            <span>{skills.length} {language==='pt'?'habilidades':'skills'}</span>
           </div>
-          <div className="flex items-center gap-1">
-            <Target className="w-4 h-4" />
-            <span>{item.tools?.length || 0} ferramentas</span>
-          </div>
+            <div className="flex items-center gap-1">
+              <Target className="w-4 h-4" />
+              <span>{tools.length} {language==='pt'?'ferramentas':'tools'}</span>
+            </div>
+        </div>
+      );
+    } else if (activeSection === 'profiles' && item.achievements) {
+      const ach = tArray(item.achievements, language);
+      return (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {ach.slice(0,2).map((a,i)=>(
+            <div key={i} className="flex items-center gap-2 text-sm text-slate-600">
+              <Star className="w-4 h-4 text-amber-500" />
+              <span>{a}</span>
+            </div>
+          ))}
         </div>
       );
     }
@@ -396,14 +426,14 @@ function App() {
                 onClick={() => setSelectedItem(null)}
                 className="mb-4 text-slate-600 hover:text-slate-900 btn-ripple micro-bounce animate-fade-in-left"
               >
-                ← Voltar
+                {tr('back', language)}
               </Button>
               
               <div className="flex items-center gap-4 mb-6">
                 {renderItemIcon(selectedItem)}
                 <div>
-                  <h1 className="text-3xl font-bold text-slate-900">{selectedItem.name}</h1>
-                  <p className="text-lg text-slate-600">{selectedItem.sector}</p>
+                  <h1 className="text-3xl font-bold text-slate-900">{t(selectedItem.title, language) || selectedItem.name}</h1>
+                  <p className="text-lg text-slate-600">{t(selectedItem.subtitle, language)}</p>
                   <div className="flex items-center gap-4 mt-2 text-sm text-slate-500">
                     <span className="flex items-center gap-1">
                       <Calendar className="w-4 h-4" />
@@ -411,7 +441,7 @@ function App() {
                     </span>
                     <span className="flex items-center gap-1">
                       <Building className="w-4 h-4" />
-                      {selectedItem.location || 'Porto Alegre, Brasil'}
+                      {t(selectedItem.location, language) || 'Porto Alegre, Brasil'}
                     </span>
                   </div>
                 </div>
@@ -423,12 +453,12 @@ function App() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <TrendingUp className="w-5 h-5 text-green-600" />
-                  Principais Conquistas
+                  {tr('main_achievements', language)}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid gap-3">
-                  {selectedItem.achievements?.map((achievement, index) => (
+                  {tArray(selectedItem.keyAchievements, language)?.map((achievement, index) => (
                     <div key={index} className="flex items-start gap-3 p-3 bg-green-50 rounded-lg">
                       <div className="w-2 h-2 bg-green-600 rounded-full mt-2"></div>
                       <span className="text-slate-700">{achievement}</span>
@@ -443,10 +473,10 @@ function App() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Star className="w-5 h-5 text-yellow-600" />
-                  Casos STAR
+                  {tr('star_cases', language)}
                 </CardTitle>
                 <CardDescription>
-                  Casos estruturados com Situação, Tarefa, Ação, Resultado e Aprendizado
+                  {tr('star_cases_desc', language)}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -461,10 +491,10 @@ function App() {
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
                             <CardTitle className="text-lg text-slate-900 hover:text-blue-600 transition-colors">
-                              {case_item.title}
+                              {t(case_item.title, language)}
                             </CardTitle>
                             <CardDescription className="mt-1">
-                              {case_item.situation?.substring(0, 150)}...
+                              {t(case_item.situation, language).substring(0, 150)}...
                             </CardDescription>
                           </div>
                           <div className="flex items-center gap-2 ml-4">
@@ -479,11 +509,12 @@ function App() {
                       {case_item.tags && (
                         <CardContent className="pt-0">
                           <div className="flex flex-wrap gap-2">
-                            {case_item.tags.map((tag, index) => (
-                              <Badge key={index} variant="outline" className="text-xs">
-                                {tag}
-                              </Badge>
-                            ))}
+                            {(Array.isArray(case_item.tags) ? case_item.tags : (case_item.tags[language] || []))
+                              .map((tag, index) => (
+                                <Badge key={index} variant="outline" className="text-xs">
+                                  {tag}
+                                </Badge>
+                              ))}
                           </div>
                         </CardContent>
                       )}
@@ -516,12 +547,12 @@ function App() {
               
               <div className="flex items-start justify-between mb-6">
                 <div>
-                  <h1 className="text-3xl font-bold text-slate-900 mb-2">{selectedCase.title}</h1>
+                  <h1 className="text-3xl font-bold text-slate-900 mb-2">{t(selectedCase.title, language)}</h1>
                   <div className="flex items-center gap-4">
                     <Badge className="bg-yellow-100 text-yellow-800 border-yellow-300">
                       Score: {selectedCase.score}
                     </Badge>
-                    {selectedCase.tags?.map((tag, index) => (
+                    {(Array.isArray(selectedCase.tags) ? selectedCase.tags : (selectedCase.tags?.[language] || []))?.map((tag, index) => (
                       <Badge key={index} variant="outline">
                         {tag}
                       </Badge>
@@ -536,50 +567,50 @@ function App() {
               {/* Situação */}
               <Card className="border-l-4 border-l-blue-600">
                 <CardHeader>
-                  <CardTitle className="text-blue-600">Situação</CardTitle>
+                  <CardTitle className="text-blue-600">{tr('situation', language)}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-slate-700 leading-relaxed">{selectedCase.situation}</p>
+                  <p className="text-slate-700 leading-relaxed">{t(selectedCase.situation, language)}</p>
                 </CardContent>
               </Card>
 
               {/* Tarefa */}
               <Card className="border-l-4 border-l-green-600">
                 <CardHeader>
-                  <CardTitle className="text-green-600">Tarefa</CardTitle>
+                  <CardTitle className="text-green-600">{tr('task', language)}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-slate-700 leading-relaxed">{selectedCase.task}</p>
+                  <p className="text-slate-700 leading-relaxed">{t(selectedCase.task, language)}</p>
                 </CardContent>
               </Card>
 
               {/* Ação */}
               <Card className="border-l-4 border-l-orange-600">
                 <CardHeader>
-                  <CardTitle className="text-orange-600">Ação</CardTitle>
+                  <CardTitle className="text-orange-600">{tr('action', language)}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-slate-700 leading-relaxed">{selectedCase.action}</p>
+                  <p className="text-slate-700 leading-relaxed">{t(selectedCase.action, language)}</p>
                 </CardContent>
               </Card>
 
               {/* Resultado */}
               <Card className="border-l-4 border-l-purple-600">
                 <CardHeader>
-                  <CardTitle className="text-purple-600">Resultado</CardTitle>
+                  <CardTitle className="text-purple-600">{tr('result', language)}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-slate-700 leading-relaxed">{selectedCase.result}</p>
+                  <p className="text-slate-700 leading-relaxed">{t(selectedCase.result, language)}</p>
                 </CardContent>
               </Card>
 
               {/* Aprendizado */}
               <Card className="border-l-4 border-l-red-600">
                 <CardHeader>
-                  <CardTitle className="text-red-600">Aprendizado</CardTitle>
+                  <CardTitle className="text-red-600">{tr('learning', language)}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-slate-700 leading-relaxed">{selectedCase.learned}</p>
+                  <p className="text-slate-700 leading-relaxed">{t(selectedCase.learning, language) || t(selectedCase.learned, language)}</p>
                 </CardContent>
               </Card>
             </div>
@@ -606,8 +637,8 @@ function App() {
             <div className="flex items-center gap-4 mb-8">
               {renderItemIcon(selectedItem)}
               <div>
-                <h1 className="text-3xl font-bold text-slate-900">{selectedItem.name}</h1>
-                <p className="text-lg text-slate-600">{selectedItem.description}</p>
+                <h1 className="text-3xl font-bold text-slate-900">{t(selectedItem.title, language) || selectedItem.name}</h1>
+                <p className="text-lg text-slate-600">{t(selectedItem.description, language)}</p>
               </div>
             </div>
 
@@ -615,11 +646,11 @@ function App() {
               {/* Habilidades */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Habilidades</CardTitle>
+                  <CardTitle>{tr('skills', language)}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                    {selectedItem.skills?.map((skill, index) => (
+                    {tArray(selectedItem.skills, language)?.map((skill, index) => (
                       <Badge key={index} variant="secondary" className="justify-center py-2">
                         {skill}
                       </Badge>
@@ -631,11 +662,11 @@ function App() {
               {/* Ferramentas */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Ferramentas</CardTitle>
+                  <CardTitle>{tr('tools', language)}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    {selectedItem.tools?.map((tool, index) => (
+                    {tArray(selectedItem.tools, language)?.map((tool, index) => (
                       <Badge key={index} variant="outline" className="justify-center py-2">
                         {tool}
                       </Badge>
@@ -647,11 +678,11 @@ function App() {
               {/* Certificações */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Certificações</CardTitle>
+                  <CardTitle>{tr('certifications', language)}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid gap-3">
-                    {selectedItem.certifications?.map((cert, index) => (
+                    {tArray(selectedItem.certifications, language)?.map((cert, index) => (
                       <Badge key={index} className="justify-center py-3 bg-blue-100 text-blue-800 border-blue-300">
                         {cert}
                       </Badge>
@@ -683,8 +714,8 @@ function App() {
             <div className="flex items-center gap-4 mb-8">
               {renderItemIcon(selectedItem)}
               <div>
-                <h1 className="text-3xl font-bold text-slate-900">{selectedItem.name}</h1>
-                <p className="text-lg text-slate-600">{selectedItem.description}</p>
+                <h1 className="text-3xl font-bold text-slate-900">{t(selectedItem.title, language) || selectedItem.name}</h1>
+                <p className="text-lg text-slate-600">{t(selectedItem.subtitle, language)}</p>
               </div>
             </div>
 
@@ -692,21 +723,21 @@ function App() {
               {/* Elevator Pitch */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Elevator Pitch</CardTitle>
+                  <CardTitle>{tr('elevator_pitch', language)}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-slate-700 leading-relaxed">{selectedItem.elevatorPitch}</p>
+                  <p className="text-slate-700 leading-relaxed">{t(selectedItem.elevatorPitch, language)}</p>
                 </CardContent>
               </Card>
 
               {/* Principais Forças */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Principais Forças</CardTitle>
+                  <CardTitle>{tr('strengths', language)}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {selectedItem.strengths?.map((strength, index) => (
+                    {(selectedItem.keyStrengths ? (selectedItem.keyStrengths[language]||[]) : selectedItem.strengths || []).map((strength, index) => (
                       <div key={index} className="flex items-center gap-2 p-3 bg-blue-50 rounded-lg">
                         <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
                         <span className="text-slate-700">{strength}</span>
@@ -719,11 +750,11 @@ function App() {
               {/* Principais Conquistas */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Principais Conquistas</CardTitle>
+                  <CardTitle>{tr('main_achievements', language)}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid gap-3">
-                    {selectedItem.achievements?.map((achievement, index) => (
+                    {tArray(selectedItem.achievements, language)?.map((achievement, index) => (
                       <div key={index} className="flex items-start gap-3 p-3 bg-green-50 rounded-lg">
                         <div className="w-2 h-2 bg-green-600 rounded-full mt-2"></div>
                         <span className="text-slate-700">{achievement}</span>
@@ -736,14 +767,12 @@ function App() {
               {/* Tecnologias */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Tecnologias</CardTitle>
+                  <CardTitle>{tr('technologies', language)}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="flex flex-wrap gap-2">
-                    {selectedItem.technologies?.map((tech, index) => (
-                      <Badge key={index} variant="outline">
-                        {tech}
-                      </Badge>
+                    {(selectedItem.technologies ? (selectedItem.technologies[language]||[]) : []).map((tech, index) => (
+                      <Badge key={index} variant="outline">{tech}</Badge>
                     ))}
                   </div>
                 </CardContent>
@@ -770,19 +799,19 @@ function App() {
             </Button>
             
             <div className="mb-8">
-              <h1 className="text-3xl font-bold text-slate-900 mb-2">{selectedItem.question}</h1>
-              <Badge variant="secondary">{selectedItem.category}</Badge>
+              <h1 className="text-3xl font-bold text-slate-900 mb-2">{t(selectedItem.question, language)}</h1>
+              <Badge variant="secondary">{t(selectedItem.category, language)}</Badge>
             </div>
 
             <div className="space-y-6">
               {selectedItem.versions?.map((version) => (
                 <Card key={version.id} className="border-l-4 border-l-blue-600">
                   <CardHeader>
-                    <CardTitle className="text-blue-600">{version.title}</CardTitle>
+                    <CardTitle className="text-blue-600">{t(version.title, language)}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="prose prose-slate max-w-none">
-                      {version.content.split('\n\n').map((paragraph, index) => (
+                      {t(version.content, language).split('\n\n').map((paragraph, index) => (
                         <p key={index} className="text-slate-700 leading-relaxed mb-4">
                           {paragraph}
                         </p>
@@ -791,11 +820,12 @@ function App() {
                     
                     {version.tags && (
                       <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-slate-200">
-                        {version.tags.map((tag, index) => (
-                          <Badge key={index} variant="outline" className="text-xs">
-                            {tag}
-                          </Badge>
-                        ))}
+                        {(Array.isArray(version.tags) ? version.tags : (version.tags[language] || []))
+                          .map((tag, index) => (
+                            <Badge key={index} variant="outline" className="text-xs">
+                              {tag}
+                            </Badge>
+                          ))}
                       </div>
                     )}
                   </CardContent>
@@ -825,11 +855,11 @@ function App() {
             <div className="flex items-center gap-4 mb-8">
               {renderItemIcon(selectedItem)}
               <div>
-                <h1 className="text-3xl font-bold text-slate-900">{selectedItem.title}</h1>
-                <p className="text-lg text-slate-600">{selectedItem.subtitle}</p>
+                <h1 className="text-3xl font-bold text-slate-900">{t(selectedItem.title, language)}</h1>
+                <p className="text-lg text-slate-600">{t(selectedItem.subtitle, language)}</p>
                 <div className="flex items-center gap-4 mt-2">
-                  <Badge variant="secondary">{selectedItem.duration}</Badge>
-                  {selectedItem.tags?.map((tag, index) => (
+                  <Badge variant="secondary">{t(selectedItem.duration, language)}</Badge>
+                  {(Array.isArray(selectedItem.tags) ? selectedItem.tags : (selectedItem.tags?.[language] || []))?.map((tag, index) => (
                     <Badge key={index} variant="outline">
                       {tag}
                     </Badge>
@@ -842,11 +872,11 @@ function App() {
               {/* Key Points */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Pontos-Chave</CardTitle>
+                  <CardTitle>{tr('key_points', language)}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid gap-3">
-                    {selectedItem.keyPoints?.map((point, index) => (
+                    {tArray(selectedItem.keyPoints, language).map((point, index) => (
                       <div key={index} className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
                         <div className="w-2 h-2 bg-blue-600 rounded-full mt-2"></div>
                         <span className="text-slate-700">{point}</span>
@@ -859,14 +889,14 @@ function App() {
               {/* Full Speech */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Speech Completo</CardTitle>
+                  <CardTitle>{tr('full_speech', language)}</CardTitle>
                   <CardDescription>
-                    Apresentação estruturada do CV para {selectedItem.title}
+                    {tr('structured_cv_for', language)} {t(selectedItem.title, language)}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="prose prose-slate max-w-none">
-                    {selectedItem.content.split('\n\n').map((paragraph, index) => {
+                    {t(selectedItem.content, language).split('\n\n').map((paragraph, index) => {
                       // Check if paragraph is a header (starts with **)
                       if (paragraph.startsWith('**') && paragraph.endsWith('**')) {
                         return (

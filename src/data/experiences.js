@@ -1,217 +1,318 @@
-// Experiências Profissionais do Leonardo Menezes
-// Baseado no Playbook e CV
+// @ts-check
+/**
+ * Estrutura bilíngue para textos curtos.
+ * @typedef {{pt:string,en:string}} Bilingual
+ *
+ * Estrutura de um caso (STAR) de experiência.
+ * @typedef {Object} ExperienceCase
+ * @property {string} id
+ * @property {Bilingual} title
+ * @property {Bilingual} situation
+ * @property {Bilingual} task
+ * @property {Bilingual} action
+ * @property {Bilingual} result
+ * @property {Bilingual} learning
+ * @property {{pt:string[],en:string[]}|string[]} tags
+ * @property {number} score
+ *
+ * Estrutura de experiência profissional.
+ * @typedef {Object} Experience
+ * @property {string} id
+ * @property {Bilingual} title
+ * @property {Bilingual} subtitle
+ * @property {string} period
+ * @property {Bilingual} location
+ * @property {Bilingual} role
+ * @property {string} icon
+ * @property {string} color
+ * @property {Bilingual} summary
+ * @property {{pt:string[],en:string[]}} keyAchievements
+ * @property {ExperienceCase[]} cases
+ */
 
+/** @type {Record<string, Experience>} */
 export const experiencesData = {
   huawei: {
     id: 'huawei',
-    title: 'Huawei',
-    subtitle: 'Telecom & Infrastructure',
+    title: { pt: 'Huawei', en: 'Huawei' },
+    subtitle: { pt: 'Telecom & Infraestrutura', en: 'Telecom & Infrastructure' },
     period: '2009-2015',
-    location: 'América Latina',
-    role: 'Gerente de Programas & PMO',
+    location: { pt: 'América Latina', en: 'Latin America' },
+    role: { pt: 'Gerente de Programas & PMO', en: 'Programs & PMO Manager' },
     icon: '🏢',
     color: 'bg-red-500',
-    summary: 'Líder global em TIC (170+ países; $90B+ receita). Responsável por programas turnkey para grandes operadoras.',
-    keyAchievements: [
-      'Redução SLA de 382 → 62 dias (~$120M economia)',
-      'War Room PMO (30+ PMs, 20 fornecedores)',
-      'Primeira estação 4G do Brasil (2012)',
-      'Telecom Copa do Mundo FIFA 2014',
-      'Global Excellent PM (2012-2014)'
-    ],
+    summary: {
+      pt: 'Líder global em TIC (170+ países; $90B+ receita). Responsável por programas turn‑key para grandes operadoras.',
+      en: 'Global ICT leader (170+ countries; $90B+ revenue). Responsible for turn‑key programs for major carriers.'
+    },
+    keyAchievements: {
+      pt: [
+        'Redução SLA 382 → 62 dias (~$120M economia)',
+        'War Room PMO (30+ PMs, 20 fornecedores)',
+        'Primeira estação 4G do Brasil (2012)',
+        'Telecom Copa do Mundo FIFA 2014',
+        'Global Excellent PM (2012-2014)'
+      ],
+      en: [
+        'SLA reduction 382 → 62 days (~$120M savings)',
+        'PMO War Room (30+ PMs, 20 vendors)',
+        'Brazil’s first 4G site (2012)',
+        'World Cup 2014 telecom delivery',
+        'Global Excellent PM (2012-2014)'
+      ]
+    },
     cases: [
       {
         id: 'huawei-sla-reduction',
-        title: 'Redução Drástica de SLA em Rollout de Telecom',
-        situation: 'A Huawei assumia contratos full-turnkey com grandes operadoras (Vivo, Claro, Oi, TIM), entregando infraestrutura completa de telecom. O ciclo médio de entrega era de 382 dias, comprometendo contratos, receita e imagem junto a ANATEL e FIFA (Copa 2014).',
-        task: 'Como Gerente de PMO, precisava redesenhar processos de rollout e reduzir drasticamente o tempo de entrega, mantendo qualidade e compliance regulatório.',
-        action: 'Estruturei a War Room do PMO como centro de comando com dashboards em tempo real. Redesenhei processos usando Critical Path Method (CPM) e Earned Value Management (EVM). Participei hands-on em negociações com prefeituras e ANATEL para acelerar licenciamento. Padronizei dashboards executivos em Primavera/MS Project Server. Conduzi reuniões semanais de Root Cause Analysis usando Ishikawa e 5 Whys. Criei o Vendor Performance Index (VPI) para ranquear fornecedores mensalmente.',
-        result: 'Redução do SLA médio de 382 → 62 dias (ganho de ~320 dias por site). Eficiência financeira de ~$120M, com modelo replicado globalmente pela Huawei. Entreguei a primeira estação 4G do Brasil (2012) antes do prazo. Responsável pelo programa de telecom da Copa 2014 com 100% operacional nos 12 estádios.',
-        learning: 'Eficiência não vem só de planejar melhor, mas de entrar no detalhe técnico e operacional. Governança, tecnologia e execução no detalhe são indissociáveis.',
-        tags: ['PMO', 'Process Optimization', 'Vendor Management', 'Critical Path', 'Root Cause Analysis'],
+        title: { pt: 'Redução Drástica de SLA em Rollout de Telecom', en: 'Drastic SLA Reduction in Telecom Rollout' },
+        situation: {
+          pt: 'Contratos turn‑key com grandes operadoras tinham ciclo médio de 382 dias, afetando receita e imagem (ANATEL / FIFA 2014).',
+          en: 'Turn‑key contracts with major carriers had a 382‑day average delivery cycle, impacting revenue and reputation (ANATEL / FIFA 2014).'
+        },
+        task: {
+          pt: 'Redesenhar processos e reduzir drasticamente o tempo mantendo qualidade e compliance.',
+          en: 'Redesign rollout processes and drastically cut cycle time while preserving quality & compliance.'
+        },
+        action: {
+          pt: 'War Room PMO central; CPM + EVM; negociação ANATEL/prefeituras; dashboards padronizados; RCA semanal; Vendor Performance Index.',
+          en: 'Central PMO War Room; CPM + EVM; regulatory & municipality negotiations; standardized dashboards; weekly RCA; Vendor Performance Index.'
+        },
+        result: {
+          pt: 'SLA 382 → 62 dias (~320 dias ganho); ~$120M eficiência; 1ª estação 4G antes do prazo; 100% operação Copa 2014.',
+          en: 'SLA 382 → 62 days (~320 days gain); ~$120M efficiency; first 4G site ahead of schedule; 100% World Cup ops readiness.'
+        },
+        learning: {
+          pt: 'Eficiência exige mergulho técnico-operacional aliado à governança.',
+          en: 'Efficiency demands deep technical/operational dive plus governance.'
+        },
+        tags: {
+          pt: ['PMO', 'Otimização de Processos', 'Gestão de Fornecedores', 'Caminho Crítico', 'Análise de Causa Raiz'],
+          en: ['PMO', 'Process Optimization', 'Vendor Management', 'Critical Path', 'Root Cause Analysis']
+        },
         score: 95
       },
       {
         id: 'huawei-4g-pioneer',
-        title: 'Lançamento Pioneiro do 4G no Brasil',
-        situation: 'Brasil estava atrasado na implementação de 4G comparado a outros países. Havia pressão regulatória da ANATEL e compromissos com a Copa do Mundo 2014. Competição acirrada com Ericsson e Nokia.',
-        task: 'Liderar o projeto de implementação da primeira estação 4G comercial do Brasil, garantindo vantagem competitiva para a Huawei e cumprindo prazos regulatórios.',
-        action: 'Coordenei equipes multidisciplinares (RF, civil, TI, regulatório). Estabeleci fast-track scheduling para componentes críticos. Negociei diretamente com operadoras para priorizar sites estratégicos. Implementei controle rigoroso de qualidade e testes de performance. Gerenciei stakeholders regulatórios (ANATEL) e técnicos.',
-        result: 'Entrega da primeira estação 4G comercial do Brasil em 2012, antes do prazo estabelecido. Posicionou a Huawei como líder tecnológico no mercado brasileiro. Garantiu contratos subsequentes para rollout nacional do 4G.',
-        learning: 'Inovação tecnológica requer coordenação perfeita entre aspectos técnicos, regulatórios e comerciais. Ser pioneiro traz vantagens competitivas duradouras.',
-        tags: ['Innovation', 'Technology Leadership', 'Regulatory Compliance', 'Fast-Track', 'Market Leadership'],
+        title: { pt: 'Lançamento Pioneiro do 4G no Brasil', en: 'Pioneering 4G Launch in Brazil' },
+        situation: {
+          pt: 'Brasil atrasado no 4G; pressão regulatória ANATEL e compromissos Copa; competição acirrada.',
+          en: 'Brazil lagging on 4G; ANATEL regulatory pressure & World Cup commitments; intense competition.'
+        },
+        task: {
+          pt: 'Liderar primeira estação 4G garantindo vantagem competitiva e prazos.',
+          en: 'Lead first commercial 4G site ensuring competitive edge and deadlines.'
+        },
+        action: {
+          pt: 'Coordenação multidisciplinar; fast‑track para críticos; priorização de sites estratégicos; QA rigoroso; gestão regulatória.',
+          en: 'Multidisciplinary coordination; fast‑track critical items; strategic site prioritization; rigorous QA; regulatory stakeholder management.'
+        },
+        result: {
+          pt: 'Primeira estação 4G (2012) antes do prazo; posicionamento de liderança; contratos subsequentes.',
+          en: 'First 4G site (2012) ahead of schedule; leadership positioning; subsequent national rollout contracts.'
+        },
+        learning: {
+          pt: 'Ser pioneiro exige alinhamento técnico, regulatório e comercial.',
+          en: 'Pioneering requires tight alignment across technical, regulatory, commercial domains.'
+        },
+        tags: {
+          pt: ['Inovação', 'Liderança Tecnológica', 'Compliance Regulatória', 'Fast-Track', 'Liderança de Mercado'],
+          en: ['Innovation', 'Technology Leadership', 'Regulatory Compliance', 'Fast-Track', 'Market Leadership']
+        },
         score: 92
       }
     ]
   },
-  
   hsbc_bradesco: {
     id: 'hsbc_bradesco',
-    title: 'HSBC & Bradesco',
-    subtitle: 'Banking & Digital Transformation',
+    title: { pt: 'HSBC & Bradesco', en: 'HSBC & Bradesco' },
+    subtitle: { pt: 'Transformação Digital Bancária', en: 'Banking & Digital Transformation' },
     period: '2015-2018',
-    location: 'Global',
-    role: 'PMO Manager & Agile Leader',
+    location: { pt: 'Global', en: 'Global' },
+    role: { pt: 'PMO Manager & Agile Leader', en: 'PMO Manager & Agile Leader' },
     icon: '🏦',
     color: 'bg-blue-600',
-    summary: 'Um dos maiores bancos do mundo (60+ países, $2.9T ativos) / Maior banco privado do Brasil ($1.7T ativos; 36M+ clientes).',
-    keyAchievements: [
-      'Migração HSBC → Bradesco ($3B sem perda de dados)',
-      'Compliance FATCA e retenção de clientes',
-      'Lançamento Banco Digital Next',
-      'Redução 20% tempo de atendimento',
-      'Aumento 30% portfolio private banking'
-    ],
+    summary: {
+      pt: 'Um dos maiores bancos globais / maior banco privado brasileiro. Portfólio RBWM e migração crítica.',
+      en: 'One of the largest global banks / major Brazilian private bank. RBWM portfolio & critical migration.'
+    },
+    keyAchievements: {
+      pt: [
+        'Migração HSBC → Bradesco ($3B sem perda)',
+        'Compliance FATCA + retenção clientes',
+        'Lançamento Banco Digital Next',
+        'Redução 20% tempo atendimento',
+        'Aumento 30% portfolio private banking'
+      ],
+      en: [
+        'HSBC → Bradesco migration ($3B no data loss)',
+        'FATCA compliance + client retention',
+        'Launch of Next Digital Bank',
+        '20% service time reduction',
+        '30% private banking portfolio growth'
+      ]
+    },
     cases: [
       {
         id: 'hsbc-bradesco-migration',
-        title: 'Migração Complexa HSBC para Bradesco',
-        situation: 'O HSBC estava em processo de saída do Brasil (venda para Bradesco, valor de ~US$ 5,2Bi). Desafio crítico: migrar milhões de contas, cartões e operações de private banking sem perdas de dados, falhas regulatórias ou impacto negativo na base de clientes. Reguladores (BACEN, CVM, FATCA/IRS) exigiam compliance absoluto.',
-        task: 'Como PMO Manager do portfólio RBWM (Retail Banking & Wealth Management) LATAM, supervisionar a migração de R$ 3Bi em ativos garantindo zero perda de dados e compliance total.',
-        action: 'Supervisionei projetos de migração em Brasil, México e Argentina. Atuei hands-on na implantação de processos FATCA, revisando políticas de due diligence, KYC e PLD. Estruturei squads com times globais (Índia, China, Polônia, Malásia) para Data Validation e Data Cleansing. Automatizei monitoramento regulatório com dashboards apresentados semanalmente ao C-Level e BACEN. Redesenhei fluxos de atendimento em agências e canais digitais.',
-        result: 'Migração de R$ 3Bi em ativos com zero perda de dados. Compliance FATCA 100% aprovado pelos reguladores. Redução de 20% no tempo de atendimento. Retenção da base de clientes HNWI. Aumento de 30% no portfolio de private banking.',
-        learning: 'Migrações complexas exigem governança rigorosa, automação de controles e gestão multicultural eficaz. Compliance não é opcional em operações financeiras globais.',
-        tags: ['Data Migration', 'Compliance', 'FATCA', 'Global Teams', 'Risk Management'],
+        title: { pt: 'Migração Complexa HSBC para Bradesco', en: 'Complex HSBC to Bradesco Migration' },
+        situation: { pt: 'Saída do HSBC Brasil exigia migração segura de milhões de contas sob rigor regulatório.', en: 'HSBC Brazil exit required secure migration of millions of accounts under strict regulation.' },
+        task: { pt: 'Supervisionar migração de R$3Bi garantindo zero perda e compliance total.', en: 'Supervise R$3B assets migration ensuring zero loss and full compliance.' },
+        action: { pt: 'Projetos multi-país; implantação FATCA; squads globais Data Validation; dashboards regulatórios semanais; redesign jornadas.', en: 'Multi-country projects; FATCA processes; global squads for Data Validation; weekly regulatory dashboards; journey redesign.' },
+        result: { pt: 'Migração sem perdas; 100% FATCA; -20% tempo atendimento; retenção HNWI; +30% portfolio.', en: 'No-loss migration; 100% FATCA; -20% service time; HNWI retention; +30% portfolio.' },
+        learning: { pt: 'Governança + automação + gestão multicultural = migração segura.', en: 'Governance + automation + multicultural management enable safe migration.' },
+        tags: {
+          pt: ['Migração de Dados', 'Compliance', 'FATCA', 'Times Globais', 'Gestão de Riscos'],
+          en: ['Data Migration', 'Compliance', 'FATCA', 'Global Teams', 'Risk Management']
+        },
         score: 94
       },
       {
         id: 'bradesco-next-launch',
-        title: 'Lançamento do Banco Digital Next',
-        situation: 'Bradesco precisava competir no segmento de bancos digitais emergente no Brasil. Concorrência com Nubank, Inter e outros players digitais. Necessidade de modernizar experiência do cliente e reduzir custos operacionais.',
-        task: 'Liderar o lançamento do Banco Digital Next, criando uma proposta de valor diferenciada e garantindo operação eficiente desde o primeiro dia.',
-        action: 'Co-fundei a Comunidade Ágil @ InovaBra, escalando metodologias ágeis para 2k+ profissionais. Colaborei com equipe de data science para explorar modelos de ML para ofertas personalizadas. Redesenhei jornadas do cliente focando em experiência mobile-first. Implementei métricas de performance em tempo real.',
-        result: 'Lançamento bem-sucedido do Next com redução de 20% no tempo de atendimento. Incorporação de cultura ágil em um banco tradicional de grande porte. Posicionamento competitivo no mercado de bancos digitais.',
-        learning: 'Transformação digital em instituições tradicionais requer mudança cultural profunda, não apenas tecnológica. Agilidade e dados são fundamentais para competir com fintechs.',
-        tags: ['Digital Banking', 'Agile Transformation', 'Customer Experience', 'Fintech Competition', 'Cultural Change'],
+        title: { pt: 'Lançamento do Banco Digital Next', en: 'Launch of Next Digital Bank' },
+        situation: { pt: 'Concorrência crescente de bancos digitais; necessidade de modernizar experiência.', en: 'Growing digital bank competition; need to modernize experience.' },
+        task: { pt: 'Lançar banco digital com proposta diferenciada e operação eficiente dia 1.', en: 'Launch digital bank with differentiated value prop and day-one efficiency.' },
+        action: { pt: 'Escala ágil (comunidade 2k+), exploração ML personalização, jornadas mobile-first, métricas em tempo real.', en: 'Scaled agile (2k+ community), ML personalization exploration, mobile-first journeys, real-time metrics.' },
+        result: { pt: 'Lançamento bem-sucedido; -20% tempo atendimento; cultura ágil incorporada.', en: 'Successful launch; -20% service time; embedded agile culture.' },
+        learning: { pt: 'Transformação digital = mudança cultural profunda + dados.', en: 'Digital transformation = deep cultural shift + data.' },
+        tags: {
+          pt: ['Banco Digital', 'Transformação Ágil', 'Experiência do Cliente', 'Competição Fintech', 'Mudança Cultural'],
+          en: ['Digital Banking', 'Agile Transformation', 'Customer Experience', 'Fintech Competition', 'Cultural Change']
+        },
         score: 88
       }
     ]
   },
-
   sicredi: {
     id: 'sicredi',
-    title: 'Sicredi',
-    subtitle: 'Cooperative Banking & Fintech',
+    title: { pt: 'Sicredi', en: 'Sicredi' },
+    subtitle: { pt: 'Cooperativismo & Fintech', en: 'Cooperative Banking & Fintech' },
     period: '2018-2021',
-    location: 'Brasil',
-    role: 'Product Strategist',
+    location: { pt: 'Brasil', en: 'Brazil' },
+    role: { pt: 'Product Strategist', en: 'Product Strategist' },
     icon: '🤝',
     color: 'bg-green-600',
-    summary: 'Primeira instituição financeira cooperativa do Brasil (6.4M+ associados, $263B ativos).',
-    keyAchievements: [
-      '15+ produtos digitais lançados',
-      'Aumento 25% adoção Woop App ($50M receita)',
-      'ML para credit scoring e fraud detection',
-      'Board advisor em transformação',
-      'Avaliador Programa Inovar Juntos (PUC)'
-    ],
+    summary: { pt: '1ª instituição financeira cooperativa do Brasil (6.4M+ associados).', en: 'Brazil’s first cooperative financial institution (6.4M+ members).' },
+    keyAchievements: {
+      pt: [ '15+ produtos digitais', 'Adoção Woop +25% ($50M)', 'ML credit scoring & fraude', 'Board advisor transformação', 'Avaliador Inovar Juntos' ],
+      en: [ '15+ digital products', 'Woop adoption +25% ($50M)', 'ML credit scoring & fraud', 'Board advisor transformation', 'Inovar Juntos evaluator' ]
+    },
     cases: [
       {
         id: 'sicredi-woop-growth',
-        title: 'Crescimento Exponencial do Woop Digital Bank',
-        situation: 'Sicredi precisava competir no segmento digital mantendo os valores cooperativistas. O app Woop tinha baixa adoção e precisava de diferenciação no mercado fintech saturado.',
-        task: 'Como Product Strategist, definir estratégia de produto e gestão do ciclo de vida completo (discovery → delivery) para aumentar adoção e receita do Woop.',
-        action: 'Defini estratégia de produto baseada em dual track (discovery → delivery). Lancei 15+ produtos digitais focados na experiência cooperativista. Liderei iniciativas de automação de processos usando ML para credit scoring e fraud detection. Contribuí como board advisor em planejamento de transformação. Atuei como avaliador no Programa de Inovação Inovar Juntos (PUC).',
-        result: 'Aumento de 25% na adoção do Woop Digital Bank App (~$50M em receita). Melhoria significativa em métricas operacionais através de ML. Fortalecimento da maturidade em gestão de produtos no Sicredi.',
-        learning: 'Cooperativismo e inovação digital podem coexistir quando a tecnologia serve aos valores da organização. Product discovery é fundamental para criar produtos relevantes.',
-        tags: ['Product Strategy', 'Digital Banking', 'ML Implementation', 'Cooperative Values', 'Innovation Program'],
+        title: { pt: 'Crescimento Exponencial do Woop Digital Bank', en: 'Exponential Growth of Woop Digital Bank' },
+        situation: { pt: 'Adoção baixa e necessidade de diferenciação mantendo valores cooperativos.', en: 'Low adoption & need for differentiation while keeping cooperative values.' },
+        task: { pt: 'Definir estratégia e ciclo discovery→delivery para aumentar adoção e receita.', en: 'Define strategy and discovery→delivery cycle to raise adoption & revenue.' },
+        action: { pt: 'Dual track; 15+ lançamentos; automação com ML; advisor em transformação; participação em programa de inovação.', en: 'Dual track; 15+ launches; ML automation; transformation advisory; innovation program involvement.' },
+        result: { pt: '+25% adoção (~$50M); maturidade produto fortalecida.', en: '+25% adoption (~$50M); strengthened product maturity.' },
+        learning: { pt: 'Discovery consistente ancora relevância e valores.', en: 'Consistent discovery anchors relevance & values.' },
+        tags: {
+          pt: ['Estratégia de Produto', 'Banco Digital', 'Implementação de ML', 'Valores Cooperativos', 'Programa de Inovação'],
+          en: ['Product Strategy', 'Digital Banking', 'ML Implementation', 'Cooperative Values', 'Innovation Program']
+        },
         score: 90
       },
       {
         id: 'sicredi-ml-credit',
-        title: 'Implementação de ML para Credit Scoring',
-        situation: 'Processos de análise de crédito manuais e lentos impactavam a experiência do associado e a competitividade do Sicredi. Necessidade de modernizar decisões de crédito mantendo a filosofia cooperativista.',
-        task: 'Liderar a implementação de soluções de Machine Learning para acelerar e melhorar a precisão do credit scoring e detecção de fraudes.',
-        action: 'Estruturei equipe multidisciplinar (data science, risco, produto). Implementei pipeline de dados para alimentar modelos de ML. Desenvolvi framework de governança para decisões automatizadas. Criei métricas de performance e monitoramento contínuo. Garantiu compliance com regulamentações do BACEN.',
-        result: 'Redução significativa no tempo de análise de crédito. Melhoria na precisão de detecção de fraudes. Aumento na satisfação dos associados com processos mais ágeis. Manutenção dos princípios cooperativistas nas decisões automatizadas.',
-        learning: 'IA pode humanizar processos financeiros quando implementada com governança adequada. Tecnologia deve amplificar valores organizacionais, não substituí-los.',
-        tags: ['Machine Learning', 'Credit Scoring', 'Fraud Detection', 'Data Governance', 'Regulatory Compliance'],
+        title: { pt: 'Implementação de ML para Credit Scoring', en: 'ML Implementation for Credit Scoring' },
+        situation: { pt: 'Análise manual lenta afetava experiência; precisão de fraude precisava subir.', en: 'Manual slow credit analysis hurt experience; fraud precision needed improvement.' },
+        task: { pt: 'Implementar ML acelerando análise e elevando precisão.', en: 'Implement ML to accelerate analysis & improve precision.' },
+        action: { pt: 'Equipe multidisciplinar; pipeline dados; governança decisões; métricas contínuas; compliance BACEN.', en: 'Multidisciplinary team; data pipeline; decision governance; continuous metrics; BACEN compliance.' },
+        result: { pt: 'Tempo reduzido; maior precisão fraude; satisfação maior.', en: 'Reduced processing time; higher fraud precision; higher satisfaction.' },
+        learning: { pt: 'IA deve amplificar valores cooperativos.', en: 'AI must amplify cooperative values.' },
+        tags: {
+          pt: ['Machine Learning', 'Credit Scoring', 'Detecção de Fraude', 'Governança de Dados', 'Compliance Regulatória'],
+          en: ['Machine Learning', 'Credit Scoring', 'Fraud Detection', 'Data Governance', 'Regulatory Compliance']
+        },
         score: 87
       }
     ]
   },
-
   unimed: {
     id: 'unimed',
-    title: 'Unimed',
-    subtitle: 'Healthcare & Strategy',
+    title: { pt: 'Unimed', en: 'Unimed' },
+    subtitle: { pt: 'Healthcare & Estratégia', en: 'Healthcare & Strategy' },
     period: '2021-2024',
-    location: 'Porto Alegre, Brasil',
-    role: 'Strategy Advisor / Group Product Manager',
+    location: { pt: 'Porto Alegre, Brasil', en: 'Porto Alegre, Brazil' },
+    role: { pt: 'Strategy Advisor / Group Product Manager', en: 'Strategy Advisor / Group Product Manager' },
     icon: '🏥',
     color: 'bg-teal-600',
-    summary: 'Maior cooperativa de saúde do Sul do Brasil (695k associados; $3.2B receita).',
-    keyAchievements: [
-      '4 novos produtos digitais (5% receita = $16M)',
-      'EBITDA +22% ($70.4M impacto)',
-      'NPS +6%, churn -15% ($45M economia)',
-      'AI para claims triage (-30% tempo)',
-      'Frameworks OKR & KPI corporativos'
-    ],
+    summary: { pt: 'Maior cooperativa de saúde do Sul (695k associados).', en: 'Largest southern Brazil health cooperative (695k members).' },
+    keyAchievements: {
+      pt: [ '4 produtos (5% receita)', 'EBITDA +22%', 'NPS +6% & churn -15%', 'AI triage sinistros -30%', 'Frameworks OKR/KPI' ],
+      en: [ '4 products (5% revenue)', 'EBITDA +22%', 'NPS +6% & churn -15%', 'AI claims triage -30%', 'OKR/KPI frameworks' ]
+    },
     cases: [
       {
         id: 'unimed-digital-products',
-        title: 'Lançamento de Produtos Digitais Inovadores',
-        situation: 'Unimed enfrentava pressão competitiva no setor de saúde suplementar. Necessidade de diversificar receita e melhorar experiência do beneficiário através de soluções digitais.',
-        task: 'Como Group Product Manager reportando ao CEO/Board, projetar e implementar novos produtos digitais que representassem impacto significativo na receita.',
-        action: 'Desenhei e implementei frameworks corporativos de OKR & KPI. Liderei iniciativa de AI para automatizar triage de sinistros e onboarding de beneficiários. Lancei 4 novos produtos digitais com foco em experiência do usuário. Implementei métricas de performance e dashboards executivos.',
-        result: 'Lançamento de 4 produtos digitais, um representando 5% da receita total (~$16M). Aumento do EBITDA em 22% (~$70.4M impacto). Melhoria do NPS em 6% e redução do churn do app em 15% (~$45M economia). Redução de 30% no tempo de processamento através de AI.',
-        learning: 'Inovação em healthcare requer equilibrio entre tecnologia e humanização. Produtos digitais podem gerar impacto financeiro significativo quando alinhados à estratégia corporativa.',
-        tags: ['Digital Products', 'Healthcare Innovation', 'AI Implementation', 'OKR Framework', 'Revenue Growth'],
+        title: { pt: 'Lançamento de Produtos Digitais Inovadores', en: 'Launch of Innovative Digital Products' },
+        situation: { pt: 'Pressão competitiva e necessidade de diversificar receita.', en: 'Competitive pressure and need to diversify revenue.' },
+        task: { pt: 'Desenhar e lançar portfólio digital com impacto em receita.', en: 'Design & launch digital portfolio impacting revenue.' },
+        action: { pt: 'Frameworks OKR/KPI; AI para triage; 4 produtos centrados no usuário; dashboards executivos.', en: 'OKR/KPI frameworks; AI triage; 4 user-centric products; executive dashboards.' },
+        result: { pt: '5% receita (~$16M); EBITDA +22%; NPS +6; churn -15%; -30% tempo processamento.', en: '5% revenue (~$16M); EBITDA +22%; NPS +6; churn -15%; -30% processing time.' },
+        learning: { pt: 'Equilíbrio tecnologia + humanização gera impacto sustentável.', en: 'Balancing tech + humanization drives sustainable impact.' },
+        tags: {
+          pt: ['Produtos Digitais', 'Inovação em Saúde', 'Implementação de IA', 'Framework OKR', 'Crescimento de Receita'],
+          en: ['Digital Products', 'Healthcare Innovation', 'AI Implementation', 'OKR Framework', 'Revenue Growth']
+        },
         score: 96
       },
       {
         id: 'unimed-ai-claims',
-        title: 'Automação de Triage de Sinistros com IA',
-        situation: 'Processamento manual de sinistros era lento e custoso, impactando satisfação dos beneficiários e eficiência operacional. Volume crescente de sinistros exigia solução escalável.',
-        task: 'Liderar implementação de solução de IA para automatizar triage de sinistros e onboarding de beneficiários, melhorando velocidade e precisão das decisões.',
-        action: 'Conduzi assessment de AI-readiness da organização. Estruturei equipe multidisciplinar (AI, produto, operações, compliance). Implementei modelos de ML para classificação automática de sinistros. Criei workflows automatizados para casos de baixa complexidade. Estabeleci governança para auditoria e compliance.',
-        result: 'Redução de 30% no tempo de processamento de sinistros. Melhoria na precisão de classificação. Liberação de recursos humanos para casos complexos. Aumento na satisfação dos beneficiários com processos mais ágeis.',
-        learning: 'IA em healthcare exige governança rigorosa e transparência. Automação deve complementar expertise humana, não substituí-la completamente.',
-        tags: ['Artificial Intelligence', 'Claims Processing', 'Process Automation', 'Healthcare Operations', 'Compliance'],
+        title: { pt: 'Automação de Triage de Sinistros com IA', en: 'AI Automation of Claims Triage' },
+        situation: { pt: 'Processo manual lento e custoso; volume crescente.', en: 'Slow, costly manual process; rising volume.' },
+        task: { pt: 'Automatizar triage mantendo precisão e compliance.', en: 'Automate triage preserving accuracy & compliance.' },
+        action: { pt: 'Assessment maturidade; equipe multidisciplinar; modelos ML; workflows automatizados; governança auditoria.', en: 'Maturity assessment; multidisciplinary team; ML models; automated workflows; audit governance.' },
+        result: { pt: '-30% tempo; maior precisão; foco humano em casos complexos; satisfação maior.', en: '-30% processing time; higher accuracy; humans focus on complex; higher satisfaction.' },
+        learning: { pt: 'IA complementa, não substitui totalmente expertise clínica.', en: 'AI complements, not fully replaces clinical expertise.' },
+        tags: {
+          pt: ['Inteligência Artificial', 'Processamento de Sinistros', 'Automação de Processos', 'Operações de Saúde', 'Compliance'],
+          en: ['Artificial Intelligence', 'Claims Processing', 'Process Automation', 'Healthcare Operations', 'Compliance']
+        },
         score: 93
       }
     ]
   },
-
   sefaz: {
     id: 'sefaz',
-    title: 'SEFAZ-RS',
-    subtitle: 'Government & Public Sector',
+    title: { pt: 'SEFAZ-RS', en: 'SEFAZ-RS' },
+    subtitle: { pt: 'Governo & Setor Público', en: 'Government & Public Sector' },
     period: '2024-Present',
-    location: 'RS, Brasil',
-    role: 'Advisor (CAGE / Executive Office)',
+    location: { pt: 'RS, Brasil', en: 'RS, Brazil' },
+    role: { pt: 'Advisor (CAGE / Gabinete Executivo)', en: 'Advisor (CAGE / Executive Office)' },
     icon: '🏛️',
     color: 'bg-purple-600',
-    summary: 'Secretaria da Fazenda do RS, responsável pela gestão fiscal e administração tributária do Estado.',
-    keyAchievements: [
-      'PMO Programa Profisco II (parceria IDB)',
-      'Frameworks value-based management e OKRs',
-      'Portal PMO executivo com dashboards',
-      'AI-readiness assessment para operações fiscais',
-      '$1.4M em ganhos de eficiência'
-    ],
+    summary: { pt: 'Secretaria da Fazenda responsável pela gestão fiscal do Estado.', en: 'State Treasury responsible for fiscal management.' },
+    keyAchievements: {
+      pt: [ 'PMO Profisco II (IDB)', 'Value-based management & OKRs', 'Portal PMO executivo', 'AI-readiness fiscal', '$1.4M eficiência' ],
+      en: [ 'Profisco II PMO (IDB)', 'Value-based management & OKRs', 'Executive PMO portal', 'Fiscal AI-readiness', '$1.4M efficiency' ]
+    },
     cases: [
       {
         id: 'sefaz-profisco-pmo',
-        title: 'Estruturação do PMO para Programa Profisco II',
-        situation: 'SEFAZ-RS iniciou parceria com Banco Interamericano de Desenvolvimento (BID) para o Programa Profisco II, modernizando gestão fiscal. Necessidade de estruturar governança robusta para programa de grande escala.',
-        task: 'Como Advisor do CAGE, liderar o PMO do Programa Profisco II, implementando frameworks de gestão baseada em valor e OKRs.',
-        action: 'Desenhei e implementei frameworks de value-based management e OKRs para o governo estadual. Desenvolvi e lancei Portal PMO executivo com dashboards em tempo real e base de conhecimento. Iniciei assessment de AI-readiness para explorar modelos de ML em forecasting e indicadores preditivos de risco fiscal. Mentorei equipes governamentais em gestão de portfólio.',
-        result: 'Modernização da gestão fiscal e fortalecimento de práticas de governança em nível estadual. Padronização de práticas resultando em ~$1.4M em ganhos de eficiência através de otimização de processos e redução de overruns em projetos.',
-        learning: 'Setor público pode adotar práticas de gestão modernas mantendo transparência e accountability. Governança robusta é fundamental para programas com financiamento internacional.',
-        tags: ['Public Sector', 'PMO Implementation', 'Value-Based Management', 'Government Modernization', 'International Partnership'],
+        title: { pt: 'Estruturação do PMO para Programa Profisco II', en: 'PMO Setup for Profisco II Program' },
+        situation: { pt: 'Programa de modernização fiscal com financiamento internacional requer governança robusta.', en: 'Fiscal modernization program with international funding required robust governance.' },
+        task: { pt: 'Liderar PMO implementando gestão baseada em valor & OKRs.', en: 'Lead PMO implementing value-based management & OKRs.' },
+        action: { pt: 'Frameworks VB/OKR; portal executivo; dashboards tempo real; assessment AI-readiness; mentoria portfólio.', en: 'VB/OKR frameworks; executive portal; real-time dashboards; AI-readiness assessment; portfolio mentoring.' },
+        result: { pt: 'Modernização + ~$1.4M eficiência via padronização e redução de overruns.', en: 'Modernization + ~$1.4M efficiency via standardization & overrun reduction.' },
+        learning: { pt: 'Transparência e governança habilitam impacto em projetos públicos.', en: 'Transparency & governance enable impact in public programs.' },
+        tags: {
+          pt: ['Setor Público', 'Implementação PMO', 'Gestão Baseada em Valor', 'Modernização Governamental', 'Parceria Internacional'],
+          en: ['Public Sector', 'PMO Implementation', 'Value-Based Management', 'Government Modernization', 'International Partnership']
+        },
         score: 91
       },
       {
         id: 'sefaz-ai-readiness',
-        title: 'AI-Readiness Assessment para Operações Fiscais',
-        situation: 'SEFAZ-RS buscava modernizar operações fiscais explorando potencial de IA e ML. Necessidade de avaliar maturidade organizacional e identificar oportunidades de automação.',
-        task: 'Conduzir assessment abrangente de AI-readiness e desenvolver roadmap para implementação de soluções de ML em forecasting fiscal e indicadores preditivos de risco.',
-        action: 'Conduzi diagnóstico de maturidade em dados e IA. Mapeei processos fiscais candidatos à automação. Identifiquei oportunidades para modelos preditivos de risco fiscal. Desenvolvi roadmap de implementação considerando aspectos regulatórios e éticos. Estruturei governança para projetos de IA no setor público.',
-        result: 'Roadmap estruturado para implementação de IA em operações fiscais. Identificação de oportunidades de alto impacto para automação. Preparação da organização para adoção responsável de tecnologias emergentes.',
-        learning: 'IA no setor público requer cuidado especial com transparência, ética e accountability. Preparação organizacional é tão importante quanto a tecnologia em si.',
-        tags: ['AI Strategy', 'Public Administration', 'Fiscal Operations', 'Predictive Analytics', 'Digital Government'],
+        title: { pt: 'AI-Readiness Assessment para Operações Fiscais', en: 'AI-Readiness Assessment for Fiscal Operations' },
+        situation: { pt: 'Necessidade de avaliar maturidade e oportunidades de IA em operações fiscais.', en: 'Need to assess maturity and AI opportunities in fiscal operations.' },
+        task: { pt: 'Mapear processos candidatos e produzir roadmap de implementação responsável.', en: 'Map candidate processes and produce responsible implementation roadmap.' },
+        action: { pt: 'Diagnóstico maturidade dados/IA; mapeamento processos; oportunidades modelos preditivos; governança ética.', en: 'Data/AI maturity diagnosis; process mapping; predictive model opportunities; ethical governance.' },
+        result: { pt: 'Roadmap estruturado; identificação de alto impacto; prontidão organizacional.', en: 'Structured roadmap; high-impact identification; organizational readiness.' },
+        learning: { pt: 'Setor público exige foco em ética e accountability na IA.', en: 'Public sector demands focus on ethics & accountability for AI.' },
+        tags: {
+          pt: ['Estratégia de IA', 'Administração Pública', 'Operações Fiscais', 'Analytics Preditivo', 'Governo Digital'],
+          en: ['AI Strategy', 'Public Administration', 'Fiscal Operations', 'Predictive Analytics', 'Digital Government']
+        },
         score: 89
       }
     ]
