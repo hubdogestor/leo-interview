@@ -25,6 +25,7 @@ function App() {
   const [language, setLanguage] = useState('pt');
   const [timerSeconds, setTimerSeconds] = useState(0);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
+  // Layout v2.0 style (sidebar not collapsible) – removed collapsible state
 
   // Timer functionality - optimized to avoid recreating interval on every second
   useEffect(() => {
@@ -102,11 +103,11 @@ function App() {
   // Render sidebar menu
   const renderSidebar = () => {
     const menuItems = [
-      { id: 'experiences', icon: Briefcase, label: 'Experiências', count: Object.keys(experiencesData).length },
-      { id: 'competencies', icon: Target, label: 'Competências', count: Object.keys(competenciesData).length },
-      { id: 'profiles', icon: User, label: 'Perfis', count: Object.keys(profilesData).length },
-      { id: 'icebreaker', icon: MessageCircle, label: 'Icebreaker', count: Object.keys(icebreakerData).length },
-      { id: 'speechcv', icon: FileText, label: 'Speech Full CV', count: Object.keys(speechFullCVData).length }
+      { id: 'experiences', icon: Briefcase, label: tr('menu_experiences', language), count: Object.keys(experiencesData).length },
+      { id: 'competencies', icon: Target, label: tr('menu_competencies', language), count: Object.keys(competenciesData).length },
+      { id: 'profiles', icon: User, label: tr('menu_profiles', language), count: Object.keys(profilesData).length },
+      { id: 'icebreaker', icon: MessageCircle, label: tr('menu_icebreaker', language), count: Object.keys(icebreakerData).length },
+      { id: 'speechcv', icon: FileText, label: tr('menu_speechcv', language), count: Object.keys(speechFullCVData).length }
     ];
 
     return (
@@ -122,7 +123,7 @@ function App() {
               <p className="text-sm text-slate-600">Preparação Universal para Entrevistas</p>
             </div>
           </div>
-          
+
           {/* Timer */}
           <div className={`bg-white rounded-lg border border-slate-200 p-4 ${isTimerRunning ? 'timer-pulse running' : ''}`}>
             <div className="flex items-center justify-between mb-2">
@@ -168,7 +169,6 @@ function App() {
             {menuItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeSection === item.id;
-              
               return (
                 <button
                   key={item.id}
