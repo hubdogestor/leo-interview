@@ -267,7 +267,18 @@ function App() {
                   
                   <CardContent className="pt-0">
                     <p className="text-slate-700 mb-4 line-clamp-3">
-                      {(typeof item.description === 'string' ? item.description : t(item.description, language)) || t(item.content, language) || (item.versions && item.versions[0]?.content?.substring(0, 200) + '...')}
+                      {(() => {
+                        // Safely compute a preview text supporting bilingual structures
+                        const direct = typeof item.description === 'string' ? item.description : t(item.description, language);
+                        if (direct) return direct;
+                        const content = t(item.content, language);
+                        if (content) return content.substring(0, 200) + (content.length > 200 ? '...' : '');
+                        if (item.versions && item.versions[0]) {
+                          const v = t(item.versions[0].content, language);
+                          if (v) return v.substring(0, 200) + (v.length > 200 ? '...' : '');
+                        }
+                        return '';
+                      })()}
                     </p>
                     
                     {renderItemMetrics(item)}
@@ -896,22 +907,42 @@ function App() {
                 </CardHeader>
                 <CardContent>
                   <div className="prose prose-slate max-w-none">
-                    {t(selectedItem.content, language).split('\n\n').map((paragraph, index) => {
-                      // Check if paragraph is a header (starts with **)
-                      if (paragraph.startsWith('**') && paragraph.endsWith('**')) {
+                    {(() => {
+                      const raw = t(selectedItem.content, language) || '';
+                      const paragraphs = raw.split(/\n\s*\n/);
+                      const boldify = (text) => {
+                        // Split by **bold** markers retaining order
+                        const parts = text.split(/(\*\*[^*]+\*\*)/g).filter(Boolean);
+                        return parts.map((part, i) => {
+                          if (/^\*\*[^*]+\*\*$/.test(part)) {
+                            return <strong key={i}>{part.slice(2, -2)}</strong>;
+                          }
+                          // Preserve single line breaks inside part
+                          const lines = part.split(/\n/);
+                          return lines.reduce((acc, line, li) => {
+                            acc.push(<React.Fragment key={li}>{line}</React.Fragment>);
+                            if (li < lines.length - 1) acc.push(<br key={li+'br'} />);
+                            return acc;
+                          }, []);
+                        });
+                      };
+                      return paragraphs.map((p, idx) => {
+                        const trimmed = p.trim();
+                        const headingMatch = /^\*\*(.+)\*\*$/.exec(trimmed);
+                        if (headingMatch) {
+                          return (
+                            <h3 key={idx} className="text-xl font-bold text-slate-900 mt-6 first:mt-0 mb-3">
+                              {headingMatch[1]}
+                            </h3>
+                          );
+                        }
                         return (
-                          <h3 key={index} className="text-xl font-bold text-slate-900 mt-6 mb-3">
-                            {paragraph.replace(/\*\*/g, '')}
-                          </h3>
+                          <p key={idx} className="text-slate-700 leading-relaxed mb-4">
+                            {boldify(p)}
+                          </p>
                         );
-                      }
-                      
-                      return (
-                        <p key={index} className="text-slate-700 leading-relaxed mb-4">
-                          {paragraph}
-                        </p>
-                      );
-                    })}
+                      });
+                    })()}
                   </div>
                 </CardContent>
               </Card>
