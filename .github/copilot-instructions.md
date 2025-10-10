@@ -35,6 +35,31 @@ Experience cases follow Situation-Task-Action-Result-Learning structure with bil
 }
 ```
 
+### Full CV Speech Content
+Detailed narrative speeches for different professional profiles (Product Manager, Program Manager, Strategy Manager, PMO Manager, Innovation Manager) with structured storytelling covering career journey, key achievements, methodologies, and future vision.
+
+**Speech structure from `src/data/speechFullCV.js`:**
+```javascript
+{
+  id: "product_manager",
+  title: { pt: "Product Manager", en: "Product Manager" },
+  subtitle: { pt: "Gestão de Produtos Digitais", en: "Digital Product Leadership" },
+  duration: { pt: "4-5 minutos", en: "4-5 minutes" },
+  content: {
+    pt: `Detailed narrative in Portuguese...`,
+    en: `Detailed narrative in English...`
+  },
+  keyPoints: {
+    pt: ["Quantified achievements"],
+    en: ["Quantified achievements"]
+  },
+  tags: {
+    pt: ["relevant", "keywords"],
+    en: ["relevant", "keywords"]
+  }
+}
+```
+
 ## Developer Workflows
 
 ### Build & Development
@@ -108,7 +133,8 @@ Use debounced search with bilingual support (see `App.jsx` lines 70-95):
 - `src/data/competencies.js` - 6 technical competencies
 - `src/data/profiles.js` - 5 role-specific profiles
 - `src/data/personalData.js` - Personal information
-- `src/data/speechFullCV.js` - Full CV speech content
+- `src/data/speechFullCV.js` - Full CV speech content (detailed narratives)
+- `old_speechFullCV_v2.js` - Legacy detailed Portuguese content reference
 
 ### Core Components
 - `src/App.jsx` - Main application component (998 lines)
