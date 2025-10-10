@@ -37,7 +37,10 @@ export const uiStrings = {
     full_speech: 'Speech Completo',
     structured_cv_for: 'Apresentação estruturada do CV para',
     search_placeholder: 'Buscar...',
-    score: 'Score'
+    score: 'Score',
+    dataset_updated: 'Data set atualizado',
+    sections_label: 'SEÇÕES',
+    back_to_top: 'Topo'
   },
   en: {
     timer: 'Timer',
@@ -75,7 +78,10 @@ export const uiStrings = {
     full_speech: 'Full Speech',
     structured_cv_for: 'Structured CV presentation for',
     search_placeholder: 'Search...',
-    score: 'Score'
+    score: 'Score',
+    dataset_updated: 'Dataset updated',
+    sections_label: 'SECTIONS',
+    back_to_top: 'Top'
   }
 };
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { Search, Timer, Globe, User, Briefcase, Target, MessageCircle, FileText, ChevronRight, Play, Pause, RotateCcw, Star, Clock, Building, Calendar, Award, TrendingUp } from 'lucide-react';
 import { Button } from './components/ui/button';
 import { Input } from './components/ui/input';
@@ -851,79 +851,124 @@ function App() {
 
   // Render speech CV detail
   const renderSpeechCVDetail = () => {
+    const topRef = useRef(null);
+    const content = t(selectedItem.content, language);
+    const paragraphs = content.split('\n\n');
+    const headingIndexes = paragraphs
+      .map((p,i)=> (p.startsWith('**') && p.endsWith('**')) ? i : -1)
+      .filter(i=>i!==-1);
+    const headings = headingIndexes.map(i => paragraphs[i].replace(/\*\*/g,'').trim());
+    const [activeHeading, setActiveHeading] = useState(0);
+
+    useEffect(()=>{
+      const obs = new IntersectionObserver((entries)=>{
+        entries.forEach(e=>{
+          if (e.isIntersecting){
+            const idx = parseInt(e.target.getAttribute('data-h-idx')||'0',10);
+            setActiveHeading(idx);
+          }
+        });
+      }, {rootMargin:'-40% 0px -50% 0px', threshold:[0,1]});
+      headingIndexes.forEach((_,i)=>{
+        const el = document.getElementById(`speech-h-${i}`);
+        if (el) obs.observe(el);
+      });
+      return ()=> obs.disconnect();
+    }, [content, language]);
+    const scrollToHeading = (idx) => {
+      const el = document.getElementById(`speech-h-${idx}`);
+      if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
+    };
+    const scrollToTop = () => {
+      if (topRef.current) topRef.current.scrollIntoView({behavior:'smooth'});
+    };
     return (
       <div className="flex-1 overflow-hidden">
         <ScrollArea className="h-full">
-          <div className="p-8">
-            <Button 
-              variant="ghost" 
-              onClick={() => setSelectedItem(null)}
-              className="mb-4 text-slate-600 hover:text-slate-900"
-            >
-              ← Voltar
-            </Button>
-            
-            <div className="flex items-center gap-4 mb-8">
-              {renderItemIcon(selectedItem)}
-              <div>
-                <h1 className="text-3xl font-bold text-slate-900">{t(selectedItem.title, language)}</h1>
-                <p className="text-lg text-slate-600">{t(selectedItem.subtitle, language)}</p>
-                <div className="flex items-center gap-4 mt-2">
-                  <Badge variant="secondary">{t(selectedItem.duration, language)}</Badge>
-                  {(Array.isArray(selectedItem.tags) ? selectedItem.tags : (selectedItem.tags?.[language] || []))?.map((tag, index) => (
-                    <Badge key={index} variant="outline">
-                      {tag}
-                    </Badge>
-                  ))}
+          <div className="p-8" ref={topRef}>
+            <div className="flex items-center justify-between mb-4">
+              <Button 
+                variant="ghost" 
+                onClick={() => setSelectedItem(null)}
+                className="text-slate-600 hover:text-slate-900"
+              >
+                ← {tr('back', language)}
+              </Button>
+              <Button variant="outline" size="sm" onClick={scrollToTop} className="hover:scale-[1.02] transition">↑ {tr('back_to_top', language)}</Button>
+            </div>
+            <div className="flex flex-col lg:flex-row gap-8">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-4 mb-8">
+                  {renderItemIcon(selectedItem)}
+                  <div>
+                    <h1 className="text-3xl font-bold text-slate-900">{t(selectedItem.title, language)}</h1>
+                    <p className="text-lg text-slate-600">{t(selectedItem.subtitle, language)}</p>
+                    <div className="flex flex-wrap items-center gap-3 mt-2">
+                      <Badge variant="secondary">{t(selectedItem.duration, language)}</Badge>
+                      {(Array.isArray(selectedItem.tags) ? selectedItem.tags : (selectedItem.tags?.[language] || []))?.map((tag, index) => (
+                        <Badge key={index} variant="outline">{tag}</Badge>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>{tr('key_points', language)}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid gap-3">
+                        {tArray(selectedItem.keyPoints, language).map((point, index) => (
+                          <div key={index} className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
+                            <div className="w-2 h-2 bg-blue-600 rounded-full mt-2"></div>
+                            <span className="text-slate-700">{point}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>{tr('full_speech', language)}</CardTitle>
+                      <CardDescription>{tr('structured_cv_for', language)} {t(selectedItem.title, language)}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="prose prose-slate max-w-none">
+                        {paragraphs.map((paragraph, index) => {
+                          const isHeading = paragraph.startsWith('**') && paragraph.endsWith('**');
+                          if (isHeading) {
+                            const clean = paragraph.replace(/\*\*/g,'').trim();
+                            const headingPos = headings.indexOf(clean);
+                            return (
+                              <h3 id={`speech-h-${headingPos}`} key={index} className="text-xl font-bold text-slate-900 mt-10 mb-4 scroll-mt-24">
+                                {clean}
+                              </h3>
+                            );
+                          }
+                          return (
+                            <p key={index} className="text-slate-700 leading-relaxed mb-4">
+                              {paragraph.trim()}
+                            </p>
+                          );
+                        })}
+                      </div>
+                    </CardContent>
+                  </Card>
                 </div>
               </div>
-            </div>
-
-            <div className="space-y-6">
-              {/* Key Points */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>{tr('key_points', language)}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid gap-3">
-                    {tArray(selectedItem.keyPoints, language).map((point, index) => (
-                      <div key={index} className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
-                        <div className="w-2 h-2 bg-blue-600 rounded-full mt-2"></div>
-                        <span className="text-slate-700">{point}</span>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Full Speech */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>{tr('full_speech', language)}</CardTitle>
-                  <CardDescription>
-                    {tr('structured_cv_for', language)} {t(selectedItem.title, language)}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="prose prose-slate max-w-none">
-                    {t(selectedItem.content, language).split('\n\n').map((paragraph, index) => {
-                      if (paragraph.startsWith('**') && paragraph.endsWith('**')) {
-                        return (
-                          <h3 key={index} className="text-xl font-bold text-slate-900 mt-6 mb-3">
-                            {paragraph.replace(/\*\*/g, '')}
-                          </h3>
-                        );
-                      }
-                      return (
-                        <p key={index} className="text-slate-700 leading-relaxed mb-4">
-                          {paragraph}
-                        </p>
-                      );
-                    })}
-                  </div>
-                </CardContent>
-              </Card>
+              {/* Outline */}
+              <div className="w-full lg:w-64 flex-shrink-0 lg:sticky lg:top-4 h-max border border-slate-200 rounded-lg bg-white p-4 shadow-sm">
+                <p className="text-xs font-semibold text-slate-500 mb-2 tracking-wide">{tr('sections_label', language)}</p>
+                <ul className="space-y-2 text-sm">
+                  {headings.map((h,i)=>(
+                    <li key={i}>
+                      <button onClick={()=>scrollToHeading(i)} className={`text-left w-full transition-colors ${activeHeading===i?'text-blue-600 font-medium':'hover:text-blue-600 text-slate-600'}`}>
+                        <span className="inline-block truncate max-w-[11rem]">{h}</span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </div>
         </ScrollArea>
@@ -934,7 +979,17 @@ function App() {
   return (
     <div className="flex h-screen bg-slate-50">
       {renderSidebar()}
-      {renderMainContent()}
+      <div className="flex-1 flex flex-col">
+        <div className="h-12 bg-white border-b border-slate-200 flex items-center px-6 sticky top-0 z-20 backdrop-blur supports-[backdrop-filter]:bg-white/80">
+          <h2 className="text-sm font-medium text-slate-600">{tr('menu_'+activeSection, language)}</h2>
+          <div className="ml-auto flex items-center gap-3 text-xs text-slate-400">
+            <span>{tr('dataset_updated', language)}</span>
+          </div>
+        </div>
+        <div className="flex-1 flex overflow-hidden">
+          {renderMainContent()}
+        </div>
+      </div>
     </div>
   );
 }
