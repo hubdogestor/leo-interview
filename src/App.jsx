@@ -22,6 +22,7 @@ function App() {
   const [selectedItem, setSelectedItem] = useState(null);
   const [selectedCase, setSelectedCase] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [globalSearchTerm, setGlobalSearchTerm] = useState('');
   const [language, setLanguage] = useState('pt');
   const [timerSeconds, setTimerSeconds] = useState(0);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
@@ -71,13 +72,42 @@ function App() {
     }
   };
 
-  // Filter data based on search term
+  // Filter data based on search terms (global and section-specific)
   const getFilteredData = () => {
     const data = getCurrentData();
     const values = Object.values(data);
-    if (!searchTerm) return values;
+    
+    // Apply global search first (across all sections)
+    let filteredValues = values;
+    if (globalSearchTerm) {
+      const globalSearchLower = globalSearchTerm.toLowerCase();
+      filteredValues = values.filter(item => {
+        // Considerar campos bilíngues comuns (title, subtitle, summary, description)
+        const candidates = [
+          typeof item.title === 'string' ? item.title : (item.title?.pt || '') + ' ' + (item.title?.en || ''),
+          typeof item.subtitle === 'string' ? item.subtitle : (item.subtitle?.pt || '') + ' ' + (item.subtitle?.en || ''),
+          typeof item.summary === 'string' ? item.summary : (item.summary?.pt || '') + ' ' + (item.summary?.en || ''),
+          typeof item.description === 'string' ? item.description : (item.description?.pt || '') + ' ' + (item.description?.en || ''),
+          typeof item.question === 'string' ? item.question : (item.question?.pt || '') + ' ' + (item.question?.en || ''),
+          typeof item.category === 'string' ? item.category : (item.category?.pt || '') + ' ' + (item.category?.en || ''),
+        ];
+        if (candidates.some(c => c.toLowerCase().includes(globalSearchLower))) return true;
+        // Tags podem ser string[] ou bilíngues {pt:[],en:[]}
+        if (item.tags) {
+          if (Array.isArray(item.tags) && item.tags.some(tag => tag.toLowerCase().includes(globalSearchLower))) return true;
+          if (!Array.isArray(item.tags) && (item.tags.pt || item.tags.en)) {
+            const allTags = [...(item.tags.pt || []), ...(item.tags.en || [])];
+              if (allTags.some(tag => tag.toLowerCase().includes(globalSearchLower))) return true;
+          }
+        }
+        return false;
+      });
+    }
+    
+    // Apply section-specific search
+    if (!searchTerm) return filteredValues;
     const searchLower = searchTerm.toLowerCase();
-    return values.filter(item => {
+    return filteredValues.filter(item => {
       // Considerar campos bilíngues comuns (title, subtitle, summary, description)
       const candidates = [
         typeof item.title === 'string' ? item.title : (item.title?.pt || '') + ' ' + (item.title?.en || ''),
@@ -980,12 +1010,92 @@ function App() {
     <div className="flex h-screen bg-slate-50">
       {renderSidebar()}
       <div className="flex-1 flex flex-col">
-        <div className="h-12 bg-white border-b border-slate-200 flex items-center px-6 sticky top-0 z-20 backdrop-blur supports-[backdrop-filter]:bg-white/80">
-          <h2 className="text-sm font-medium text-slate-600">{tr('menu_'+activeSection, language)}</h2>
-          <div className="ml-auto flex items-center gap-3 text-xs text-slate-400">
-            <span>{tr('dataset_updated', language)}</span>
+        {/* Header fixo com busca global */}
+        <header className="h-16 bg-white border-b border-slate-200 flex items-center px-6 sticky top-0 z-30 shadow-sm">
+          <div className="flex items-center gap-4 flex-1">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">
+                L
+              </div>
+              <div>
+                <h1 className="text-lg font-bold text-slate-900">Leo Interview Prep</h1>
+                <p className="text-xs text-slate-600">Preparação Universal para Entrevistas</p>
+              </div>
+            </div>
+            
+            {/* Busca global */}
+            <div className="flex-1 max-w-md ml-8">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+                <Input
+                  placeholder={tr('global_search_placeholder', language)}
+                  value={globalSearchTerm}
+                  onChange={(e) => setGlobalSearchTerm(e.target.value)}
+                  className="pl-10 bg-slate-50 border-slate-200 focus:border-blue-500 focus:ring-blue-500 text-sm"
+                  aria-label="Busca global em todo o conteúdo"
+                />
+              </div>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-3">
+            {/* Timer */}
+            <div className={`flex items-center gap-2 bg-slate-100 rounded-lg px-3 py-1.5 ${isTimerRunning ? 'timer-pulse running' : ''}`}>
+              <Timer className="w-4 h-4" />
+              <span className="font-mono text-sm">{formatTime(timerSeconds)}</span>
+              <div className="flex gap-1">
+                <Button size="sm" variant="ghost" onClick={() => setIsTimerRunning(true)} className="h-6 w-6 p-0">
+                  <Play className="w-3 h-3" />
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => setIsTimerRunning(false)} className="h-6 w-6 p-0">
+                  <Pause className="w-3 h-3" />
+                </Button>
+                <Button size="sm" variant="ghost" onClick={resetTimer} className="h-6 w-6 p-0">
+                  <RotateCcw className="w-3 h-3" />
+                </Button>
+              </div>
+            </div>
+
+            {/* Language Toggle */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setLanguage(language === 'pt' ? 'en' : 'pt')}
+              className="flex items-center gap-2"
+            >
+              <Globe className="w-4 h-4" />
+              {language === 'pt' ? 'PT' : 'EN'}
+            </Button>
+          </div>
+        </header>
+        
+        {/* Barra de seção com busca específica */}
+        <div className="h-12 bg-slate-50 border-b border-slate-200 flex items-center px-6">
+          <div className="flex items-center gap-4 flex-1">
+            <h2 className="text-sm font-medium text-slate-700">{tr('menu_'+activeSection, language)}</h2>
+            
+            {/* Busca específica da seção */}
+            <div className="flex-1 max-w-sm">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-3 h-3" />
+                <Input
+                  placeholder={`${tr('search_in', language)} ${tr('menu_'+activeSection, language).toLowerCase()}...`}
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-8 bg-white border-slate-200 focus:border-blue-500 focus:ring-blue-500 text-sm h-8"
+                  aria-label={`Busca específica em ${tr('menu_'+activeSection, language)}`}
+                />
+              </div>
+            </div>
+          </div>
+          
+          <div className="text-xs text-slate-400">
+            {globalSearchTerm && (
+              <span>{tr('filtered_by_global', language)}: "{globalSearchTerm}"</span>
+            )}
           </div>
         </div>
+        
         <div className="flex-1 flex overflow-hidden">
           {renderMainContent()}
         </div>
