@@ -1,7 +1,19 @@
 {
   "permissions": {
     "allow": [
-      "Bash(powershell.exe:*)"
+      "Bash(powershell.exe:*)",
+      "Bash(git worktree:*)",
+      "Bash(cat:*)",
+      "Bash(pnpm install:*)",
+      "Bash(npx vite:*)",
+      "Bash(yes Y)",
+      "Bash(pnpm run:*)",
+      "Bash(for:*)",
+      "Bash(do echo \"=== dist/$dir ===\")",
+      "Bash(ls:*)",
+      "Bash(done)",
+      "Bash(git add:*)",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []
