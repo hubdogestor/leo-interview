@@ -15,7 +15,9 @@
       "Bash(git add:*)",
       "Bash(git push:*)",
       "Bash(gh run list:*)",
-      "Bash(awk:*)"
+      "Bash(awk:*)",
+      "Bash(git log:*)",
+      "Bash(do echo -e \"\\n$dir:\")"
     ],
     "deny": [],
     "ask": []
