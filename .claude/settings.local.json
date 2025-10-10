@@ -14,7 +14,8 @@
       "Bash(done)",
       "Bash(git add:*)",
       "Bash(git push:*)",
-      "Bash(gh run list:*)"
+      "Bash(gh run list:*)",
+      "Bash(awk:*)"
     ],
     "deny": [],
     "ask": []
