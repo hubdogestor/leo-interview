@@ -17,7 +17,10 @@
       "Bash(gh run list:*)",
       "Bash(awk:*)",
       "Bash(git log:*)",
-      "Bash(do echo -e \"\\n$dir:\")"
+      "Bash(do echo -e \"\\n$dir:\")",
+      "Bash(do echo \"=== $commit ===\")",
+      "Bash(do echo \"Verificando $commit...\" git show $commit:src/App.jsx)",
+      "Bash(echo:*)"
     ],
     "deny": [],
     "ask": []
