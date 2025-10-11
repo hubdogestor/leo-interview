@@ -143,11 +143,115 @@ function App() {
     }
   };
 
+  // Helper to extract all text from nested object
+  const getAllTextFromObject = (obj) => {
+    let texts = [];
+    if (typeof obj === 'string') return [obj];
+    if (typeof obj === 'object' && obj !== null) {
+      if (obj.pt) texts.push(obj.pt);
+      if (obj.en) texts.push(obj.en);
+      Object.values(obj).forEach(val => {
+        if (typeof val === 'string') texts.push(val);
+        else if (typeof val === 'object') texts = texts.concat(getAllTextFromObject(val));
+      });
+    }
+    return texts;
+  };
+
+  // Deep search in all content fields including nested content
+  const deepSearchAllSections = (searchQuery) => {
+    if (!searchQuery) return [];
+
+    const allSections = {
+      experiences: experiencesData,
+      competencies: competenciesData,
+      profiles: profilesData,
+      icebreaker: icebreakerData,
+      speechcv: speechFullCVData,
+      myquestions: myQuestionsData
+    };
+
+    const searchTerms = searchQuery.toLowerCase().split(' ').filter(t => t.length > 2);
+    const results = [];
+
+    Object.entries(allSections).forEach(([sectionKey, sectionData]) => {
+      Object.values(sectionData).forEach(item => {
+        const allTexts = getAllTextFromObject(item).join(' ').toLowerCase();
+
+        // Check if all search terms are present
+        const matchCount = searchTerms.filter(term => allTexts.includes(term)).length;
+        if (matchCount === 0) return;
+
+        // Find the best matching excerpt
+        const sentences = allTexts.split(/[.!?]\s+/);
+        let bestMatch = { sentence: '', score: 0 };
+
+        sentences.forEach(sentence => {
+          const sentenceLower = sentence.toLowerCase();
+          const score = searchTerms.filter(term => sentenceLower.includes(term)).length;
+          if (score > bestMatch.score) {
+            bestMatch = { sentence: sentence.trim(), score };
+          }
+        });
+
+        if (bestMatch.score > 0) {
+          results.push({
+            item,
+            section: sectionKey,
+            excerpt: bestMatch.sentence.substring(0, 200),
+            matchScore: bestMatch.score / searchTerms.length
+          });
+        }
+      });
+    });
+
+    return results.sort((a, b) => b.matchScore - a.matchScore);
+  };
+
+  // Deep search in current section only
+  const deepSearchCurrentSection = (searchQuery) => {
+    if (!searchQuery) return [];
+
+    const sectionData = getCurrentData();
+    const searchTerms = searchQuery.toLowerCase().split(' ').filter(t => t.length > 2);
+    const results = [];
+
+    Object.values(sectionData).forEach(item => {
+      const allTexts = getAllTextFromObject(item).join(' ').toLowerCase();
+
+      // Check if all search terms are present
+      const matchCount = searchTerms.filter(term => allTexts.includes(term)).length;
+      if (matchCount === 0) return;
+
+      // Find the best matching excerpt
+      const sentences = allTexts.split(/[.!?]\s+/);
+      let bestMatch = { sentence: '', score: 0 };
+
+      sentences.forEach(sentence => {
+        const sentenceLower = sentence.toLowerCase();
+        const score = searchTerms.filter(term => sentenceLower.includes(term)).length;
+        if (score > bestMatch.score) {
+          bestMatch = { sentence: sentence.trim(), score };
+        }
+      });
+
+      if (bestMatch.score > 0) {
+        results.push({
+          item,
+          excerpt: bestMatch.sentence.substring(0, 200),
+          matchScore: bestMatch.score / searchTerms.length
+        });
+      }
+    });
+
+    return results.sort((a, b) => b.matchScore - a.matchScore);
+  };
+
   // Filter data based on search terms (global and section-specific)
   const getFilteredData = () => {
     const data = getCurrentData();
     const values = Object.values(data);
-    
+
     // Apply global search first (across all sections)
     let filteredValues = values;
     if (globalSearchTerm) {
@@ -174,7 +278,7 @@ function App() {
         return false;
       });
     }
-    
+
     // Apply section-specific search
     if (!searchTerm) return filteredValues;
     const searchLower = searchTerm.toLowerCase();
@@ -201,6 +305,34 @@ function App() {
     });
   };
 
+  // Get breadcrumb for section
+  const getSectionBreadcrumb = (sectionKey) => {
+    const breadcrumbs = {
+      experiences: tr('menu_experiences', language),
+      competencies: tr('menu_competencies', language),
+      profiles: tr('menu_profiles', language),
+      icebreaker: tr('menu_icebreaker', language),
+      speechcv: tr('menu_speechcv', language),
+      myquestions: tr('my_questions', language)
+    };
+    return breadcrumbs[sectionKey] || sectionKey;
+  };
+
+  // Highlight search terms in text
+  const highlightText = (text, searchQuery) => {
+    if (!searchQuery || !text) return text;
+
+    const terms = searchQuery.toLowerCase().split(' ').filter(t => t.length > 2);
+    let highlightedText = text;
+
+    terms.forEach(term => {
+      const regex = new RegExp(`(${term})`, 'gi');
+      highlightedText = highlightedText.replace(regex, '<mark class="bg-yellow-200 font-semibold">$1</mark>');
+    });
+
+    return highlightedText;
+  };
+
   // Render sidebar menu
   const renderSidebar = () => {
     const menuItems = [
@@ -211,10 +343,27 @@ function App() {
       { id: 'speechcv', icon: FileText, label: tr('menu_speechcv', language), count: Object.keys(speechFullCVData).length }
     ];
 
-    const globalResults = getFilteredData();
+    const deepSearchResults = deepSearchAllSections(globalSearchTerm);
 
     return (
       <div className="w-80 bg-gradient-to-b from-slate-50 to-white border-r border-slate-200 flex flex-col h-screen">
+        {/* Logo and Title */}
+        <div className="p-4 border-b border-slate-200">
+          <div className="flex items-center gap-3">
+            <img
+              src="/favicon.ico"
+              alt="Leo Interview Logo"
+              className="w-10 h-10 rounded-lg"
+            />
+            <div>
+              <h1 className="text-lg font-bold text-slate-900">{tr('app_title', language)}</h1>
+              <p className="text-xs text-slate-600">
+                {language === 'pt' ? 'Preparação para Entrevistas' : 'Interview Preparation'}
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* Global Search */}
         <div className="p-6 border-b border-slate-200">
           <label className="text-xs font-semibold text-slate-500 tracking-wide mb-2 block">
@@ -233,26 +382,36 @@ function App() {
               className="pl-10 bg-white border-slate-200 focus:border-blue-500 focus:ring-blue-500"
               aria-label="Busca global em todo o conteúdo"
             />
-            {showGlobalSearchDropdown && globalSearchTerm && globalResults.length > 0 && (
-              <div className="absolute z-50 w-full mt-2 bg-white rounded-lg shadow-lg border border-slate-200 max-h-96 overflow-y-auto">
-                {globalResults.map((item, index) => (
-                  <button
-                    key={index}
-                    onClick={() => {
-                      setSelectedItem(item);
-                      setShowGlobalSearchDropdown(false);
-                      setGlobalSearchTerm('');
-                    }}
-                    className="w-full text-left px-4 py-3 hover:bg-slate-50 border-b border-slate-100 last:border-0"
-                  >
-                    <div className="font-medium text-slate-900 text-sm">
-                      {item.name || (typeof item.title === 'string' ? item.title : t(item.title, language)) || (typeof item.question === 'string' ? item.question : t(item.question, language))}
-                    </div>
-                    <div className="text-xs text-slate-500 mt-1">
-                      {renderItemSubtitle(item)}
-                    </div>
-                  </button>
-                ))}
+            {showGlobalSearchDropdown && globalSearchTerm && deepSearchResults.length > 0 && (
+              <div className="absolute z-50 w-full mt-2 bg-white rounded-lg shadow-lg border border-slate-200 max-h-96 overflow-y-auto custom-scrollbar">
+                {deepSearchResults.slice(0, 10).map((result, index) => {
+                  const itemTitle = result.item.name ||
+                    (typeof result.item.title === 'string' ? result.item.title : t(result.item.title, language)) ||
+                    (typeof result.item.question === 'string' ? result.item.question : t(result.item.question, language));
+
+                  return (
+                    <button
+                      key={index}
+                      onClick={() => {
+                        setActiveSection(result.section);
+                        setSelectedItem(result.item);
+                        setShowGlobalSearchDropdown(false);
+                        setGlobalSearchTerm('');
+                      }}
+                      className="w-full text-left px-4 py-3 hover:bg-slate-50 border-b border-slate-100 last:border-0 transition-colors"
+                    >
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-xs font-medium text-blue-600">
+                          {getSectionBreadcrumb(result.section)} &gt; {itemTitle}
+                        </span>
+                      </div>
+                      <div
+                        className="text-sm text-slate-700 line-clamp-2"
+                        dangerouslySetInnerHTML={{ __html: highlightText(result.excerpt, globalSearchTerm) }}
+                      />
+                    </button>
+                  );
+                })}
               </div>
             )}
           </div>
@@ -1128,9 +1287,11 @@ function App() {
               className="flex items-center gap-3 hover:opacity-80 transition-opacity btn-ripple micro-bounce"
               aria-label="Home"
             >
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">
-                L
-              </div>
+              <img
+                src="/favicon.ico"
+                alt="Leo Interview Logo"
+                className="w-10 h-10 rounded-lg"
+              />
               <h1 className="text-lg font-bold text-slate-900">{tr('app_title', language)}</h1>
             </button>
           </div>
@@ -1150,26 +1311,35 @@ function App() {
                 className="pl-10 bg-slate-50 border-slate-200 focus:border-blue-500 focus:ring-blue-500"
                 aria-label={`Busca em ${tr('menu_'+activeSection, language)}`}
               />
-              {showSectionSearchDropdown && searchTerm && getFilteredData().length > 0 && (
-                <div className="absolute z-50 w-full mt-2 bg-white rounded-lg shadow-lg border border-slate-200 max-h-96 overflow-y-auto">
-                  {getFilteredData().map((item, index) => (
-                    <button
-                      key={index}
-                      onClick={() => {
-                        setSelectedItem(item);
-                        setShowSectionSearchDropdown(false);
-                        setSearchTerm('');
-                      }}
-                      className="w-full text-left px-4 py-3 hover:bg-slate-50 border-b border-slate-100 last:border-0"
-                    >
-                      <div className="font-medium text-slate-900">
-                        {item.name || (typeof item.title === 'string' ? item.title : t(item.title, language)) || (typeof item.question === 'string' ? item.question : t(item.question, language))}
-                      </div>
-                      <div className="text-xs text-slate-500 mt-1">
-                        {renderItemSubtitle(item)}
-                      </div>
-                    </button>
-                  ))}
+              {showSectionSearchDropdown && searchTerm && deepSearchCurrentSection(searchTerm).length > 0 && (
+                <div className="absolute z-50 w-full mt-2 bg-white rounded-lg shadow-lg border border-slate-200 max-h-96 overflow-y-auto custom-scrollbar">
+                  {deepSearchCurrentSection(searchTerm).slice(0, 10).map((result, index) => {
+                    const itemTitle = result.item.name ||
+                      (typeof result.item.title === 'string' ? result.item.title : t(result.item.title, language)) ||
+                      (typeof result.item.question === 'string' ? result.item.question : t(result.item.question, language));
+
+                    return (
+                      <button
+                        key={index}
+                        onClick={() => {
+                          setSelectedItem(result.item);
+                          setShowSectionSearchDropdown(false);
+                          setSearchTerm('');
+                        }}
+                        className="w-full text-left px-4 py-3 hover:bg-slate-50 border-b border-slate-100 last:border-0 transition-colors"
+                      >
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-xs font-medium text-blue-600">
+                            {itemTitle}
+                          </span>
+                        </div>
+                        <div
+                          className="text-sm text-slate-700 line-clamp-2"
+                          dangerouslySetInnerHTML={{ __html: highlightText(result.excerpt, searchTerm) }}
+                        />
+                      </button>
+                    );
+                  })}
                 </div>
               )}
             </div>
