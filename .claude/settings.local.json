@@ -20,7 +20,9 @@
       "Bash(do echo -e \"\\n$dir:\")",
       "Bash(do echo \"=== $commit ===\")",
       "Bash(do echo \"Verificando $commit...\" git show $commit:src/App.jsx)",
-      "Bash(echo:*)"
+      "Bash(echo:*)",
+      "Bash(rm:*)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []

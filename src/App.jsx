@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Search, Timer, Globe, User, Briefcase, Target, MessageCircle, FileText, ChevronRight, Play, Pause, RotateCcw, Star, Clock, Building, Calendar, Award, TrendingUp } from 'lucide-react';
 import { Button } from './components/ui/button';
 import { Input } from './components/ui/input';
