@@ -347,23 +347,6 @@ function App() {
 
     return (
       <div className="w-80 bg-gradient-to-b from-slate-50 to-white border-r border-slate-200 flex flex-col h-screen">
-        {/* Logo and Title */}
-        <div className="p-4 border-b border-slate-200">
-          <div className="flex items-center gap-3">
-            <img
-              src="/favicon.ico"
-              alt="Leo Interview Logo"
-              className="w-10 h-10 rounded-lg"
-            />
-            <div>
-              <h1 className="text-lg font-bold text-slate-900">{tr('app_title', language)}</h1>
-              <p className="text-xs text-slate-600">
-                {language === 'pt' ? 'Preparação para Entrevistas' : 'Interview Preparation'}
-              </p>
-            </div>
-          </div>
-        </div>
-
         {/* Global Search */}
         <div className="p-6 border-b border-slate-200">
           <label className="text-xs font-semibold text-slate-500 tracking-wide mb-2 block">
@@ -488,13 +471,18 @@ function App() {
 
   // Render items list
   const renderItemsList = () => {
-    const filteredData = getFilteredData();
-    
+    let filteredData = getFilteredData();
+
+    // Reverse order for experiences (newest first)
+    if (activeSection === 'experiences') {
+      filteredData = [...filteredData].reverse();
+    }
+
     return (
       <div className="flex-1 overflow-hidden">
         <ScrollArea className="h-full">
           <div className="p-8">
-            <div className="mb-8">
+            <div className="mb-6">
               <h2 className="text-3xl font-bold text-slate-900 mb-2">
                 {getSectionTitle()}
               </h2>
@@ -503,15 +491,15 @@ function App() {
               </p>
             </div>
 
-            <div className="grid gap-6">
+            <div className="grid gap-4">
               {filteredData.map((item, index) => (
-                <Card 
-                  key={item.id} 
+                <Card
+                  key={item.id}
                   className="group cursor-pointer card-hover hover-lift animate-fade-in-up border-slate-200 hover:border-blue-300"
                   onClick={() => setSelectedItem(item)}
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
-                  <CardHeader className="pb-4">
+                  <CardHeader className="pb-2">
                     <div className="flex items-start justify-between">
                       <div className="flex items-center gap-4">
                         {renderItemIcon(item)}
@@ -527,8 +515,8 @@ function App() {
                       <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-blue-600 transition-colors" />
                     </div>
                   </CardHeader>
-                  
-                  <CardContent className="pt-0">
+
+                  <CardContent className="pt-2">
                     <p className="text-slate-700 mb-4 line-clamp-3">
                       {(() => {
                         // Safely compute a preview text supporting bilingual structures

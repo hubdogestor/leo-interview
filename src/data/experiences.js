@@ -39,11 +39,16 @@ export const experiencesData = {
     period: '2009-2015',
     location: { pt: 'América Latina', en: 'Latin America' },
     role: { pt: 'Gerente de Programas & PMO', en: 'Programs & PMO Manager' },
+    sector: { pt: 'Telecom & Infrastructure', en: 'Telecom & Infrastructure' },
     icon: '🏢',
     color: 'bg-red-500',
     summary: {
       pt: 'Líder global em TIC (170+ países; $90B+ receita). Responsável por programas turn‑key para grandes operadoras.',
       en: 'Global ICT leader (170+ countries; $90B+ revenue). Responsible for turn‑key programs for major carriers.'
+    },
+    overview: {
+      pt: 'Líder global em TIC (170+ países; $90B+ receita). Responsável por programas turnkey para grandes operadoras.',
+      en: 'Global ICT leader (170+ countries; $90B+ revenue). Responsible for turnkey programs for major carriers.'
     },
     keyAchievements: {
       pt: [
@@ -127,13 +132,18 @@ export const experiencesData = {
     title: { pt: 'HSBC & Bradesco', en: 'HSBC & Bradesco' },
     subtitle: { pt: 'Transformação Digital Bancária', en: 'Banking & Digital Transformation' },
     period: '2015-2018',
-    location: { pt: 'Global', en: 'Global' },
-    role: { pt: 'PMO Manager & Agile Leader', en: 'PMO Manager & Agile Leader' },
+    location: { pt: 'São Paulo, Brasil', en: 'São Paulo, Brazil' },
+    role: { pt: 'Gerente de Programas Digitais', en: 'Digital Programs Manager' },
+    sector: { pt: 'Banking & Digital Transformation', en: 'Banking & Digital Transformation' },
     icon: '🏦',
     color: 'bg-blue-600',
     summary: {
       pt: 'Um dos maiores bancos globais / maior banco privado brasileiro. Portfólio RBWM e migração crítica.',
       en: 'One of the largest global banks / major Brazilian private bank. RBWM portfolio & critical migration.'
+    },
+    overview: {
+      pt: 'Um dos maiores bancos do mundo (60+ países, $2.9T ativos) / Maior banco privado do Brasil ($1.7T ativos; 60+ milhões de clientes).',
+      en: 'One of the world largest banks (60+ countries, $2.9T assets) / Brazil largest private bank ($1.7T assets; 60+ million clients).'
     },
     keyAchievements: {
       pt: [
@@ -186,12 +196,17 @@ export const experiencesData = {
     id: 'sicredi',
     title: { pt: 'Sicredi', en: 'Sicredi' },
     subtitle: { pt: 'Cooperativismo & Fintech', en: 'Cooperative Banking & Fintech' },
-    period: '2018-2021',
-    location: { pt: 'Brasil', en: 'Brazil' },
-    role: { pt: 'Product Strategist', en: 'Product Strategist' },
+    period: '2018-2020',
+    location: { pt: 'Porto Alegre, Brasil', en: 'Porto Alegre, Brazil' },
+    role: { pt: 'Head de Produtos Digitais', en: 'Head of Digital Products' },
+    sector: { pt: 'Cooperative Banking & Fintech', en: 'Cooperative Banking & Fintech' },
     icon: '🤝',
     color: 'bg-green-600',
-    summary: { pt: '1ª instituição financeira cooperativa do Brasil (6.4M+ associados).', en: 'Brazil’s first cooperative financial institution (6.4M+ members).' },
+    summary: { pt: '1ª instituição financeira cooperativa do Brasil (6.4M+ associados).', en: 'Brazil first cooperative financial institution (6.4M+ members).' },
+    overview: {
+      pt: 'Maior sistema cooperativo de crédito da América Latina (4+ milhões de associados, $80B+ ativos).',
+      en: 'Latin America\'s largest cooperative credit system (4+ million members, $80B+ assets).'
+    },
     keyAchievements: {
       pt: [ '15+ produtos digitais', 'Adoção Woop +25% ($50M)', 'ML credit scoring & fraude', 'Board advisor transformação', 'Avaliador Inovar Juntos' ],
       en: [ '15+ digital products', 'Woop adoption +25% ($50M)', 'ML credit scoring & fraud', 'Board advisor transformation', 'Inovar Juntos evaluator' ]
@@ -230,13 +245,18 @@ export const experiencesData = {
   unimed: {
     id: 'unimed',
     title: { pt: 'Unimed', en: 'Unimed' },
-    subtitle: { pt: 'Healthcare & Estratégia', en: 'Healthcare & Strategy' },
-    period: '2021-2024',
+    subtitle: { pt: 'Healthcare & Inovação Digital', en: 'Healthcare & Digital Innovation' },
+    period: '2020-2023',
     location: { pt: 'Porto Alegre, Brasil', en: 'Porto Alegre, Brazil' },
-    role: { pt: 'Strategy Advisor / Group Product Manager', en: 'Strategy Advisor / Group Product Manager' },
+    role: { pt: 'Gerente de Inovação & Produtos Digitais', en: 'Innovation & Digital Products Manager' },
+    sector: { pt: 'Healthcare & Digital Innovation', en: 'Healthcare & Digital Innovation' },
     icon: '🏥',
     color: 'bg-teal-600',
     summary: { pt: 'Maior cooperativa de saúde do Sul (695k associados).', en: 'Largest southern Brazil health cooperative (695k members).' },
+    overview: {
+      pt: 'Maior sistema cooperativo de saúde do mundo (18+ milhões de beneficiários, $20B+ receita).',
+      en: 'World largest cooperative healthcare system (18+ million beneficiaries, $20B+ revenue).'
+    },
     keyAchievements: {
       pt: [ '4 produtos (5% receita)', 'EBITDA +22%', 'NPS +6% & churn -15%', 'AI triage sinistros -30%', 'Frameworks OKR/KPI' ],
       en: [ '4 products (5% revenue)', 'EBITDA +22%', 'NPS +6% & churn -15%', 'AI claims triage -30%', 'OKR/KPI frameworks' ]
@@ -275,13 +295,18 @@ export const experiencesData = {
   sefaz: {
     id: 'sefaz',
     title: { pt: 'SEFAZ-RS', en: 'SEFAZ-RS' },
-    subtitle: { pt: 'Governo & Setor Público', en: 'Government & Public Sector' },
-    period: '2024-Present',
-    location: { pt: 'RS, Brasil', en: 'RS, Brazil' },
-    role: { pt: 'Advisor (CAGE / Gabinete Executivo)', en: 'Advisor (CAGE / Executive Office)' },
+    subtitle: { pt: 'Governo & Transformação Digital', en: 'Government & Digital Transformation' },
+    period: '2023-Present',
+    location: { pt: 'Porto Alegre, Brasil', en: 'Porto Alegre, Brazil' },
+    role: { pt: 'Coordenador de Transformação Digital', en: 'Digital Transformation Coordinator' },
+    sector: { pt: 'Government & Digital Transformation', en: 'Government & Digital Transformation' },
     icon: '🏛️',
     color: 'bg-purple-600',
     summary: { pt: 'Secretaria da Fazenda responsável pela gestão fiscal do Estado.', en: 'State Treasury responsible for fiscal management.' },
+    overview: {
+      pt: 'Secretaria da Fazenda do Rio Grande do Sul - Responsável por $40B+ em arrecadação anual.',
+      en: 'Rio Grande do Sul State Treasury - Responsible for $40B+ in annual tax collection.'
+    },
     keyAchievements: {
       pt: [ 'PMO Profisco II (IDB)', 'Value-based management & OKRs', 'Portal PMO executivo', 'AI-readiness fiscal', '$1.4M eficiência' ],
       en: [ 'Profisco II PMO (IDB)', 'Value-based management & OKRs', 'Executive PMO portal', 'Fiscal AI-readiness', '$1.4M efficiency' ]
