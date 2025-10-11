@@ -43,7 +43,12 @@ export const uiStrings = {
     score: 'Score',
     dataset_updated: 'Data set atualizado',
     sections_label: 'SEÇÕES',
-    back_to_top: 'Topo'
+    back_to_top: 'Topo',
+    global_search: 'Busca Global',
+    section_search: 'Buscar na seção',
+    my_questions: 'Minhas Perguntas',
+    home: 'Início',
+    app_title: 'Leo Interview App'
   },
   en: {
     timer: 'Timer',
@@ -87,7 +92,12 @@ export const uiStrings = {
     score: 'Score',
     dataset_updated: 'Dataset updated',
     sections_label: 'SECTIONS',
-    back_to_top: 'Top'
+    back_to_top: 'Top',
+    global_search: 'Global Search',
+    section_search: 'Search in section',
+    my_questions: 'My Questions',
+    home: 'Home',
+    app_title: 'Leo Interview App'
   }
 };
 

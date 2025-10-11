@@ -14,6 +14,7 @@ import { competenciesData } from './data/competencies';
 import { profilesData } from './data/profiles';
 import icebreakerData from './data/icebreaker';
 import speechFullCVData from './data/speechFullCV';
+import myQuestionsData from './data/myQuestions';
 import { t, tArray } from './lib/i18n';
 import { tr } from './locales/strings';
 
@@ -26,11 +27,47 @@ function App() {
   const [language, setLanguage] = useState('pt');
   const [timerSeconds, setTimerSeconds] = useState(0);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
-  // Layout v2.0 style (sidebar not collapsible) – removed collapsible state
+  const [showSectionSearchDropdown, setShowSectionSearchDropdown] = useState(false);
+  const [showGlobalSearchDropdown, setShowGlobalSearchDropdown] = useState(false);
 
-  // Refs for Speech CV scroll functionality
+  // Refs
   const topRef = useRef(null);
   const [activeHeading, setActiveHeading] = useState(0);
+  const sectionSearchRef = useRef(null);
+  const globalSearchRef = useRef(null);
+
+  // Speech CV - track headings for scroll
+  useEffect(() => {
+    if (activeSection !== 'speechcv' || !selectedItem) return;
+
+    const content = t(selectedItem.content, language);
+    const paragraphs = content.split('\n\n');
+    const headingIndexes = paragraphs
+      .map((p, i) => (p.startsWith('**') && p.endsWith('**')) ? i : -1)
+      .filter(i => i !== -1);
+
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          const idx = parseInt(e.target.getAttribute('data-h-idx') || '0', 10);
+          setActiveHeading(idx);
+        }
+      });
+    }, { rootMargin: '-40% 0px -50% 0px', threshold: [0, 1] });
+
+    // Small delay to ensure DOM elements are rendered
+    const timeoutId = setTimeout(() => {
+      headingIndexes.forEach((_, i) => {
+        const el = document.getElementById(`speech-h-${i}`);
+        if (el) obs.observe(el);
+      });
+    }, 100);
+
+    return () => {
+      clearTimeout(timeoutId);
+      obs.disconnect();
+    };
+  }, [selectedItem, language, activeSection]);
 
   // Timer functionality - optimized to avoid recreating interval on every second
   useEffect(() => {
@@ -58,6 +95,34 @@ function App() {
     setIsTimerRunning(false);
   }, []);
 
+  // Handle click outside search fields to close dropdowns and clear search
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (sectionSearchRef.current && !sectionSearchRef.current.contains(event.target)) {
+        setShowSectionSearchDropdown(false);
+        setSearchTerm('');
+      }
+      if (globalSearchRef.current && !globalSearchRef.current.contains(event.target)) {
+        setShowGlobalSearchDropdown(false);
+        setGlobalSearchTerm('');
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Home button - clear all filters and selections
+  const handleHomeClick = useCallback(() => {
+    setActiveSection('experiences');
+    setSelectedItem(null);
+    setSelectedCase(null);
+    setSearchTerm('');
+    setGlobalSearchTerm('');
+    setShowSectionSearchDropdown(false);
+    setShowGlobalSearchDropdown(false);
+  }, []);
+
   // Get current data based on active section
   const getCurrentData = () => {
     switch (activeSection) {
@@ -71,6 +136,8 @@ function App() {
         return icebreakerData;
       case 'speechcv':
         return speechFullCVData;
+      case 'myquestions':
+        return myQuestionsData;
       default:
         return experiencesData;
     }
@@ -144,61 +211,55 @@ function App() {
       { id: 'speechcv', icon: FileText, label: tr('menu_speechcv', language), count: Object.keys(speechFullCVData).length }
     ];
 
+    const globalResults = getFilteredData();
+
     return (
       <div className="w-80 bg-gradient-to-b from-slate-50 to-white border-r border-slate-200 flex flex-col h-screen">
-        {/* Header */}
+        {/* Global Search */}
         <div className="p-6 border-b border-slate-200">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold text-xl">
-              L
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-slate-900">Leo Interview Prep</h1>
-              <p className="text-sm text-slate-600">Preparação Universal para Entrevistas</p>
-            </div>
-          </div>
-
-          {/* Timer */}
-          <div className={`bg-white rounded-lg border border-slate-200 p-4 ${isTimerRunning ? 'timer-pulse running' : ''}`}>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-slate-700">{tr('timer', language)}</span>
-              <div className="flex items-center gap-1">
-                <Clock className={`w-4 h-4 ${isTimerRunning ? 'text-blue-500' : 'text-slate-500'}`} />
-                <span className={`text-lg font-mono font-bold ${isTimerRunning ? 'text-blue-600' : 'text-slate-900'}`}>{formatTime(timerSeconds)}</span>
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <Button
-                size="sm"
-                variant={isTimerRunning ? "destructive" : "default"}
-                onClick={() => setIsTimerRunning(!isTimerRunning)}
-                className="flex-1 btn-ripple micro-bounce"
-              >
-                {isTimerRunning ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-              </Button>
-              <Button size="sm" variant="outline" onClick={resetTimer} className="btn-ripple micro-bounce">
-                <RotateCcw className="w-4 h-4" />
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {/* Search */}
-        <div className="p-6 border-b border-slate-200">
-          <div className="relative">
+          <label className="text-xs font-semibold text-slate-500 tracking-wide mb-2 block">
+            {tr('global_search', language).toUpperCase()}
+          </label>
+          <div className="relative" ref={globalSearchRef}>
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
             <Input
-              placeholder={tr('search_placeholder', language)}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder={tr('global_search_placeholder', language)}
+              value={globalSearchTerm}
+              onChange={(e) => {
+                setGlobalSearchTerm(e.target.value);
+                setShowGlobalSearchDropdown(e.target.value.length > 0);
+              }}
+              onFocus={() => setShowGlobalSearchDropdown(globalSearchTerm.length > 0)}
               className="pl-10 bg-white border-slate-200 focus:border-blue-500 focus:ring-blue-500"
-              aria-label="Campo de busca para filtrar conteúdo"
+              aria-label="Busca global em todo o conteúdo"
             />
+            {showGlobalSearchDropdown && globalSearchTerm && globalResults.length > 0 && (
+              <div className="absolute z-50 w-full mt-2 bg-white rounded-lg shadow-lg border border-slate-200 max-h-96 overflow-y-auto">
+                {globalResults.map((item, index) => (
+                  <button
+                    key={index}
+                    onClick={() => {
+                      setSelectedItem(item);
+                      setShowGlobalSearchDropdown(false);
+                      setGlobalSearchTerm('');
+                    }}
+                    className="w-full text-left px-4 py-3 hover:bg-slate-50 border-b border-slate-100 last:border-0"
+                  >
+                    <div className="font-medium text-slate-900 text-sm">
+                      {item.name || (typeof item.title === 'string' ? item.title : t(item.title, language)) || (typeof item.question === 'string' ? item.question : t(item.question, language))}
+                    </div>
+                    <div className="text-xs text-slate-500 mt-1">
+                      {renderItemSubtitle(item)}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
         {/* Navigation */}
-        <div className="p-6">
+        <div className="flex-1 overflow-y-auto p-6">
           <nav className="space-y-2">
             {menuItems.map((item) => {
               const Icon = item.icon;
@@ -210,6 +271,7 @@ function App() {
                     setActiveSection(item.id);
                     setSelectedItem(null);
                     setSelectedCase(null);
+                    setSearchTerm('');
                   }}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left sidebar-item btn-ripple micro-bounce ${
                     isActive
@@ -228,16 +290,20 @@ function App() {
           </nav>
         </div>
 
-        {/* Language Toggle */}
-        <div className="mt-auto p-6 border-t border-slate-200">
+        {/* My Questions Button */}
+        <div className="p-6 border-t border-slate-200">
           <Button
-            variant="outline"
+            variant={activeSection === 'myquestions' ? "default" : "outline"}
             size="sm"
-            onClick={() => setLanguage(language === 'pt' ? 'en' : 'pt')}
+            onClick={() => {
+              setActiveSection('myquestions');
+              setSelectedItem(null);
+              setSelectedCase(null);
+            }}
             className="w-full flex items-center gap-2 btn-ripple micro-bounce hover-scale"
           >
-            <Globe className="w-4 h-4" />
-            {language === 'pt' ? 'PT' : 'EN'}
+            <MessageCircle className="w-4 h-4" />
+            {tr('my_questions', language)}
           </Button>
         </div>
       </div>
@@ -249,9 +315,13 @@ function App() {
     if (selectedCase) {
       return renderCaseDetail();
     }
-    
+
     if (selectedItem) {
       return renderItemDetail();
+    }
+
+    if (activeSection === 'myquestions') {
+      return renderMyQuestions();
     }
 
     return renderItemsList();
@@ -350,7 +420,8 @@ function App() {
       competencies: tr('competencies_title', language),
       profiles: tr('profiles_title', language),
       icebreaker: tr('icebreaker_title', language),
-      speechcv: tr('speechcv_title', language)
+      speechcv: tr('speechcv_title', language),
+      myquestions: tr('my_questions', language)
     };
     return titles[activeSection] || 'Seção';
   };
@@ -361,7 +432,8 @@ function App() {
       competencies: tr('competencies_desc', language),
       profiles: tr('profiles_desc', language),
       icebreaker: tr('icebreaker_desc', language),
-      speechcv: tr('speechcv_desc', language)
+      speechcv: tr('speechcv_desc', language),
+      myquestions: language === 'pt' ? 'Perguntas estratégicas para entrevistadores' : 'Strategic questions for interviewers'
     };
     return descriptions[activeSection] || 'Descrição';
   };
@@ -892,25 +964,6 @@ function App() {
       .filter(i=>i!==-1);
     const headings = headingIndexes.map(i => paragraphs[i].replace(/\*\*/g,'').trim());
 
-    useEffect(()=>{
-      if (!selectedItem || activeSection !== 'speechcv') return;
-
-      const obs = new IntersectionObserver((entries)=>{
-        entries.forEach(e=>{
-          if (e.isIntersecting){
-            const idx = parseInt(e.target.getAttribute('data-h-idx')||'0',10);
-            setActiveHeading(idx);
-          }
-        });
-      }, {rootMargin:'-40% 0px -50% 0px', threshold:[0,1]});
-
-      headingIndexes.forEach((_,i)=>{
-        const el = document.getElementById(`speech-h-${i}`);
-        if (el) obs.observe(el);
-      });
-
-      return ()=> obs.disconnect();
-    }, [selectedItem, language, activeSection, headingIndexes]);
     const scrollToHeading = (idx) => {
       const el = document.getElementById(`speech-h-${idx}`);
       if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
@@ -1012,55 +1065,169 @@ function App() {
     );
   };
 
+  // Render My Questions section
+  const renderMyQuestions = () => {
+    const data = Object.values(myQuestionsData);
+
+    return (
+      <div className="flex-1 overflow-hidden">
+        <ScrollArea className="h-full">
+          <div className="p-8">
+            <div className="mb-8">
+              <h2 className="text-3xl font-bold text-slate-900 mb-2">
+                {tr('my_questions', language)}
+              </h2>
+              <p className="text-slate-600">
+                {language === 'pt'
+                  ? 'Perguntas estratégicas para fazer aos entrevistadores, organizadas por categoria'
+                  : 'Strategic questions to ask interviewers, organized by category'}
+              </p>
+            </div>
+
+            <div className="grid gap-6">
+              {data.map((category) => (
+                <Card key={category.id} className="hover-lift animate-fade-in-up">
+                  <CardHeader>
+                    <CardTitle className="text-xl text-slate-900">
+                      {t(category.category, language)}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {category.questions.map((q) => (
+                        <div key={q.id} className="border-l-4 border-l-blue-600 pl-4 py-2">
+                          <p className="font-medium text-slate-900 mb-1">
+                            {t(q.question, language)}
+                          </p>
+                          <p className="text-sm text-slate-600 italic">
+                            {t(q.context, language)}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </ScrollArea>
+      </div>
+    );
+  };
+
   return (
     <div className="flex h-screen bg-slate-50">
       {renderSidebar()}
       <div className="flex-1 flex flex-col">
-        {/* Header com busca global */}
+        {/* Header fixo */}
         <header className="h-16 bg-white border-b border-slate-200 flex items-center px-6 sticky top-0 z-30 shadow-sm">
-          <div className="flex items-center gap-4 flex-1">
-            {/* Busca global */}
-            <div className="flex-1 max-w-2xl">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
-                <Input
-                  placeholder={tr('global_search_placeholder', language)}
-                  value={globalSearchTerm}
-                  onChange={(e) => setGlobalSearchTerm(e.target.value)}
-                  className="pl-10 bg-slate-50 border-slate-200 focus:border-blue-500 focus:ring-blue-500 text-sm"
-                  aria-label="Busca global em todo o conteúdo"
-                />
+          {/* Left: Logo and Title (Home Button) */}
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleHomeClick}
+              className="flex items-center gap-3 hover:opacity-80 transition-opacity btn-ripple micro-bounce"
+              aria-label="Home"
+            >
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">
+                L
               </div>
+              <h1 className="text-lg font-bold text-slate-900">{tr('app_title', language)}</h1>
+            </button>
+          </div>
+
+          {/* Center: Section Search */}
+          <div className="flex-1 max-w-2xl mx-8" ref={sectionSearchRef}>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+              <Input
+                placeholder={`${tr('section_search', language)}: ${tr('menu_'+activeSection, language)}`}
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setShowSectionSearchDropdown(e.target.value.length > 0);
+                }}
+                onFocus={() => setShowSectionSearchDropdown(searchTerm.length > 0)}
+                className="pl-10 bg-slate-50 border-slate-200 focus:border-blue-500 focus:ring-blue-500"
+                aria-label={`Busca em ${tr('menu_'+activeSection, language)}`}
+              />
+              {showSectionSearchDropdown && searchTerm && getFilteredData().length > 0 && (
+                <div className="absolute z-50 w-full mt-2 bg-white rounded-lg shadow-lg border border-slate-200 max-h-96 overflow-y-auto">
+                  {getFilteredData().map((item, index) => (
+                    <button
+                      key={index}
+                      onClick={() => {
+                        setSelectedItem(item);
+                        setShowSectionSearchDropdown(false);
+                        setSearchTerm('');
+                      }}
+                      className="w-full text-left px-4 py-3 hover:bg-slate-50 border-b border-slate-100 last:border-0"
+                    >
+                      <div className="font-medium text-slate-900">
+                        {item.name || (typeof item.title === 'string' ? item.title : t(item.title, language)) || (typeof item.question === 'string' ? item.question : t(item.question, language))}
+                      </div>
+                      <div className="text-xs text-slate-500 mt-1">
+                        {renderItemSubtitle(item)}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Right: Timer and Language Selector */}
+          <div className="flex items-center gap-3">
+            {/* Timer */}
+            <div className={`flex items-center gap-2 bg-slate-100 rounded-lg px-3 py-2 ${isTimerRunning ? 'timer-pulse running' : ''}`}>
+              <Clock className={`w-4 h-4 ${isTimerRunning ? 'text-blue-500' : 'text-slate-500'}`} />
+              <span className={`font-mono text-sm font-bold ${isTimerRunning ? 'text-blue-600' : 'text-slate-900'}`}>
+                {formatTime(timerSeconds)}
+              </span>
+              <div className="flex gap-1 ml-1">
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => setIsTimerRunning(!isTimerRunning)}
+                  className="h-7 w-7 p-0 hover:bg-slate-200"
+                >
+                  {isTimerRunning ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3" />}
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={resetTimer}
+                  className="h-7 w-7 p-0 hover:bg-slate-200"
+                >
+                  <RotateCcw className="w-3 h-3" />
+                </Button>
+              </div>
+            </div>
+
+            {/* Language Toggle */}
+            <div className="flex rounded-lg border border-slate-200 overflow-hidden">
+              <button
+                onClick={() => setLanguage('pt')}
+                className={`px-3 py-2 text-sm font-medium transition-colors ${
+                  language === 'pt'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-white text-slate-700 hover:bg-slate-50'
+                }`}
+              >
+                PT
+              </button>
+              <button
+                onClick={() => setLanguage('en')}
+                className={`px-3 py-2 text-sm font-medium transition-colors ${
+                  language === 'en'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-white text-slate-700 hover:bg-slate-50'
+                }`}
+              >
+                EN
+              </button>
             </div>
           </div>
         </header>
-        
-        {/* Barra de seção com busca específica */}
-        <div className="h-12 bg-slate-50 border-b border-slate-200 flex items-center px-6">
-          <div className="flex items-center gap-4 flex-1">
-            <h2 className="text-sm font-medium text-slate-700">{tr('menu_'+activeSection, language)}</h2>
-            
-            {/* Busca específica da seção */}
-            <div className="flex-1 max-w-sm">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-3 h-3" />
-                <Input
-                  placeholder={`${tr('search_in', language)} ${tr('menu_'+activeSection, language).toLowerCase()}...`}
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-8 bg-white border-slate-200 focus:border-blue-500 focus:ring-blue-500 text-sm h-8"
-                  aria-label={`Busca específica em ${tr('menu_'+activeSection, language)}`}
-                />
-              </div>
-            </div>
-          </div>
-          
-          <div className="text-xs text-slate-400">
-            {globalSearchTerm && (
-              <span>{tr('filtered_by_global', language)}: "{globalSearchTerm}"</span>
-            )}
-          </div>
-        </div>
         
         <div className="flex-1 flex overflow-hidden">
           {renderMainContent()}
