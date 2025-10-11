@@ -22,7 +22,8 @@
       "Bash(do echo \"Verificando $commit...\" git show $commit:src/App.jsx)",
       "Bash(echo:*)",
       "Bash(rm:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(git rm:*)"
     ],
     "deny": [],
     "ask": []
