@@ -28,6 +28,10 @@ function App() {
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   // Layout v2.0 style (sidebar not collapsible) – removed collapsible state
 
+  // Refs for Speech CV scroll functionality
+  const topRef = useRef(null);
+  const [activeHeading, setActiveHeading] = useState(0);
+
   // Timer functionality - optimized to avoid recreating interval on every second
   useEffect(() => {
     let interval = null;
@@ -881,16 +885,16 @@ function App() {
 
   // Render speech CV detail
   const renderSpeechCVDetail = () => {
-    const topRef = useRef(null);
     const content = t(selectedItem.content, language);
     const paragraphs = content.split('\n\n');
     const headingIndexes = paragraphs
       .map((p,i)=> (p.startsWith('**') && p.endsWith('**')) ? i : -1)
       .filter(i=>i!==-1);
     const headings = headingIndexes.map(i => paragraphs[i].replace(/\*\*/g,'').trim());
-    const [activeHeading, setActiveHeading] = useState(0);
 
     useEffect(()=>{
+      if (!selectedItem || activeSection !== 'speechcv') return;
+
       const obs = new IntersectionObserver((entries)=>{
         entries.forEach(e=>{
           if (e.isIntersecting){
@@ -899,12 +903,14 @@ function App() {
           }
         });
       }, {rootMargin:'-40% 0px -50% 0px', threshold:[0,1]});
+
       headingIndexes.forEach((_,i)=>{
         const el = document.getElementById(`speech-h-${i}`);
         if (el) obs.observe(el);
       });
+
       return ()=> obs.disconnect();
-    }, [content, language]);
+    }, [selectedItem, language, activeSection, headingIndexes]);
     const scrollToHeading = (idx) => {
       const el = document.getElementById(`speech-h-${idx}`);
       if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
@@ -1010,21 +1016,11 @@ function App() {
     <div className="flex h-screen bg-slate-50">
       {renderSidebar()}
       <div className="flex-1 flex flex-col">
-        {/* Header fixo com busca global */}
+        {/* Header com busca global */}
         <header className="h-16 bg-white border-b border-slate-200 flex items-center px-6 sticky top-0 z-30 shadow-sm">
           <div className="flex items-center gap-4 flex-1">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">
-                L
-              </div>
-              <div>
-                <h1 className="text-lg font-bold text-slate-900">Leo Interview Prep</h1>
-                <p className="text-xs text-slate-600">Preparação Universal para Entrevistas</p>
-              </div>
-            </div>
-            
             {/* Busca global */}
-            <div className="flex-1 max-w-md ml-8">
+            <div className="flex-1 max-w-2xl">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
                 <Input
@@ -1036,36 +1032,6 @@ function App() {
                 />
               </div>
             </div>
-          </div>
-          
-          <div className="flex items-center gap-3">
-            {/* Timer */}
-            <div className={`flex items-center gap-2 bg-slate-100 rounded-lg px-3 py-1.5 ${isTimerRunning ? 'timer-pulse running' : ''}`}>
-              <Timer className="w-4 h-4" />
-              <span className="font-mono text-sm">{formatTime(timerSeconds)}</span>
-              <div className="flex gap-1">
-                <Button size="sm" variant="ghost" onClick={() => setIsTimerRunning(true)} className="h-6 w-6 p-0">
-                  <Play className="w-3 h-3" />
-                </Button>
-                <Button size="sm" variant="ghost" onClick={() => setIsTimerRunning(false)} className="h-6 w-6 p-0">
-                  <Pause className="w-3 h-3" />
-                </Button>
-                <Button size="sm" variant="ghost" onClick={resetTimer} className="h-6 w-6 p-0">
-                  <RotateCcw className="w-3 h-3" />
-                </Button>
-              </div>
-            </div>
-
-            {/* Language Toggle */}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setLanguage(language === 'pt' ? 'en' : 'pt')}
-              className="flex items-center gap-2"
-            >
-              <Globe className="w-4 h-4" />
-              {language === 'pt' ? 'PT' : 'EN'}
-            </Button>
           </div>
         </header>
         
