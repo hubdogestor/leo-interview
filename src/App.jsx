@@ -15,9 +15,10 @@ import { profilesData } from './data/profiles';
 import icebreakerData from './data/icebreaker';
 import speechFullCVData from './data/speechFullCV';
 import myQuestionsData from './data/myQuestions';
- { ThemeProvider, useTheme } from './contexts/ThemeContext.jsx';
+import { t, tArray } from './lib/i18n';
+import { tr } from './locales/strings';
 
-function App() {\n  // Theme context available if needed\n
+function App() {
   const [activeSection, setActiveSection] = useState('experiences');
   const [selectedItem, setSelectedItem] = useState(null);
   const [selectedCase, setSelectedCase] = useState(null);
@@ -345,13 +346,13 @@ function App() {\n  // Theme context available if needed\n
     const deepSearchResults = deepSearchAllSections(globalSearchTerm);
 
     return (
-      <aside role="navigation" aria-label="Primary" className="w-80 bg-gradient-to-b from-slate-50 to-white border-r border-slate-200 flex flex-col h-screen dark:bg-slate-900 dark:border-slate-800">
+      <div className="w-80 bg-gradient-to-b from-slate-50 to-white border-r border-slate-200 flex flex-col h-screen">
         {/* Global Search */}
         <div className="p-6 border-b border-slate-200">
           <label className="text-xs font-semibold text-slate-500 tracking-wide mb-2 block">
             {tr('global_search', language).toUpperCase()}
           </label>
-          <div className="relative" ref={globalSearchRef} role="search">
+          <div className="relative" ref={globalSearchRef}>
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
             <Input
               placeholder={tr('global_search_placeholder', language)}
@@ -447,7 +448,9 @@ function App() {\n  // Theme context available if needed\n
             {tr('my_questions', language)}
           </Button>
         </div>
-      </aside>\n    );\n  };
+      </div>
+    );
+  };
 
   // Render main content based on active section
   const renderMainContent = () => {
@@ -553,7 +556,9 @@ function App() {\n  // Theme context available if needed\n
             </div>
           </div>
         </ScrollArea>
-      </aside>\n    );\n  };
+      </div>
+    );
+  };
 
   // Helper functions for rendering
   const getSectionTitle = () => {
@@ -784,7 +789,9 @@ function App() {\n  // Theme context available if needed\n
             </Card>
           </div>
         </ScrollArea>
-      </aside>\n    );\n  };
+      </div>
+    );
+  };
 
   // Render case detail (STAR format)
   const renderCaseDetail = () => {
@@ -873,7 +880,9 @@ function App() {\n  // Theme context available if needed\n
             </div>
           </div>
         </ScrollArea>
-      </aside>\n    );\n  };
+      </div>
+    );
+  };
 
   // Render competency detail
   const renderCompetencyDetail = () => {
@@ -948,7 +957,9 @@ function App() {\n  // Theme context available if needed\n
             </div>
           </div>
         </ScrollArea>
-      </aside>\n    );\n  };
+      </div>
+    );
+  };
 
   // Render profile detail
   const renderProfileDetail = () => {
@@ -1033,7 +1044,9 @@ function App() {\n  // Theme context available if needed\n
             </div>
           </div>
         </ScrollArea>
-      </aside>\n    );\n  };
+      </div>
+    );
+  };
 
   // Render icebreaker detail
   const renderIcebreakerDetail = () => {
@@ -1085,7 +1098,9 @@ function App() {\n  // Theme context available if needed\n
             </div>
           </div>
         </ScrollArea>
-      </aside>\n    );\n  };
+      </div>
+    );
+  };
 
   // Render speech CV detail
   const renderSpeechCVDetail = () => {
@@ -1193,7 +1208,9 @@ function App() {\n  // Theme context available if needed\n
             </div>
           </div>
         </ScrollArea>
-      </aside>\n    );\n  };
+      </div>
+    );
+  };
 
   // Render My Questions section
   const renderMyQuestions = () => {
@@ -1241,11 +1258,12 @@ function App() {\n  // Theme context available if needed\n
             </div>
           </div>
         </ScrollArea>
-      </aside>\n    );\n  };
+      </div>
+    );
+  };
 
   return (
     <div className="flex h-screen bg-slate-50">
-    <ThemeProvider>
       {renderSidebar()}
       <div className="flex-1 flex flex-col">
         {/* Header fixo */}
@@ -1327,7 +1345,7 @@ function App() {\n  // Theme context available if needed\n
                 <Button
                   size="sm"
                   variant="ghost"
-                  onClick={() => setIsTimerRunning(!isTimerRunning)} aria-label="Play/Pause timer"
+                  onClick={() => setIsTimerRunning(!isTimerRunning)}
                   className="h-7 w-7 p-0 hover:bg-slate-200"
                 >
                   {isTimerRunning ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3" />}
@@ -1335,7 +1353,7 @@ function App() {\n  // Theme context available if needed\n
                 <Button
                   size="sm"
                   variant="ghost"
-                  onClick={resetTimer} aria-label="Reset timer"
+                  onClick={resetTimer}
                   className="h-7 w-7 p-0 hover:bg-slate-200"
                 >
                   <RotateCcw className="w-3 h-3" />
@@ -1374,16 +1392,7 @@ function App() {\n  // Theme context available if needed\n
         </div>
       </div>
     </div>
-    </ThemeProvider>
   );
 }
 
 export default App;
-
-
-
-
-
-
-
-
