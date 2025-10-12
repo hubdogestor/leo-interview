@@ -1,0 +1,122 @@
+function App() {
+  const [activeSection, setActiveSection] = useState('experiences');
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedCase, setSelectedCase] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [globalSearchTerm, setGlobalSearchTerm] = useState('');
+  const [language, setLanguage] = useState('pt');
+  const [timerSeconds, setTimerSeconds] = useState(0);
+  const [isTimerRunning, setIsTimerRunning] = useState(false);
+  const [showSectionSearchDropdown, setShowSectionSearchDropdown] = useState(false);
+  const [showGlobalSearchDropdown, setShowGlobalSearchDropdown] = useState(false);
+
+  // Refs
+  const topRef = useRef(null);
+  const [activeHeading, setActiveHeading] = useState(0);
+  const sectionSearchRef = useRef(null);
+  const globalSearchRef = useRef(null);
+
+  // Speech CV - track headings for scroll
+  useEffect(() => {
+    if (activeSection !== 'speechcv' || !selectedItem) return;
+
+    const content = t(selectedItem.content, language);
+    const paragraphs = content.split('\n\n');
+    const headingIndexes = paragraphs
+      .map((p, i) => (p.startsWith('**') && p.endsWith('**')) ? i : -1)
+      .filter(i => i !== -1);
+
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          const idx = parseInt(e.target.getAttribute('data-h-idx') || '0', 10);
+          setActiveHeading(idx);
+        }
+      });
+    }, { rootMargin: '-40% 0px -50% 0px', threshold: [0, 1] });
+
+    // Small delay to ensure DOM elements are rendered
+    const timeoutId = setTimeout(() => {
+      headingIndexes.forEach((_, i) => {
+        const el = document.getElementById(`speech-h-${i}`);
+        if (el) obs.observe(el);
+      });
+    }, 100);
+
+    return () => {
+      clearTimeout(timeoutId);
+      obs.disconnect();
+    };
+  }, [selectedItem, language, activeSection]);
+
+  // Timer functionality - optimized to avoid recreating interval on every second
+  useEffect(() => {
+    let interval = null;
+    if (isTimerRunning) {
+      interval = setInterval(() => {
+        setTimerSeconds(seconds => seconds + 1);
+      }, 1000);
+    }
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [isTimerRunning]);
+
+  const formatTime = useCallback((seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  }, []);
+
+  const resetTimer = useCallback(() => {
+    setTimerSeconds(0);
+    setIsTimerRunning(false);
+  }, []);
+
+  // Handle click outside search fields to close dropdowns and clear search
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (sectionSearchRef.current && !sectionSearchRef.current.contains(event.target)) {
+        setShowSectionSearchDropdown(false);
+        setSearchTerm('');
+      }
+      if (globalSearchRef.current && !globalSearchRef.current.contains(event.target)) {
+        setShowGlobalSearchDropdown(false);
+        setGlobalSearchTerm('');
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Home button - clear all filters and selections
+  const handleHomeClick = useCallback(() => {
+    setActiveSection('experiences');
+    setSelectedItem(null);
+    setSelectedCase(null);
+    setSearchTerm('');
+    setGlobalSearchTerm('');
+    setShowSectionSearchDropdown(false);
+    setShowGlobalSearchDropdown(false);
+  }, []);
+
+  // Get current data based on active section
+  const getCurrentData = () => {
+    switch (activeSection) {
+      case 'experiences':
+        return experiencesData;
+      case 'competencies':
+        return competenciesData;
+      case 'profiles':
+        return profilesData;
+      case 'icebreaker':
+        return icebreakerData;
+      case 'speechcv':
+        return speechFullCVData;
+      case 'myquestions':
+        return myQuestionsData;
+      default:
+        return experiencesData;

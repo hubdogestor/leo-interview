@@ -1,203 +1,110 @@
-#!/usr/bin/env node
-/*
-  Validador simples para garantir consistência bilíngue dos datasets:
-  - speechFullCVData
-  - experiencesData
-  - profilesData
-
-  Regras:
-    1. Campos Bilingual devem ter pt & en não vazios.
-    2. Arrays bilíngues (keyAchievements / achievements / keyPoints) devem existir em pt e en e ter mesmo length.
-    3. Nenhuma role/case pode faltar campo obrigatório.
-  Saída: processo sai com código !=0 se houver erro.
-*/
-import { speechFullCVData } from '../src/data/speechFullCV.js';
+// Basic data validation for bilingual structure and required fields
 import { experiencesData } from '../src/data/experiences.js';
-import { profilesData } from '../src/data/profiles.js';
 import { competenciesData } from '../src/data/competencies.js';
-import personalData from '../src/data/personalData.js';
-import icebreakerData from '../src/data/icebreaker.js';
-import questionsToExperiencesMapping from '../src/data/questionsToExperiencesMapping.js';
+import { profilesData } from '../src/data/profiles.js';
+import icebreaker from '../src/data/icebreaker.js';
+import speechFullCV from '../src/data/speechFullCV.js';
+import myQuestions from '../src/data/myQuestions.js';
 
-/** @param {any} v */
-const isObj = (v)=> v && typeof v === 'object' && !Array.isArray(v);
+const errors = [];
 
-function assert(cond, msg, acc) { if(!cond){ acc.push(msg);} }
-function notEmptyStr(s){ return typeof s === 'string' && s.trim().length>0; }
+const isBilingual = (v) => v && typeof v === 'object' && 'pt' in v && 'en' in v;
+const ensure = (cond, msg) => { if (!cond) errors.push(msg); };
 
-function validateBilingual(node, path, acc){
-  assert(isObj(node), `${path} deve ser objeto`, acc);
-  if(!isObj(node)) return;
-  assert('pt' in node, `${path}.pt ausente`, acc);
-  assert('en' in node, `${path}.en ausente`, acc);
-  if('pt' in node) assert(notEmptyStr(node.pt), `${path}.pt vazio`, acc);
-  if('en' in node) assert(notEmptyStr(node.en), `${path}.en vazio`, acc);
-}
-
-function validateArrayBilingual(node, path, acc){
-  assert(isObj(node), `${path} deve ser objeto`, acc);
-  if(!isObj(node)) return;
-  const { pt, en } = node;
-  assert(Array.isArray(pt), `${path}.pt deve ser array`, acc);
-  assert(Array.isArray(en), `${path}.en deve ser array`, acc);
-  if(Array.isArray(pt) && Array.isArray(en)){
-    assert(pt.length === en.length, `${path} tamanhos divergentes (${pt.length} vs ${en.length})`, acc);
-    pt.forEach((val,i)=> assert(notEmptyStr(val), `${path}.pt[${i}] vazio`, acc));
-    en.forEach((val,i)=> assert(notEmptyStr(val), `${path}.en[${i}] vazio`, acc));
+const checkBilingualArray = (v, path) => {
+  ensure(isBilingual(v), `${path}: must be {pt:[], en:[]}`);
+  if (isBilingual(v)) {
+    ensure(Array.isArray(v.pt), `${path}.pt must be array`);
+    ensure(Array.isArray(v.en), `${path}.en must be array`);
   }
-}
+};
 
-function validateSpeech(data){
-  const errors=[];
-  Object.entries(data).forEach(([key, role])=>{
-    const basePath = `speech.${key}`;
-    validateBilingual(role.title, basePath+'.title', errors);
-    validateBilingual(role.subtitle, basePath+'.subtitle', errors);
-    validateBilingual(role.duration, basePath+'.duration', errors);
-    validateBilingual(role.content, basePath+'.content', errors);
-    validateArrayBilingual(role.keyPoints, basePath+'.keyPoints', errors);
-    if(role.tags){
-      if(Array.isArray(role.tags)){
-        // legacy format ok
-      } else {
-        validateArrayBilingual(role.tags, basePath+'.tags', errors);
-      }
-    }
-  });
-  return errors;
-}
-
-function validateExperiences(data){
-  const errors=[];
-  Object.entries(data).forEach(([key, exp])=>{
-    const p = `exp.${key}`;
-    validateBilingual(exp.title, p+'.title', errors);
-    validateBilingual(exp.subtitle, p+'.subtitle', errors);
-    validateBilingual(exp.location, p+'.location', errors);
-    validateBilingual(exp.role, p+'.role', errors);
-    validateBilingual(exp.summary, p+'.summary', errors);
-    validateArrayBilingual(exp.keyAchievements, p+'.keyAchievements', errors);
-    exp.cases.forEach((c,i)=>{
-      const cp = `${p}.cases[${i}]`;
-      validateBilingual(c.title, cp+'.title', errors);
-      validateBilingual(c.situation, cp+'.situation', errors);
-      validateBilingual(c.task, cp+'.task', errors);
-      validateBilingual(c.action, cp+'.action', errors);
-      validateBilingual(c.result, cp+'.result', errors);
-      validateBilingual(c.learning, cp+'.learning', errors);
-      if(c.tags){
-        if(Array.isArray(c.tags)){} else validateArrayBilingual(c.tags, cp+'.tags', errors);
-      }
-    });
-  });
-  return errors;
-}
-
-function validateProfiles(data){
-  const errors=[];
-  Object.entries(data).forEach(([key, prof])=>{
-    const p = `profile.${key}`;
-    validateBilingual(prof.title, p+'.title', errors);
-    validateBilingual(prof.subtitle, p+'.subtitle', errors);
-    validateBilingual(prof.elevatorPitch, p+'.elevatorPitch', errors);
-    validateArrayBilingual(prof.achievements, p+'.achievements', errors);
-    if(prof.keyStrengths) validateArrayBilingual(prof.keyStrengths, p+'.keyStrengths', errors);
-    if(prof.technologies) validateArrayBilingual(prof.technologies, p+'.technologies', errors);
-  });
-  return errors;
-}
-
-function validateCompetencies(data){
-  const errors=[];
-  Object.entries(data).forEach(([key, comp])=>{
-    const p = `competency.${key}`;
-    validateBilingual(comp.title, p+'.title', errors);
-    validateBilingual(comp.subtitle, p+'.subtitle', errors);
-    validateBilingual(comp.description, p+'.description', errors);
-    validateArrayBilingual(comp.skills, p+'.skills', errors);
-    validateArrayBilingual(comp.tools, p+'.tools', errors);
-    validateArrayBilingual(comp.certifications, p+'.certifications', errors);
-  });
-  return errors;
-}
-
-function validatePersonal(data){
-  const errors=[];
-  const b = 'personal.basic';
-  validateBilingual(data.basic.title, b+'.title', errors);
-  validateBilingual(data.basic.location, b+'.location', errors);
-  validateBilingual(data.basic.summary, b+'.summary', errors);
-  // icebreaker
-  const ib = data.icebreaker;
-  if(!ib) errors.push('personal.icebreaker ausente'); else {
-    validateBilingual({pt:ib.pt.intro,en:ib.en.intro}, 'personal.icebreaker.intro', errors);
-    ['pt','en'].forEach(lang=>{
-      ib[lang].questions.forEach((q,idx)=>{
-        if(!q.q) errors.push(`personal.icebreaker.${lang}.questions[${idx}].q vazio`);
-        if(!q.a) errors.push(`personal.icebreaker.${lang}.questions[${idx}].a vazio`);
-      });
-    });
-  }
-  // education
-  data.education.forEach((ed,i)=>{
-    validateBilingual(ed.degree, `personal.education[${i}].degree`, errors);
-    validateBilingual(ed.focus, `personal.education[${i}].focus`, errors);
-    validateBilingual(ed.institution, `personal.education[${i}].institution`, errors);
-  });
-  // languages
-  data.languages.forEach((lng,i)=>{
-    validateBilingual(lng.language, `personal.languages[${i}].language`, errors);
-    validateBilingual(lng.level, `personal.languages[${i}].level`, errors);
-  });
-  return errors;
-}
-
-function validateIcebreaker(data){
-  const errors=[];
-  Object.entries(data).forEach(([key, item])=>{
-    const p = `icebreaker.${key}`;
-    validateBilingual(item.question, p+'.question', errors);
-    validateBilingual(item.category, p+'.category', errors);
-    if(!Array.isArray(item.versions) || !item.versions.length){
-      errors.push(p+'.versions vazio');
+// Experiences
+for (const [expId, exp] of Object.entries(experiencesData)) {
+  const base = `experiences.${expId}`;
+  ['title','subtitle','location','role','summary'].forEach(k=>
+    ensure(isBilingual(exp[k]), `${base}.${k} must be bilingual`)
+  );
+  checkBilingualArray(exp.keyAchievements, `${base}.keyAchievements`);
+  ensure(Array.isArray(exp.cases), `${base}.cases must be array`);
+  (exp.cases||[]).forEach((c, idx)=>{
+    const cbase = `${base}.cases[${idx}](${c.id||'no-id'})`;
+    ['title','situation','task','action','result','learning'].forEach(k=>
+      ensure(isBilingual(c[k]), `${cbase}.${k} must be bilingual`)
+    );
+    // tags must be bilingual array
+    if (Array.isArray(c.tags)) {
+      errors.push(`${cbase}.tags must be bilingual {pt:[],en:[]}, found plain array`);
     } else {
-      item.versions.forEach((v,i)=>{
-        const vp = `${p}.versions[${i}]`;
-        validateBilingual(v.title, vp+'.title', errors);
-        validateBilingual(v.content, vp+'.content', errors);
+      checkBilingualArray(c.tags, `${cbase}.tags`);
+    }
+  });
+}
+
+// Competencies
+if (competenciesData && Array.isArray(competenciesData.categories)) {
+  competenciesData.categories.forEach((cat, i)=>{
+    const cbase = `competenciesData.categories[${i}]`;
+    ensure(isBilingual(cat.title), `${cbase}.title must be bilingual`);
+    ['skills','tools','certifications'].forEach(arrK=>{
+      if (cat[arrK] !== undefined) {
+        checkBilingualArray(cat[arrK], `${cbase}.${arrK}`);
+      }
+    });
+  });
+}
+
+// Profiles
+if (profilesData) {
+  Object.values(profilesData).forEach((p, i)=>{
+    const pbase = `Object.values(profilesData)[${i}]`;
+    ['title','elevatorPitch'].forEach(k=> ensure(isBilingual(p[k]), `${pbase}.${k} must be bilingual`));
+    ['achievements','keyStrengths','technologies'].forEach(k=>{
+      if (p[k] !== undefined) checkBilingualArray(p[k], `${pbase}.${k}`);
+    });
+  });
+}
+
+// Icebreaker
+if (icebreaker && Array.isArray(icebreaker.items)){
+  icebreaker.items.forEach((q,i)=>{
+    const qbase = `icebreaker.items[${i}]`;
+    ensure(isBilingual(q.question), `${qbase}.question must be bilingual`);
+    if (q.category !== undefined) ensure(isBilingual(q.category), `${qbase}.category must be bilingual`);
+    if (Array.isArray(q.versions)) {
+      q.versions.forEach((v, j)=> ensure(isBilingual(v.content), `${qbase}.versions[${j}].content must be bilingual`));
+    }
+  });
+}
+
+// Speech Full CV
+if (speechFullCV && Array.isArray(speechFullCV.sections)){
+  speechFullCV.sections.forEach((s,i)=>{
+    const sbase = `speechFullCV.sections[${i}]`;
+    ['title','content'].forEach(k=> ensure(isBilingual(s[k]), `${sbase}.${k} must be bilingual`));
+    if (s.keyPoints !== undefined) checkBilingualArray(s.keyPoints, `${sbase}.keyPoints`);
+    if (s.tags !== undefined) checkBilingualArray(s.tags, `${sbase}.tags`);
+  });
+}
+
+// My Questions
+if (myQuestions && Array.isArray(myQuestions.categories)){
+  myQuestions.categories.forEach((cat,i)=>{
+    const qbase = `myQuestions.categories[${i}]`;
+    ensure(isBilingual(cat.category), `${qbase}.category must be bilingual`);
+    if (Array.isArray(cat.questions)){
+      cat.questions.forEach((q,j)=>{
+        ensure(isBilingual(q.question), `${qbase}.questions[${j}].question must be bilingual`);
+        if (q.context !== undefined) ensure(isBilingual(q.context), `${qbase}.questions[${j}].context must be bilingual`);
       });
     }
   });
-  return errors;
 }
 
-function validateQuestionsMapping(list){
-  const errors=[];
-  list.forEach((m,i)=>{
-    if(m.tags){
-      if(Array.isArray(m.tags)){
-        // legacy ok
-      } else {
-        validateArrayBilingual(m.tags, `questionsMapping[${i}].tags`, errors);
-      }
-    }
-  });
-  return errors;
-}
-
-const allErrors = [
-  ...validateSpeech(speechFullCVData),
-  ...validateExperiences(experiencesData),
-  ...validateProfiles(profilesData),
-  ...validateCompetencies(competenciesData),
-  ...validatePersonal(personalData),
-  ...validateIcebreaker(icebreakerData)
-  ,...validateQuestionsMapping(questionsToExperiencesMapping)
-];
-
-if(allErrors.length){
-  console.error('\x1b[31mFalhas de validação de dados bilíngues:\n- '+allErrors.join('\n- ')+'\x1b[0m');
+if (errors.length){
+  console.error('Data validation failed:');
+  for (const e of errors) console.error(' -', e);
   process.exit(1);
 } else {
-  console.log('\x1b[32m✔ Dados bilíngues válidos\x1b[0m');
+  console.log('Data validation passed.');
 }

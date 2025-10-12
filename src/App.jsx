@@ -15,10 +15,9 @@ import { profilesData } from './data/profiles';
 import icebreakerData from './data/icebreaker';
 import speechFullCVData from './data/speechFullCV';
 import myQuestionsData from './data/myQuestions';
-import { t, tArray } from './lib/i18n';
-import { tr } from './locales/strings';
+ { ThemeProvider, useTheme } from './contexts/ThemeContext.jsx';
 
-function App() {
+function App() {\n  // Theme context available if needed\n
   const [activeSection, setActiveSection] = useState('experiences');
   const [selectedItem, setSelectedItem] = useState(null);
   const [selectedCase, setSelectedCase] = useState(null);
@@ -1396,3 +1395,5 @@ function App() {
 }
 
 export default App;
+
+
