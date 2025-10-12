@@ -1,0 +1,132 @@
+  const renderSidebar = () => {
+    const menuItems = [
+      { id: 'experiences', icon: Briefcase, label: tr('menu_experiences', language), count: Object.keys(experiencesData).length },
+      { id: 'competencies', icon: Target, label: tr('menu_competencies', language), count: Object.keys(competenciesData).length },
+      { id: 'profiles', icon: User, label: tr('menu_profiles', language), count: Object.keys(profilesData).length },
+      { id: 'icebreaker', icon: MessageCircle, label: tr('menu_icebreaker', language), count: Object.keys(icebreakerData).length },
+      { id: 'speechcv', icon: FileText, label: tr('menu_speechcv', language), count: Object.keys(speechFullCVData).length }
+    ];
+
+    const deepSearchResults = deepSearchAllSections(globalSearchTerm);
+
+    return (
+      <aside role="navigation" aria-label="Primary" className="w-80 bg-gradient-to-b from-slate-50 to-white border-r border-slate-200 flex flex-col h-screen">
+        {/* Global Search */}
+        <div className="p-6 border-b border-slate-200">
+          <label className="text-xs font-semibold text-slate-500 tracking-wide mb-2 block">
+            {tr('global_search', language).toUpperCase()}
+          </label>
+          <div className="relative" ref={globalSearchRef} role="search">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+            <Input
+              placeholder={tr('global_search_placeholder', language)}
+              value={globalSearchTerm}
+              onChange={(e) => {
+                setGlobalSearchTerm(e.target.value);
+                setShowGlobalSearchDropdown(e.target.value.length > 0);
+              }}
+              onFocus={() => setShowGlobalSearchDropdown(globalSearchTerm.length > 0)}
+              className="pl-10 bg-white border-slate-200 focus:border-blue-500 focus:ring-blue-500"
+              aria-label="Busca global em todo o conteúdo"
+            />
+            {showGlobalSearchDropdown && globalSearchTerm && deepSearchResults.length > 0 && (
+              <div className="absolute z-50 w-full mt-2 bg-white rounded-lg shadow-lg border border-slate-200 max-h-96 overflow-y-auto custom-scrollbar">
+                {deepSearchResults.slice(0, 10).map((result, index) => {
+                  const itemTitle = result.item.name ||
+                    (typeof result.item.title === 'string' ? result.item.title : t(result.item.title, language)) ||
+                    (typeof result.item.question === 'string' ? result.item.question : t(result.item.question, language));
+
+                  return (
+                    <button
+                      key={index}
+                      onClick={() => {
+                        setActiveSection(result.section);
+                        setSelectedItem(result.item);
+                        setShowGlobalSearchDropdown(false);
+                        setGlobalSearchTerm('');
+                      }}
+                      className="w-full text-left px-4 py-3 hover:bg-slate-50 border-b border-slate-100 last:border-0 transition-colors"
+                    >
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-xs font-medium text-blue-600">
+                          {getSectionBreadcrumb(result.section)} &gt; {itemTitle}
+                        </span>
+                      </div>
+                      <div
+                        className="text-sm text-slate-700 line-clamp-2"
+                        dangerouslySetInnerHTML={{ __html: highlightText(result.excerpt, globalSearchTerm) }}
+                      />
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Navigation */}
+        <div className="flex-1 overflow-y-auto p-6">
+          <nav className="space-y-2">
+            {menuItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = activeSection === item.id;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => {
+                    setActiveSection(item.id);
+                    setSelectedItem(null);
+                    setSelectedCase(null);
+                    setSearchTerm('');
+                  }}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left sidebar-item btn-ripple micro-bounce ${
+                    isActive
+                      ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg active'
+                      : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
+                  }`}
+                >
+                  <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-slate-500 group-hover:text-slate-700'}`} />
+                  <span className="font-medium flex-1">{item.label}</span>
+                  <Badge variant={isActive ? "secondary" : "outline"} className={`${isActive ? 'bg-white/20 text-white border-white/30' : ''}`}>
+                    {item.count}
+                  </Badge>
+                </button>
+              );
+            })}
+          </nav>
+        </div>
+
+        {/* My Questions Button */}
+        <div className="p-6 border-t border-slate-200">
+          <Button
+            variant={activeSection === 'myquestions' ? "default" : "outline"}
+            size="sm"
+            onClick={() => {
+              setActiveSection('myquestions');
+              setSelectedItem(null);
+              setSelectedCase(null);
+            }}
+            className="w-full flex items-center gap-2 btn-ripple micro-bounce hover-scale"
+          >
+            <MessageCircle className="w-4 h-4" />
+            {tr('my_questions', language)}
+          </Button>
+        </div>
+      </aside>\n    );\n  };
+
+  // Render main content based on active section
+  const renderMainContent = () => {
+    if (selectedCase) {
+      return renderCaseDetail();
+    }
+
+    if (selectedItem) {
+      return renderItemDetail();
+    }
+
+    if (activeSection === 'myquestions') {
+      return renderMyQuestions();
+    }
+
+    return renderItemsList();
+  };

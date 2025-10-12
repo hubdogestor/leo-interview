@@ -1,0 +1,42 @@
+                    return (
+                      <button
+                        key={index}
+                        onClick={() => {
+                          setSelectedItem(result.item);
+                          setShowSectionSearchDropdown(false);
+                          setSearchTerm('');
+                        }}
+                        className="w-full text-left px-4 py-3 hover:bg-slate-50 border-b border-slate-100 last:border-0 transition-colors"
+                      >
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-xs font-medium text-blue-600">
+                            {itemTitle}
+                          </span>
+                        </div>
+                        <div
+                          className="text-sm text-slate-700 line-clamp-2"
+                          dangerouslySetInnerHTML={{ __html: highlightText(result.excerpt, searchTerm) }}
+                        />
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Right: Timer and Language Selector */}
+          <div className="flex items-center gap-3">
+            {/* Timer */}
+            <div className={`flex items-center gap-2 bg-slate-100 rounded-lg px-3 py-2 ${isTimerRunning ? 'timer-pulse running' : ''}`}>
+              <Clock className={`w-4 h-4 ${isTimerRunning ? 'text-blue-500' : 'text-slate-500'}`} />
+              <span className={`font-mono text-sm font-bold ${isTimerRunning ? 'text-blue-600' : 'text-slate-900'}`}>
+                {formatTime(timerSeconds)}
+              </span>
+              <div className="flex gap-1 ml-1">
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => setIsTimerRunning(!isTimerRunning)} aria-label="Play/Pause timer"
+                  className="h-7 w-7 p-0 hover:bg-slate-200"
+                >
