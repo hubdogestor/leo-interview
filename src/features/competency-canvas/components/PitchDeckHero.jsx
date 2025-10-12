@@ -10,7 +10,6 @@ import {
   DialogTrigger
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
-import { useLanguage } from '@/contexts/LanguageContext';
 
 const gradientMap = {
   'bg-blue-600': 'from-blue-600 via-sky-500 to-blue-400',
@@ -21,8 +20,7 @@ const gradientMap = {
   'bg-red-600': 'from-rose-500 via-fuchsia-500 to-violet-500'
 };
 
-export function PitchDeckHero({ competency, onSelectPrev, onSelectNext }) {
-  const { language } = useLanguage();
+export function PitchDeckHero({ competency, onSelectPrev, onSelectNext, language }) {
   const [open, setOpen] = useState(false);
 
   if (!competency) {
@@ -32,7 +30,8 @@ export function PitchDeckHero({ competency, onSelectPrev, onSelectNext }) {
   const gradient = gradientMap[competency.color] ?? 'from-slate-800 via-slate-900 to-black';
   const title = competency.title?.[language] ?? competency.title?.pt ?? '';
   const subtitle = competency.subtitle?.[language] ?? competency.subtitle?.pt ?? '';
-  const narrative = competency.pitchDeck?.narrative?.[language] ?? competency.pitchDeck?.narrative?.pt ?? '';
+  const narrative =
+    competency.pitchDeck?.narrative?.[language] ?? competency.pitchDeck?.narrative?.pt ?? '';
   const bullets = Array.isArray(competency.pitchDeck?.bullets?.[language])
     ? competency.pitchDeck.bullets[language]
     : [];

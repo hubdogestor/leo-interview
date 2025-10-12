@@ -3,7 +3,6 @@ import clsx from 'clsx';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { CanvasSection } from './CanvasSection';
-import { useLanguage } from '@/contexts/LanguageContext';
 import { experiencesData } from '@/data/experiences.js';
 
 const experienceLabels = Object.fromEntries(
@@ -36,11 +35,11 @@ function SignatureCases({ cases = [], language }) {
     return null;
   }
 
+  const heading = language === 'pt' ? 'Casos Assinatura' : 'Signature Cases';
+
   return (
     <section className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-sm">
-      <h4 className="text-xs font-semibold uppercase tracking-[0.18em] text-white/70">
-        Signature Cases
-      </h4>
+      <h4 className="text-xs font-semibold uppercase tracking-[0.18em] text-white/70">{heading}</h4>
       <div className="mt-3 grid gap-4 md:grid-cols-3">
         {cases.map((caseItem) => {
           const title = caseItem.title?.[language] ?? caseItem.title?.pt ?? '';
@@ -51,7 +50,7 @@ function SignatureCases({ cases = [], language }) {
               key={caseItem.id}
               className="rounded-xl border border-white/10 bg-slate-950/40 p-4 text-sm text-white/90"
             >
-              <h5 className="text-white font-semibold text-sm">{title}</h5>
+              <h5 className="text-white text-sm font-semibold">{title}</h5>
               <p className="mt-2 text-xs leading-relaxed text-white/70">{summary}</p>
               <p className="mt-3 text-xs font-medium text-emerald-300/90">{impact}</p>
             </article>
@@ -62,9 +61,7 @@ function SignatureCases({ cases = [], language }) {
   );
 }
 
-export function CompetencyCard({ competency, isActive, onSelect }) {
-  const { language } = useLanguage();
-
+export function CompetencyCard({ competency, isActive, onSelect, language }) {
   const keyStrengths = normalizeList(competency.keyStrengths, language);
   const tools = normalizeList(competency.tools, language);
   const technologies = normalizeList(competency.technologies, language);
@@ -85,8 +82,10 @@ export function CompetencyCard({ competency, isActive, onSelect }) {
 
   const title = competency.title?.[language] ?? competency.title?.pt ?? '';
   const subtitle = competency.subtitle?.[language] ?? competency.subtitle?.pt ?? '';
-  const experienceApplied = competency.experienceApplied?.[language] ?? competency.experienceApplied?.pt ?? '';
-  const pitchNarrative = competency.pitchDeck?.narrative?.[language] ?? competency.pitchDeck?.narrative?.pt ?? '';
+  const experienceApplied =
+    competency.experienceApplied?.[language] ?? competency.experienceApplied?.pt ?? '';
+  const pitchNarrative =
+    competency.pitchDeck?.narrative?.[language] ?? competency.pitchDeck?.narrative?.pt ?? '';
 
   return (
     <button

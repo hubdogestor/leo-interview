@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { PitchDeckHero } from './components/PitchDeckHero.jsx';
 import { CompetencyCard } from './components/CompetencyCard.jsx';
 
-export function CompetencyCanvas({ competencies, selectedId, onSelect }) {
+export function CompetencyCanvas({ competencies, selectedId, onSelect, language }) {
   const list = competencies ?? [];
   const active = useMemo(
     () => list.find((item) => item.id === selectedId) ?? list[0] ?? null,
@@ -24,7 +24,12 @@ export function CompetencyCanvas({ competencies, selectedId, onSelect }) {
 
   return (
     <div className="space-y-10">
-      <PitchDeckHero competency={active} onSelectPrev={handlePrev} onSelectNext={handleNext} />
+      <PitchDeckHero
+        competency={active}
+        onSelectPrev={handlePrev}
+        onSelectNext={handleNext}
+        language={language}
+      />
       <div className="space-y-8">
         {list.map((competency) => (
           <CompetencyCard
@@ -32,10 +37,10 @@ export function CompetencyCanvas({ competencies, selectedId, onSelect }) {
             competency={competency}
             isActive={competency.id === active?.id}
             onSelect={onSelect}
+            language={language}
           />
         ))}
       </div>
     </div>
   );
 }
-
