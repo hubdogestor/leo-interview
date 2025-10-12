@@ -11,7 +11,6 @@ import { ScrollArea } from './components/ui/scroll-area';
 // Import data
 import { experiencesData } from './data/experiences';
 import { competenciesData } from './data/competencies';
-import { profilesData } from './data/profiles';
 import icebreakerData from './data/icebreaker';
 import speechFullCVData from './data/speechFullCV';
 import myQuestionsData from './data/myQuestions';
@@ -130,8 +129,6 @@ function App() {
         return experiencesData;
       case 'competencies':
         return competenciesData;
-      case 'profiles':
-        return profilesData;
       case 'icebreaker':
         return icebreakerData;
       case 'speechcv':
@@ -165,7 +162,6 @@ function App() {
     const allSections = {
       experiences: experiencesData,
       competencies: competenciesData,
-      profiles: profilesData,
       icebreaker: icebreakerData,
       speechcv: speechFullCVData,
       myquestions: myQuestionsData
@@ -338,7 +334,6 @@ function App() {
     const menuItems = [
       { id: 'experiences', icon: Briefcase, label: tr('menu_experiences', language), count: Object.keys(experiencesData).length },
       { id: 'competencies', icon: Target, label: tr('menu_competencies', language), count: Object.keys(competenciesData).length },
-      { id: 'profiles', icon: User, label: tr('menu_profiles', language), count: Object.keys(profilesData).length },
       { id: 'icebreaker', icon: MessageCircle, label: tr('menu_icebreaker', language), count: Object.keys(icebreakerData).length },
       { id: 'speechcv', icon: FileText, label: tr('menu_speechcv', language), count: Object.keys(speechFullCVData).length }
     ];
