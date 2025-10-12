@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { Search, Globe, User, Briefcase, Target, MessageCircle, FileText, ChevronRight, Play, Pause, RotateCcw, Star, Clock, Building, Calendar, Award, TrendingUp } from 'lucide-react';
+import { Search, Timer, Globe, User, Briefcase, Target, MessageCircle, FileText, ChevronRight, Play, Pause, RotateCcw, Star, Clock, Building, Calendar, Award, TrendingUp } from 'lucide-react';
 import { Button } from './components/ui/button';
 import { Input } from './components/ui/input';
 import { Badge } from './components/ui/badge';
@@ -7,12 +7,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './components/ui/tabs';
 import { Separator } from './components/ui/separator';
 import { ScrollArea } from './components/ui/scroll-area';
-import { CompetencyCanvas } from './features/competency-canvas';
 
 // Import data
 import { experiencesData } from './data/experiences';
-import { competenciesData, competenciesList } from './data/competencies';
-import { profilesData } from './data/profiles';
+import { competenciesData } from './data/competencies';
 import icebreakerData from './data/icebreaker';
 import speechFullCVData from './data/speechFullCV';
 import myQuestionsData from './data/myQuestions';
@@ -30,7 +28,6 @@ function App() {
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [showSectionSearchDropdown, setShowSectionSearchDropdown] = useState(false);
   const [showGlobalSearchDropdown, setShowGlobalSearchDropdown] = useState(false);
-  const [activeCompetencyId, setActiveCompetencyId] = useState(competenciesList[0]?.id ?? null);
 
   // Refs
   const topRef = useRef(null);
@@ -114,13 +111,6 @@ function App() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  useEffect(() => {
-    if (activeSection === 'competencies' && selectedItem) {
-      setActiveCompetencyId(selectedItem.id ?? competenciesList[0]?.id ?? null);
-      setSelectedItem(null);
-    }
-  }, [activeSection, selectedItem]);
-
   // Home button - clear all filters and selections
   const handleHomeClick = useCallback(() => {
     setActiveSection('experiences');
@@ -139,8 +129,6 @@ function App() {
         return experiencesData;
       case 'competencies':
         return competenciesData;
-      case 'profiles':
-        return profilesData;
       case 'icebreaker':
         return icebreakerData;
       case 'speechcv':
@@ -174,7 +162,6 @@ function App() {
     const allSections = {
       experiences: experiencesData,
       competencies: competenciesData,
-      profiles: profilesData,
       icebreaker: icebreakerData,
       speechcv: speechFullCVData,
       myquestions: myQuestionsData
@@ -347,7 +334,6 @@ function App() {
     const menuItems = [
       { id: 'experiences', icon: Briefcase, label: tr('menu_experiences', language), count: Object.keys(experiencesData).length },
       { id: 'competencies', icon: Target, label: tr('menu_competencies', language), count: Object.keys(competenciesData).length },
-      { id: 'profiles', icon: User, label: tr('menu_profiles', language), count: Object.keys(profilesData).length },
       { id: 'icebreaker', icon: MessageCircle, label: tr('menu_icebreaker', language), count: Object.keys(icebreakerData).length },
       { id: 'speechcv', icon: FileText, label: tr('menu_speechcv', language), count: Object.keys(speechFullCVData).length }
     ];
@@ -480,41 +466,19 @@ function App() {
 
   // Render main content based on active section
   const renderMainContent = () => {
-
     if (selectedCase) {
-
       return renderCaseDetail();
-
     }
-
-
-
-    if (activeSection === 'competencies' || activeSection === 'profiles') {
-
-      return renderCompetencyCanvas();
-
-    }
-
-
 
     if (selectedItem) {
-
       return renderItemDetail();
-
     }
-
-
 
     if (activeSection === 'myquestions') {
-
       return renderMyQuestions();
-
     }
 
-
-
     return renderItemsList();
-
   };
 
   // Render items list
@@ -607,22 +571,6 @@ function App() {
       </div>
     );
   };
-
-
-  const renderCompetencyCanvas = () => (
-    <div className="flex-1 overflow-hidden bg-slate-950">
-      <ScrollArea className="h-full">
-        <div className="min-h-full px-8 py-8">
-          <CompetencyCanvas
-            competencies={competenciesList}
-            selectedId={activeCompetencyId}
-            onSelect={setActiveCompetencyId}
-            language={language}
-          />
-        </div>
-      </ScrollArea>
-    </div>
-  );
 
   // Helper functions for rendering
   const getSectionTitle = () => {
