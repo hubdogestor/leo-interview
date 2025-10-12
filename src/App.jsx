@@ -730,19 +730,19 @@ function App() {
             </div>
 
             {/* Main Achievements */}
-            <Card className="mb-8">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5 text-green-600" />
+            <Card className="mb-6">
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <TrendingUp className="w-4 h-4 text-green-600" />
                   {tr('main_achievements', language)}
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                   {tArray(selectedItem.keyAchievements, language)?.map((achievement, index) => (
-                    <div key={index} className="flex items-start gap-3 p-3 bg-green-50 rounded-lg">
-                      <div className="w-2 h-2 bg-green-600 rounded-full mt-2"></div>
-                      <span className="text-slate-700">{achievement}</span>
+                    <div key={index} className="flex items-start gap-2 p-2 bg-green-50 rounded">
+                      <div className="w-1.5 h-1.5 bg-green-600 rounded-full mt-1.5 flex-shrink-0"></div>
+                      <span className="text-xs italic text-slate-600">{achievement}</span>
                     </div>
                   ))}
                 </div>
@@ -761,38 +761,39 @@ function App() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid gap-4">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
                   {selectedItem.cases?.map((case_item) => (
-                    <Card 
+                    <Card
                       key={case_item.id}
                       className="cursor-pointer transition-all duration-200 hover:shadow-md hover:border-blue-300"
                       onClick={() => setSelectedCase(case_item)}
                     >
-                      <CardHeader className="pb-3">
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <CardTitle className="text-lg text-slate-900 hover:text-blue-600 transition-colors">
+                      <CardHeader className="pb-2">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1 min-w-0">
+                            <CardTitle className="text-base text-slate-900 hover:text-blue-600 transition-colors">
                               {t(case_item.title, language)}
                             </CardTitle>
-                            <CardDescription className="mt-1">
-                              {t(case_item.situation, language).substring(0, 150)}...
+                            <CardDescription className="mt-1 text-xs line-clamp-2">
+                              {t(case_item.situation, language).substring(0, 100)}...
                             </CardDescription>
                           </div>
-                          <div className="flex items-center gap-2 ml-4">
-                            <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
-                              Score: {case_item.score}
+                          <div className="flex flex-col items-end gap-1 flex-shrink-0">
+                            <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 text-xs px-2 py-0">
+                              {case_item.score}
                             </Badge>
                             <ChevronRight className="w-4 h-4 text-slate-400" />
                           </div>
                         </div>
                       </CardHeader>
-                      
+
                       {case_item.tags && (
                         <CardContent className="pt-0">
-                          <div className="flex flex-wrap gap-2">
+                          <div className="flex flex-wrap gap-1">
                             {(Array.isArray(case_item.tags) ? case_item.tags : (case_item.tags[language] || []))
+                              .slice(0, 3)
                               .map((tag, index) => (
-                                <Badge key={index} variant="outline" className="text-xs">
+                                <Badge key={index} variant="outline" className="text-xs px-1.5 py-0">
                                   {tag}
                                 </Badge>
                               ))}
@@ -1167,21 +1168,6 @@ function App() {
                 <div className="space-y-6">
                   <Card>
                     <CardHeader>
-                      <CardTitle>{tr('key_points', language)}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="grid gap-3">
-                        {tArray(selectedItem.keyPoints, language).map((point, index) => (
-                          <div key={index} className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
-                            <div className="w-2 h-2 bg-blue-600 rounded-full mt-2"></div>
-                            <span className="text-slate-700">{point}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardHeader>
                       <CardTitle>{tr('full_speech', language)}</CardTitle>
                       <CardDescription>{tr('structured_cv_for', language)} {t(selectedItem.title, language)}</CardDescription>
                     </CardHeader>
@@ -1209,18 +1195,34 @@ function App() {
                   </Card>
                 </div>
               </div>
-              {/* Outline */}
-              <div className="w-full lg:w-64 flex-shrink-0 lg:sticky lg:top-4 h-max border border-slate-200 rounded-lg bg-white p-4 shadow-sm">
-                <p className="text-xs font-semibold text-slate-500 mb-2 tracking-wide">{tr('sections_label', language)}</p>
-                <ul className="space-y-2 text-sm">
-                  {headings.map((h,i)=>(
-                    <li key={i}>
-                      <button onClick={()=>scrollToHeading(i)} className={`text-left w-full transition-colors ${activeHeading===i?'text-blue-600 font-medium':'hover:text-blue-600 text-slate-600'}`}>
-                        <span className="inline-block truncate max-w-[11rem]">{h}</span>
-                      </button>
-                    </li>
-                  ))}
-                </ul>
+              {/* Right Sidebar: Sections + Key Points */}
+              <div className="w-full lg:w-64 flex-shrink-0 space-y-4">
+                {/* Sections/Outline */}
+                <div className="lg:sticky lg:top-4 border border-slate-200 rounded-lg bg-white p-4 shadow-sm">
+                  <p className="text-xs font-semibold text-slate-500 mb-2 tracking-wide uppercase">{tr('sections_label', language)}</p>
+                  <ul className="space-y-2 text-sm">
+                    {headings.map((h,i)=>(
+                      <li key={i}>
+                        <button onClick={()=>scrollToHeading(i)} className={`text-left w-full transition-colors ${activeHeading===i?'text-blue-600 font-medium':'hover:text-blue-600 text-slate-600'}`}>
+                          <span className="inline-block truncate max-w-[11rem]">{h}</span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Key Points */}
+                <div className="border border-slate-200 rounded-lg bg-white p-4 shadow-sm">
+                  <p className="text-xs font-semibold text-slate-500 mb-3 tracking-wide uppercase">{tr('key_points', language)}</p>
+                  <div className="space-y-2">
+                    {tArray(selectedItem.keyPoints, language).map((point, index) => (
+                      <div key={index} className="flex items-start gap-2">
+                        <div className="w-1.5 h-1.5 bg-blue-600 rounded-full mt-1.5 flex-shrink-0"></div>
+                        <span className="text-xs text-slate-700">{point}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
