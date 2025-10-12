@@ -1285,24 +1285,8 @@ function App() {
       <div className="flex-1 flex flex-col">
         {/* Header fixo */}
         <header className="h-16 bg-white border-b border-slate-200 flex items-center px-6 sticky top-0 z-30 shadow-sm">
-          {/* Left: Logo and Title (Home Button) */}
-          <div className="flex items-center gap-3">
-            <button
-              onClick={handleHomeClick}
-              className="flex items-center gap-3 hover:opacity-80 transition-opacity btn-ripple micro-bounce"
-              aria-label="Home"
-            >
-              <img
-                src="/favicon.ico"
-                alt="Leo Interview Logo"
-                className="w-10 h-10 rounded-lg"
-              />
-              <h1 className="text-lg font-bold text-slate-900">{tr('app_title', language)}</h1>
-            </button>
-          </div>
-
-          {/* Center: Section Search */}
-          <div className="flex-1 max-w-2xl mx-8" ref={sectionSearchRef}>
+          {/* Left: Section Search */}
+          <div className="flex-1 max-w-2xl mr-8" ref={sectionSearchRef}>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
               <Input
