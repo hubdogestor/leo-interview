@@ -1,384 +1,512 @@
-// @ts-check
-// Competências Unificadas (antes separadas em Competências + Perfis)
-// Estrutura otimizada para canvas visual de competências
+/* @ts-check */
 
-/** @typedef {{pt:string,en:string}} Bilingual */
+import { competenciesData as legacyCompetenciesData } from "./competencies.legacy.js";
+import { profilesData as legacyProfilesData } from "./profiles.legacy.js";
+import { experiencesData } from "./experiences.js";
 
 /**
- * @typedef {Object} Competency
- * @property {string} id
- * @property {Bilingual} title
- * @property {Bilingual} subtitle
- * @property {Bilingual} elevatorPitch - Pitch curto e impactante
- * @property {string} icon
- * @property {string} color
- * @property {{pt:string[],en:string[]}} keyStrengths - Principais forças/habilidades
- * @property {{pt:string[],en:string[]}} tools - Ferramentas e tecnologias
- * @property {{pt:string[],en:string[]}} certifications - Certificações relevantes
- * @property {{pt:string[],en:string[]}} achievements - Principais conquistas quantificadas
- * @property {string[]} relevantExperiences - IDs de experiências relevantes
- * @property {{pt:string,en:string}} experienceApplied - Resumo da experiência aplicada
+ * @typedef {{pt: string[], en: string[]}} BilingualList
  */
 
-/** @type {Record<string, Competency>} */
-export const competenciesData = {
+const createList = () => ({ pt: [], en: [] });
+
+const normalizeList = (list) => ({
+  pt: Array.isArray(list?.pt) ? [...list.pt] : [],
+  en: Array.isArray(list?.en) ? [...list.en] : []
+});
+
+const dedupe = (items) => {
+  const seen = new Set();
+  return items
+    .map((item) => (typeof item === "string" ? item.trim() : ""))
+    .filter((item) => {
+      if (!item) return false;
+      const key = item.toLowerCase();
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+};
+
+const mergeLists = (primary, secondary) => {
+  const a = normalizeList(primary);
+  const b = normalizeList(secondary);
+  return {
+    pt: dedupe([...a.pt, ...b.pt]),
+    en: dedupe([...a.en, ...b.en])
+  };
+};
+
+const caseIndex = Object.values(experiencesData).reduce((acc, experience) => {
+  (experience.cases ?? []).forEach((caseItem) => {
+    acc[caseItem.id] = caseItem;
+  });
+  return acc;
+}, {});
+
+const buildSignatureCases = (caseIds = []) =>
+  caseIds
+    .map((caseId) => {
+      const caseData = caseIndex[caseId];
+      if (!caseData) return null;
+      return {
+        id: caseData.id,
+        title: caseData.title,
+        summary: caseData.action ?? caseData.task ?? caseData.situation,
+        impact: caseData.result,
+        tags: caseData.tags
+      };
+    })
+    .filter(Boolean);
+
+const augmentations = {
   product_manager: {
-    id: 'product_manager',
-    title: { pt: 'Product Manager', en: 'Product Manager' },
-    subtitle: { pt: 'Gestão de Produtos Digitais', en: 'Digital Product Management' },
-    icon: '📱',
-    color: 'bg-blue-600',
-    elevatorPitch: {
-      pt: 'Product Manager com 15+ anos transformando ideias em produtos digitais de impacto. Liderei o lançamento de 20+ produtos que geraram mais de $200M em receita. Especialista em discovery, user experience e growth, com experiência desde fintechs até healthtech. Minha abordagem combina dados, design thinking e execução ágil para criar produtos que os usuários amam e que geram resultados de negócio.',
-      en: 'Product Manager with 15+ years transforming ideas into impactful digital products. Led the launch of 20+ products generating over $200M in revenue. Expert in discovery, user experience, and growth, with experience from fintech to healthtech. My approach combines data, design thinking, and agile execution to create products users love that drive business results.'
+    pitchDeck: {
+      title: { pt: "Pitch Deck", en: "Pitch Deck" },
+      narrative: {
+        pt: "Product manager com 15+ anos transformando ideias em produtos digitais que somam US$200M+ em receita. Conecto insight de cliente, dados e execução ágil para escalar portfólios.",
+        en: "Product leader with 15+ years turning ideas into digital products generating US$200M+. I connect customer insight, data, and agile execution to scale portfolios."
+      },
+      bullets: {
+        pt: [
+          "North Star e guardrails financeiros para priorizar roadmap.",
+          "Discovery 360° com entrevistas, analytics e experimentação contínua.",
+          "Growth loops com IA generativa para personalização e retenção."
+        ],
+        en: [
+          "North Star and financial guardrails to prioritise the roadmap.",
+          "360° discovery with interviews, analytics, and continuous experimentation.",
+          "Growth loops with generative AI for personalised engagement and retention."
+        ]
+      }
     },
-    keyStrengths: {
+    frameworks: {
       pt: [
-        'Estratégia de Produto & Roadmapping',
-        'Growth & Monetização',
-        'Decisão Orientada por Dados',
-        'Integração de IA/ML em Produtos'
+        "Dual-Track Agile + Discovery Contínuo",
+        "North Star Metrics & Value-Based Management",
+        "Jobs To Be Done + Growth Loops"
       ],
       en: [
-        'Product Strategy & Roadmapping',
-        'Growth & Monetization',
-        'Data-Driven Decision Making',
-        'AI/ML Product Integration'
+        "Dual-Track Agile + Continuous Discovery",
+        "North Star Metrics & Value-Based Management",
+        "Jobs To Be Done + Growth Loops"
       ]
     },
-    tools: {
-      pt: ['Primavera P6', 'Tableau', 'MS Project Server', 'Power BI', 'SAP (MM/PM)'],
-      en: ['Primavera P6', 'Tableau', 'MS Project Server', 'Power BI', 'SAP (MM/PM)']
-    },
-    certifications: {
-      pt: ['PMP®', 'PMO-CP®', 'SAFe SSM®'],
-      en: ['PMP®', 'PMO-CP®', 'SAFe SSM®']
-    },
-    achievements: {
+    playbookHighlights: {
       pt: [
-        '20+ produtos ($200M receita)',
-        'Crescimento 25% Woop App ($50M receita)',
-        'NPS +6% & churn -15% Unimed',
-        'AI em produtos de saúde'
+        "Unimed: squads orientados a valor conectados a OKRs corporativos.",
+        "Sicredi: Woop App com loops de aquisição→engajamento→receita.",
+        "Next Bank: go-to-market mobile-first em 12 meses após a migração."
       ],
       en: [
-        '20+ products ($200M revenue)',
-        '25% Woop App adoption growth ($50M revenue)',
-        'NPS +6% & churn -15% at Unimed',
-        'AI in healthcare products'
+        "Unimed: value-driven squads connected to corporate OKRs.",
+        "Sicredi: Woop App with acquisition→engagement→revenue loops.",
+        "Next Bank: mobile-first go-to-market in 12 months post-migration."
       ]
     },
-    relevantExperiences: ['unimed', 'sicredi', 'hsbc_bradesco'],
-    experienceApplied: {
-      pt: 'Experiência em estruturação e liderança de PMOs, gestão de programas complexos e governança de portfólios.',
-      en: 'Experience in PMO structuring and leadership, managing complex programs, and portfolio governance.'
-    }
+    impactMetrics: {
+      pt: [
+        "20+ produtos lançados gerando US$200M+.",
+        "Unimed: EBITDA +22% (~US$70M), NPS +6, churn -15%.",
+        "Woop Digital Bank: adoção +25% (~US$50M) com motor de ML."
+      ],
+      en: [
+        "20+ products launched generating US$200M+.",
+        "Unimed: EBITDA +22% (~US$70M), NPS +6, churn -15%.",
+        "Woop Digital Bank: +25% adoption (~US$50M) backed by ML engine."
+      ]
+    },
+    signatureCases: ["unimed-digital-products", "sicredi-woop-growth", "bradesco-next-launch"]
   },
-
   program_manager: {
-    id: 'program_manager',
-    title: { pt: 'Program Manager', en: 'Program Manager' },
-    subtitle: { pt: 'Gestão de Programas Complexos & PMO', en: 'Complex Program Management & PMO' },
-    icon: '📊',
-    color: 'bg-purple-600',
-    elevatorPitch: {
-      pt: 'Program Manager com track record em programas de larga escala. Liderei transformações que geraram $300M+ em valor, desde rollouts globais até migrações bancárias críticas. Especialista em PMO, governança e gestão multicultural. Combino rigor metodológico com adaptabilidade para entregar resultados em ambientes desafiadores.',
-      en: 'Program Manager with proven track record in large-scale programs. Led transformations generating $300M+ in value, from global rollouts to critical banking migrations. Expert in PMO, governance, and cross-cultural management. I combine methodological rigor with adaptability to deliver results in challenging environments.'
+    pitchDeck: {
+      title: { pt: "Pitch Deck", en: "Pitch Deck" },
+      narrative: {
+        pt: "Program manager que entrega programas de US$300M+ e migrações críticas com governança replicável. Estruturo PMOs que conectam estratégia, compliance e execução.",
+        en: "Program manager delivering US$300M+ programmes and critical migrations with repeatable governance. I build PMOs that connect strategy, compliance, and execution."
+      },
+      bullets: {
+        pt: [
+          "War rooms com dashboards em tempo real e VPI.",
+          "EVM + rituais executivos para decisões baseadas em valor.",
+          "Runbooks de migração e cutover 24/7 com fornecedores orquestrados."
+        ],
+        en: [
+          "War rooms with real-time dashboards and VPI.",
+          "EVM + executive rituals for value-based decisions.",
+          "24/7 migration and cutover runbooks with orchestrated vendors."
+        ]
+      }
     },
-    keyStrengths: {
+    frameworks: {
       pt: [
-        'PMO Framework Design',
-        'Portfolio Management',
-        'Earned Value Management (EVM)',
-        'Critical Path Method (CPM)',
-        'Vendor Management',
-        'Risk Management',
-        'Stakeholder Management',
-        'Executive Dashboards'
+        "PMI integrado a SAFe e Lean Portfolio",
+        "Critical Path Method com cenários what-if",
+        "Risk Heatmaps + Vendor Performance Index"
       ],
       en: [
-        'PMO Framework Design',
-        'Portfolio Management',
-        'Earned Value Management (EVM)',
-        'Critical Path Method (CPM)',
-        'Vendor Management',
-        'Risk Management',
-        'Stakeholder Management',
-        'Executive Dashboards'
+        "PMI combined with SAFe and Lean Portfolio",
+        "Critical Path Method with what-if scenarios",
+        "Risk Heatmaps + Vendor Performance Index"
       ]
     },
-    tools: {
-      pt: ['Primavera P6', 'MS Project Server', 'SAP (MM/PM)', 'Tableau', 'Power BI'],
-      en: ['Primavera P6', 'MS Project Server', 'SAP (MM/PM)', 'Tableau', 'Power BI']
-    },
-    certifications: {
-      pt: ['PMP®', 'PMO-CP®', 'SAFe SSM®'],
-      en: ['PMP®', 'PMO-CP®', 'SAFe SSM®']
-    },
-    achievements: {
+    playbookHighlights: {
       pt: [
-        'Redução SLA 382→62 dias (~$120M economia)',
-        'Migração $3B HSBC→Bradesco sem perda',
-        'PMO Profisco II (parceria BID)',
-        'Global Excellent PM (2012-2014)'
+        "Huawei: War Room e governança replicados globalmente.",
+        "HSBC→Bradesco: cutover bancário com zero incidentes.",
+        "SEFAZ: Value Management Office com portal executivo."
       ],
       en: [
-        'SLA reduction 382→62 days (~$120M savings)',
-        '$3B HSBC→Bradesco migration no data loss',
-        'Profisco II PMO (IDB partnership)',
-        'Global Excellent PM (2012-2014)'
+        "Huawei: War Room and governance replicated globally.",
+        "HSBC→Bradesco: banking cutover with zero incidents.",
+        "SEFAZ: Value Management Office with executive portal."
       ]
     },
-    relevantExperiences: ['huawei', 'hsbc_bradesco', 'sefaz'],
-    experienceApplied: {
-      pt: 'Experiência em estruturação e liderança de PMOs, gestão de programas complexos e governança de portfólios.',
-      en: 'Experience in PMO structuring and leadership, complex programs management, and portfolio governance.'
-    }
+    impactMetrics: {
+      pt: [
+        "Huawei: SLA 382→62 dias (~US$120M em eficiência).",
+        "HSBC→Bradesco: US$3B e 3M contas migradas com compliance 100%.",
+        "SEFAZ: padronização com US$1.4M em savings e 50+ projetos governados."
+      ],
+      en: [
+        "Huawei: SLA 382→62 days (~US$120M efficiency).",
+        "HSBC→Bradesco: US$3B and 3M accounts migrated with 100% compliance.",
+        "SEFAZ: standardisation delivering US$1.4M savings and 50+ projects governed."
+      ]
+    },
+    signatureCases: ["huawei-sla-reduction", "hsbc-bradesco-migration", "sefaz-profisco-pmo"]
   },
-
   digital_transformation: {
-    id: 'digital_transformation',
-    title: { pt: 'Digital Transformation', en: 'Digital Transformation' },
-    subtitle: { pt: 'Transformação Digital & Inovação', en: 'Digital Transformation & Innovation' },
-    icon: '🚀',
-    color: 'bg-green-600',
-    elevatorPitch: {
-      pt: 'Líder em transformação digital com 15+ anos modernizando organizações. Conduzi transformações desde fintechs até setor público, sempre com foco em valor mensurável. Especialista em IA/ML, automação e mudança cultural. Minha abordagem alia visão estratégica com execução hands-on.',
-      en: 'Digital transformation leader with 15+ years modernizing organizations. Led transformations from fintechs to public sector, always focusing on measurable value. Expert in AI/ML, automation, and cultural change. My approach combines strategic vision with hands-on execution.'
+    pitchDeck: {
+      title: { pt: "Pitch Deck", en: "Pitch Deck" },
+      narrative: {
+        pt: "Líder de transformação digital que conecta estratégia, tecnologia e cultura para gerar novas receitas e eficiência.",
+        en: "Digital transformation leader connecting strategy, technology, and culture to unlock new revenue and efficiency."
+      },
+      bullets: {
+        pt: [
+          "OKRs corporativos ligados a dashboards executivos.",
+          "Automação com IA e low-code reduzindo custos e tempo de ciclo.",
+          "Change management com storytelling e capacitação contínua."
+        ],
+        en: [
+          "Corporate OKRs linked to executive dashboards.",
+          "AI and low-code automation reducing cost and cycle time.",
+          "Change management with storytelling and continuous enablement."
+        ]
+      }
     },
-    keyStrengths: {
+    frameworks: {
       pt: [
-        'Estratégia Digital',
-        'Automação de Processos',
-        'Change Management',
-        'Cultura Digital',
-        'Gestão de Inovação',
-        'Adoção Tecnológica',
-        'Experiência Digital do Cliente',
-        'Modernização de Legados'
+        "OKR + Value-Based Management",
+        "Digital Maturity Blueprint",
+        "Service Design & Journey Mapping"
       ],
       en: [
-        'Digital Strategy',
-        'Process Automation',
-        'Change Management',
-        'Digital Culture',
-        'Innovation Management',
-        'Technology Adoption',
-        'Digital Customer Experience',
-        'Legacy Modernization'
+        "OKR + Value-Based Management",
+        "Digital Maturity Blueprint",
+        "Service Design & Journey Mapping"
       ]
     },
-    tools: {
-      pt: ['n8n', 'Zapier', 'Power Automate', 'APIs', 'Plataformas Cloud'],
-      en: ['n8n', 'Zapier', 'Power Automate', 'APIs', 'Cloud Platforms']
-    },
-    certifications: {
-      pt: ['Digital Product Leadership (TERA)', 'Innovation & Sustainability (Unisinos)'],
-      en: ['Digital Product Leadership (TERA)', 'Innovation & Sustainability (Unisinos)']
-    },
-    achievements: {
+    playbookHighlights: {
       pt: [
-        'EBITDA +22% Unimed (~$70.4M)',
-        'Lançamento Next Bank (Bradesco)',
-        'Banco Digital Woop (Sicredi)',
-        'Portal PMO executivo (SEFAZ)'
+        "Unimed: Digital Care Hub com IA e squads orientados a valor.",
+        "Sicredi: plataforma Woop e omnicanalidade cooperativa.",
+        "SEFAZ: Profisco II com portal executivo e automação fiscal."
       ],
       en: [
-        'EBITDA +22% Unimed (~$70.4M)',
-        'Next Digital Bank launch (Bradesco)',
-        'Woop Digital Bank (Sicredi)',
-        'Executive PMO portal (SEFAZ)'
+        "Unimed: AI-powered Digital Care Hub with value squads.",
+        "Sicredi: Woop platform and cooperative omnichannel.",
+        "SEFAZ: Profisco II with executive portal and fiscal automation."
       ]
     },
-    relevantExperiences: ['unimed', 'sicredi', 'hsbc_bradesco', 'sefaz'],
-    experienceApplied: {
-      pt: 'Transformações digitais em fintech, healthtech e setor público, com foco em automação e experiência do cliente.',
-      en: 'Digital transformations in fintech, healthtech, and public sector, focused on automation and customer experience.'
-    }
+    impactMetrics: {
+      pt: [
+        "Unimed: EBITDA +22%, churn -15%, IA triage -30%.",
+        "Sicredi: adoção +25% e 15+ releases digitais.",
+        "SEFAZ: arrecadação +12% e custos -15%."
+      ],
+      en: [
+        "Unimed: EBITDA +22%, churn -15%, AI triage -30%.",
+        "Sicredi: +25% adoption and 15+ digital releases.",
+        "SEFAZ: +12% revenue and -15% cost."
+      ]
+    },
+    technologies: {
+      pt: [
+        "APIs & microservices",
+        "Plataformas de IA e automação",
+        "Data lakes e analytics em cloud"
+      ],
+      en: [
+        "APIs & microservices",
+        "AI and automation platforms",
+        "Cloud data lakes and analytics"
+      ]
+    },
+    signatureCases: ["unimed-digital-products", "sicredi-woop-growth", "sefaz-profisco-pmo"]
   },
-
   ai_data_analytics: {
-    id: 'ai_data_analytics',
-    title: { pt: 'AI & Data Analytics', en: 'AI & Data Analytics' },
-    subtitle: { pt: 'Inteligência Artificial e Análise de Dados', en: 'Artificial Intelligence & Data Analysis' },
-    icon: '🤖',
-    color: 'bg-orange-600',
-    elevatorPitch: {
-      pt: 'Especialista em IA/ML aplicada a resultados de negócio. Implementei soluções que reduziram custos em 30% e aumentaram eficiência operacional significativamente. Da automação de triage de sinistros ao credit scoring, minha experiência cobre casos reais com ROI comprovado. Combino visão estratégica de IA com implementação prática.',
-      en: 'AI/ML specialist focused on business results. Implemented solutions that reduced costs by 30% and significantly increased operational efficiency. From automated claims triage to credit scoring, my experience covers real cases with proven ROI. I combine AI strategic vision with practical implementation.'
+    pitchDeck: {
+      title: { pt: "Pitch Deck", en: "Pitch Deck" },
+      narrative: {
+        pt: "Especialista em IA/ML aplicada com ROI mensurável do discovery ao MLOps.",
+        en: "Applied AI/ML leader delivering measurable ROI from discovery to MLOps."
+      },
+      bullets: {
+        pt: [
+          "Discovery→MVP→Escala guiado por KPIs de negócio.",
+          "Responsible AI com governança de dados e MLOps.",
+          "Automação inteligente (agentes, RPA, copilots) integrada a operações."
+        ],
+        en: [
+          "Discovery→MVP→Scale guided by business KPIs.",
+          "Responsible AI with data governance and MLOps.",
+          "Intelligent automation (agents, RPA, copilots) embedded in operations."
+        ]
+      }
     },
-    keyStrengths: {
+    frameworks: {
       pt: [
-        'Implementação ML',
-        'Analytics Preditivo',
-        'Automação com IA',
-        'Governança de Dados',
-        'Estratégia de IA',
-        'NLP',
-        'Visão Computacional',
-        'Ética & Compliance IA'
+        "CRISP-DM + Value Mapping",
+        "DataOps & Feature Store com observabilidade",
+        "Responsible AI checkpoints"
       ],
       en: [
-        'ML Implementation',
-        'Predictive Analytics',
-        'AI Process Automation',
-        'Data Governance',
-        'AI Strategy',
-        'Natural Language Processing',
-        'Computer Vision',
-        'AI Ethics & Compliance'
+        "CRISP-DM + Value Mapping",
+        "DataOps & Feature Store with observability",
+        "Responsible AI checkpoints"
       ]
     },
-    tools: {
-      pt: ['Python', 'TensorFlow', 'Scikit-learn', 'Pandas', 'Jupyter', 'OpenAI API'],
-      en: ['Python', 'TensorFlow', 'Scikit-learn', 'Pandas', 'Jupyter', 'OpenAI API']
-    },
-    certifications: {
-      pt: ['AI Agent Manager Program (NoCodeStartup)', 'Next frontier – AI & Data (JoinIA)'],
-      en: ['AI Agent Manager Program (NoCodeStartup)', 'Next frontier – AI & Data (JoinIA)']
-    },
-    achievements: {
+    playbookHighlights: {
       pt: [
-        'AI triage sinistros -30% tempo (Unimed)',
-        'ML credit scoring & fraude (Sicredi)',
-        'AI-readiness setor público (SEFAZ)',
-        'Automação processos fiscais'
+        "Unimed: AI triage e onboarding digital.",
+        "Sicredi: ML para crédito e fraude escalado em produção.",
+        "SEFAZ: roteiro de AI-readiness e automação fiscal."
       ],
       en: [
-        'AI claims triage -30% time (Unimed)',
-        'ML credit scoring & fraud (Sicredi)',
-        'Public sector AI-readiness (SEFAZ)',
-        'Fiscal process automation'
+        "Unimed: AI triage and digital onboarding.",
+        "Sicredi: ML for credit and fraud scaled to production.",
+        "SEFAZ: AI-readiness roadmap and fiscal automation."
       ]
     },
-    relevantExperiences: ['unimed', 'sicredi', 'sefaz'],
-    experienceApplied: {
-      pt: 'Implementação de IA/ML em healthcare, fintech e governo, com foco em automação e eficiência.',
-      en: 'AI/ML implementation in healthcare, fintech, and government, focused on automation and efficiency.'
-    }
+    impactMetrics: {
+      pt: [
+        "Unimed: tempo de triagem -30% com aumento de assertividade.",
+        "Sicredi: aprovação mais rápida e redução de fraude gerando US$50M digitais.",
+        "SEFAZ: +12% de arrecadação com automação e analytics."
+      ],
+      en: [
+        "Unimed: triage time -30% with higher accuracy.",
+        "Sicredi: faster approvals and lower fraud enabling US$50M digital revenue.",
+        "SEFAZ: +12% revenue through automation and analytics."
+      ]
+    },
+    technologies: {
+      pt: [
+        "Python, TensorFlow e Scikit-learn",
+        "Databricks, Spark e dbt",
+        "OpenAI API e LangChain",
+        "Azure ML · AWS SageMaker"
+      ],
+      en: [
+        "Python, TensorFlow, and Scikit-learn",
+        "Databricks, Spark, and dbt",
+        "OpenAI API and LangChain",
+        "Azure ML · AWS SageMaker"
+      ]
+    },
+    signatureCases: ["unimed-ai-claims", "sicredi-ml-credit", "sefaz-ai-readiness"]
   },
-
   agile_strategy: {
-    id: 'agile_strategy',
-    title: { pt: 'Agile & Strategy', en: 'Agile & Strategy' },
-    subtitle: { pt: 'Metodologias Ágeis e Estratégia', en: 'Agile Methodologies & Strategy' },
-    icon: '⚡',
-    color: 'bg-yellow-600',
-    elevatorPitch: {
-      pt: 'Líder em transformação ágil e estratégia. Co-fundei a Comunidade Ágil @ InovaBra (2k+ profissionais), implementei SAFe em larga escala e estruturei OKRs corporativos. Especialista em conectar agilidade com resultados estratégicos. Minha abordagem alia métodos lean com execução focada em valor.',
-      en: 'Agile transformation and strategy leader. Co-founded Agile Community @ InovaBra (2k+ professionals), implemented SAFe at scale, and structured corporate OKRs. Expert in connecting agility with strategic results. My approach combines lean methods with value-focused execution.'
+    pitchDeck: {
+      title: { pt: "Pitch Deck", en: "Pitch Deck" },
+      narrative: {
+        pt: "Líder de transformação ágil que escalou comunidades com 2k+ profissionais e conectou OKRs a métricas de fluxo.",
+        en: "Agile transformation leader who scaled communities of 2k+ professionals and linked OKRs to flow metrics."
+      },
+      bullets: {
+        pt: [
+          "Comunidades de prática e hubs ágeis corporativos.",
+          "OKRs conectados a flow metrics e cadência executiva.",
+          "Lean + SAFe garantindo compliance e previsibilidade."
+        ],
+        en: [
+          "Corporate communities of practice and agile hubs.",
+          "OKRs connected to flow metrics and executive cadence.",
+          "Lean + SAFe ensuring compliance and predictability."
+        ]
+      }
     },
-    keyStrengths: {
+    frameworks: {
       pt: [
-        'Scrum Master',
-        'Implementação SAFe',
-        'Lean Six Sigma',
-        'Kanban',
-        'Melhoria Contínua',
-        'Team Coaching',
-        'Transformação Ágil',
-        'Cultura DevOps'
+        "Agile Playbook InovaBra",
+        "OKR Tree + Flow Metrics",
+        "SAFe Release Trains"
       ],
       en: [
-        'Scrum Master',
-        'SAFe Implementation',
-        'Lean Six Sigma',
-        'Kanban',
-        'Continuous Improvement',
-        'Team Coaching',
-        'Agile Transformation',
-        'DevOps Culture'
+        "Agile Playbook InovaBra",
+        "OKR Tree + Flow Metrics",
+        "SAFe Release Trains"
       ]
     },
-    tools: {
-      pt: ['Jira', 'Azure DevOps', 'Confluence', 'Slack', 'Miro', 'Ferramentas de Retrospectiva'],
-      en: ['Jira', 'Azure DevOps', 'Confluence', 'Slack', 'Miro', 'Retrospective Tools']
-    },
-    certifications: {
-      pt: ['CSM®', 'SAFe SSM®', 'Lean Six Sigma'],
-      en: ['CSM®', 'SAFe SSM®', 'Lean Six Sigma']
-    },
-    achievements: {
+    playbookHighlights: {
       pt: [
-        'Co-fundador Comunidade Ágil @ InovaBra',
-        'Frameworks OKR & KPI corporativos',
-        'SAFe scaled em banking (2k+ pessoas)',
-        'Lean redução SLA 382→62 dias'
+        "Comunidade Ágil @ InovaBra com guildas e academias.",
+        "SAFe em operações críticas HSBC→Bradesco.",
+        "Lean pipeline Huawei reduzindo SLA 382→62 dias."
       ],
       en: [
-        'Co-founder Agile Community @ InovaBra',
-        'Corporate OKR & KPI frameworks',
-        'SAFe scaled in banking (2k+ people)',
-        'Lean SLA reduction 382→62 days'
+        "Agile Community @ InovaBra with guilds and academies.",
+        "SAFe in critical operations HSBC→Bradesco.",
+        "Huawei lean pipeline cutting SLA 382→62 days."
       ]
     },
-    relevantExperiences: ['hsbc_bradesco', 'sicredi', 'unimed', 'sefaz'],
-    experienceApplied: {
-      pt: 'Escalonamento de métodos ágeis em banking, fintech, healthtech e governo, com foco em cultura e resultados.',
-      en: 'Scaling agile methods in banking, fintech, healthtech, and government, focused on culture and results.'
-    }
+    impactMetrics: {
+      pt: [
+        "Comunidade ágil com 2k+ profissionais acelerando time-to-market.",
+        "SLA 382→62 dias (~80% redução) com Lean + VPI.",
+        "Migração HSBC→Bradesco com zero downtime e private banking +30%."
+      ],
+      en: [
+        "Agile community with 2k+ professionals accelerating time-to-market.",
+        "SLA 382→62 days (~80% reduction) via Lean + VPI.",
+        "HSBC→Bradesco migration with zero downtime and private banking +30%."
+      ]
+    },
+    technologies: {
+      pt: [
+        "Jira · Jira Align",
+        "Azure DevOps",
+        "Miro · FigJam",
+        "Parabol · MetroRetro"
+      ],
+      en: [
+        "Jira · Jira Align",
+        "Azure DevOps",
+        "Miro · FigJam",
+        "Parabol · MetroRetro"
+      ]
+    },
+    signatureCases: ["huawei-sla-reduction", "hsbc-bradesco-migration", "sicredi-woop-growth"]
   },
-
   innovation_leadership: {
-    id: 'innovation_leadership',
-    title: { pt: 'Innovation & Leadership', en: 'Innovation & Leadership' },
-    subtitle: { pt: 'Inovação e Liderança Executiva', en: 'Innovation & Executive Leadership' },
-    icon: '🎯',
-    color: 'bg-red-600',
-    elevatorPitch: {
-      pt: 'Executive leader com experiência assessorando CEOs/Boards em decisões estratégicas. Estruturei programas de inovação que geraram novos modelos de negócio e liderei times globais (US, Europa, China, LATAM). Especialista em corporate venture, mentoria de startups e inovação corporativa com impacto mensurável.',
-      en: 'Executive leader with experience advising CEOs/Boards on strategic decisions. Structured innovation programs that generated new business models and led global teams (US, Europe, China, LATAM). Expert in corporate venture, startup mentorship, and corporate innovation with measurable impact.'
+    pitchDeck: {
+      title: { pt: "Pitch Deck", en: "Pitch Deck" },
+      narrative: {
+        pt: "Executive advisor que assessora CEOs/Boards, lidera corporate venture e times globais em saúde, finanças e telecom.",
+        en: "Executive advisor supporting CEOs/Boards, leading corporate venture and global teams across healthcare, finance, and telecom."
+      },
+      bullets: {
+        pt: [
+          "Storytelling estratégico orientado a métricas de valor.",
+          "Corporate venture e parcerias com ecossistemas globais.",
+          "Mentoria de startups e desenvolvimento de lideranças."
+        ],
+        en: [
+          "Strategic storytelling anchored in value metrics.",
+          "Corporate venture and partnerships with global ecosystems.",
+          "Startup mentoring and leadership development."
+        ]
+      }
     },
-    keyStrengths: {
+    frameworks: {
       pt: [
-        'Planejamento Estratégico',
-        'Implementação OKR',
-        'Frameworks de Inovação',
-        'Design de Modelos de Negócio',
-        'Análise de Mercado',
-        'Inteligência Competitiva',
-        'Corporate Venture',
-        'Mentoria de Startups'
+        "Business Model Canvas & Venture Building",
+        "Innovation Accounting & Growth Board",
+        "Scenario Planning & Competitive Intelligence"
       ],
       en: [
-        'Strategic Planning',
-        'OKR Implementation',
-        'Innovation Frameworks',
-        'Business Model Design',
-        'Market Analysis',
-        'Competitive Intelligence',
-        'Corporate Venture',
-        'Startup Mentoring'
+        "Business Model Canvas & Venture Building",
+        "Innovation Accounting & Growth Board",
+        "Scenario Planning & Competitive Intelligence"
       ]
     },
-    tools: {
-      pt: ['Business Model Canvas', 'Software de OKR', 'Ferramentas de Pesquisa de Mercado', 'Software de Planejamento Estratégico'],
-      en: ['Business Model Canvas', 'OKR Software', 'Market Research Tools', 'Strategic Planning Software']
-    },
-    certifications: {
-      pt: ['MSc Business Management (Unisinos)', 'MBA Project Management (FGV)', 'Cooperative Financial Institutions (Escoop)'],
-      en: ['MSc Business Management (Unisinos)', 'MBA Project Management (FGV)', 'Cooperative Financial Institutions (Escoop)']
-    },
-    achievements: {
+    playbookHighlights: {
       pt: [
-        '4 novos produtos Unimed (5% receita)',
-        'Board advisor transformação',
-        'Avaliador Inovar Juntos (PUC)',
-        'Liderança global (US, EU, CN, LATAM)'
+        "Unimed: advisory para CEO/Board com programas digitais e IA.",
+        "InovaBra: corporate venture, comunidade ágil e co-inovação.",
+        "Inovar Juntos/PUC: avaliação e mentoria de startups."
       ],
       en: [
-        '4 new Unimed products (5% revenue)',
-        'Board advisor transformation',
-        'Inovar Juntos evaluator (PUC)',
-        'Global leadership (US, EU, CN, LATAM)'
+        "Unimed: advisory to CEO/Board with digital and AI programmes.",
+        "InovaBra: corporate venture, agile community, and co-innovation.",
+        "Inovar Juntos/PUC: startup evaluation and mentoring."
       ]
     },
-    relevantExperiences: ['unimed', 'sicredi', 'hsbc_bradesco', 'sefaz'],
-    experienceApplied: {
-      pt: 'Liderança executiva em inovação corporativa, venture building e transformação organizacional.',
-      en: 'Executive leadership in corporate innovation, venture building, and organizational transformation.'
-    }
+    impactMetrics: {
+      pt: [
+        "4 novos produtos Unimed (5% da receita) e EBITDA +22%.",
+        "Programas transformacionais liberando US$300M+ em valor.",
+        "Mentoria e avaliação de 50+ startups no ecossistema LATAM."
+      ],
+      en: [
+        "4 new Unimed products (5% of revenue) and EBITDA +22%.",
+        "Transformational programmes releasing US$300M+ in value.",
+        "Mentored and evaluated 50+ startups across LATAM ecosystems."
+      ]
+    },
+    technologies: {
+      pt: [
+        "Strategyzer & Miro",
+        "Ferramentas de pitch deck e data room",
+        "Dealroom & Crunchbase",
+        "Figma & suites colaborativas"
+      ],
+      en: [
+        "Strategyzer & Miro",
+        "Pitch deck and data room tooling",
+        "Dealroom & Crunchbase",
+        "Figma & collaborative suites"
+      ]
+    },
+    signatureCases: ["unimed-digital-products", "sicredi-woop-growth", "huawei-4g-pioneer"]
   }
 };
 
+const mergeCompetency = (id, base) => {
+  const profile = legacyProfilesData[id];
+  const augment = augmentations[id] ?? {};
+
+  const technologies = mergeLists(profile?.technologies, augment.technologies);
+  const frameworks = normalizeList(augment.frameworks);
+  const playbookHighlights = normalizeList(augment.playbookHighlights);
+  const impactMetrics = normalizeList(augment.impactMetrics);
+  const pitchDeck = augment.pitchDeck ?? {
+    title: { pt: "Pitch Deck", en: "Pitch Deck" },
+    narrative: base.elevatorPitch ?? { pt: "", en: "" },
+    bullets: createList()
+  };
+
+  const signatureCaseIds = augment.signatureCases ?? profile?.topCases ?? [];
+
+  return {
+    ...base,
+    keyStrengths: mergeLists(base.keyStrengths, profile?.keyStrengths),
+    tools: mergeLists(base.tools, augment.tools),
+    certifications: mergeLists(base.certifications, augment.certifications),
+    achievements: mergeLists(base.achievements, profile?.achievements),
+    technologies,
+    frameworks,
+    playbookHighlights,
+    impactMetrics,
+    pitchDeck: {
+      title: pitchDeck.title,
+      narrative: pitchDeck.narrative,
+      bullets: normalizeList(pitchDeck.bullets)
+    },
+    signatureCases: buildSignatureCases(signatureCaseIds),
+    relevantExperiences: augment.relevantExperiences ?? base.relevantExperiences ?? []
+  };
+};
+
+export const competenciesData = Object.fromEntries(
+  Object.entries(legacyCompetenciesData).map(([id, competency]) => [
+    id,
+    mergeCompetency(id, competency)
+  ])
+);
+
 export const competenciesList = Object.values(competenciesData);
+
+
