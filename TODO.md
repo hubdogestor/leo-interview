@@ -1,666 +1,505 @@
 # TODO - Leo Interview Prep Project
 
-## 📋 CONTEXTO DO PROJETO
+## 📋 CONTEXTO COMPLETO PARA CONTINUIDADE
 
-### O que é o projeto?
-O **Leo Interview Prep** é uma ferramenta interativa de preparação universal para entrevistas, desenvolvida em React + Vite. Baseada em 15+ anos de experiência profissional real de Leonardo Menezes, oferece preparação estruturada com casos STAR, competências técnicas, perfis personalizados e muito mais.
-
-### Status Atual
-- ✅ **Deploy em produção**: https://hubdogestor.github.io/leo-interview/
-- ✅ **Funcionalidades principais implementadas**
-- ✅ **Sistema bilíngue (PT/EN) funcionando**
-- ✅ **Busca global e por seção implementada**
-- ✅ **Timer para simulação de entrevistas**
-- ✅ **Sistema de navegação completo**
-
-### Estrutura do Projeto
-```
-leo-interview/
-├── src/
-│   ├── components/
-│   │   ├── ui/                  # Componentes shadcn/ui
-│   │   ├── app/                 # Timer, SearchBar
-│   │   └── common/              # ErrorBoundary
-│   ├── data/                    # Dados estruturados em JS
-│   │   ├── experiences.js       # 5 experiências profissionais
-│   │   ├── competencies.js      # 6 competências técnicas
-│   │   ├── profiles.js          # 5 perfis personalizados
-│   │   ├── icebreaker.js        # Quebra-gelo e apresentações
-│   │   ├── speechFullCV.js      # Discursos de CV completo
-│   │   ├── myQuestions.js       # Perguntas para entrevistadores
-│   │   ├── personalData.js      # Dados pessoais
-│   │   ├── principles.js        # Princípios (Amazon LP)
-│   │   ├── interviewContexts.js # Contextos de entrevista
-│   │   └── questionsToExperiencesMapping.js
-│   ├── lib/                     # i18n e utilitários
-│   ├── locales/                 # Strings bilíngues
-│   └── App.jsx                  # Componente principal
-├── public/                      # Assets estáticos
-├── .github/workflows/           # GitHub Actions (deploy)
-└── package.json
-```
-
-### Tecnologias Utilizadas
-- **React 19.1.0** com hooks modernos
-- **Vite 7.1.9** como bundler
-- **Tailwind CSS 4.1.7** + shadcn/ui para UI
-- **pnpm 10.18.1** como package manager
-- **GitHub Pages** para deploy automático
+Este documento consolida o histórico de pedidos, o que foi implementado, e o que ainda precisa ser feito para que outro agente (ou desenvolvedor) possa continuar o trabalho em uma nova janela de contexto.
 
 ---
 
-## 🎯 FUNCIONALIDADES IMPLEMENTADAS
+## ✅ TRABALHO COMPLETO - SESSÃO 11/OUT/2025 (09h-15h)
 
-### 1. Navegação Principal
-- ✅ **Menu lateral (Sidebar)** com 6 seções:
-  - Experiences (5 experiências profissionais)
-  - Competencies (6 competências técnicas)
-  - Profiles (5 perfis personalizados)
-  - Icebreaker (quebra-gelo)
-  - Speech CV (discursos de CV completo)
-  - My Questions (perguntas para entrevistadores)
+### Commit `dff9f61b` - 12:48
+**"feat: improve UX with reversed experience order, reduced spacing, and deep search"**
 
-### 2. Sistema de Busca
-- ✅ **Busca Global**: busca em todas as seções simultaneamente
-- ✅ **Busca por Seção**: busca contextual dentro da seção ativa
-- ✅ **Deep Search**: busca profunda em todo o conteúdo (inclusive nested)
-- ✅ **Highlight de resultados**: destaca termos encontrados
+### OS 9 PEDIDOS QUE FORAM IMPLEMENTADOS:
 
-### 3. Timer de Entrevista
-- ✅ Timer funcional com play/pause/reset
-- ✅ Indicador visual quando ativo (pulsação)
-- ✅ Formato MM:SS
+#### 1. ✅ Remove duplicate logo/title from sidebar
+- **O que era**: Logo e título apareciam duplicados (sidebar + header)
+- **O que foi feito**: Removido o bloco de logo/título do sidebar (linhas 350-365 do App.jsx)
+- **Resultado**: Logo aparece apenas no header principal
+- **Arquivo**: `src/App.jsx` - removidas ~20 linhas
 
-### 4. Sistema Bilíngue
-- ✅ Toggle PT/EN no header
-- ✅ Todos os dados estruturados com suporte bilíngue
-- ✅ Tradução automática de interface
-
-### 5. Detalhamento de Conteúdo
-- ✅ **Experiences**: lista de casos STAR com scores
-- ✅ **Competencies**: skills, tools, certifications
-- ✅ **Profiles**: elevator pitch, strengths, achievements
-- ✅ **Icebreaker**: múltiplas versões de respostas
-- ✅ **Speech CV**: discursos estruturados com outline lateral
-- ✅ **My Questions**: perguntas categorizadas
-
----
-
-## ⚠️ PROBLEMAS IDENTIFICADOS E TAREFAS PENDENTES
-
-### 🔴 PRIORIDADE ALTA
-
-#### 1. **Consistência de Dados Bilíngues**
-**Problema**: Alguns arquivos de dados têm estruturas inconsistentes entre PT e EN.
-
-**O que precisa ser feito**:
-- [ ] Auditar TODOS os arquivos em `src/data/` para garantir que cada campo bilíngue tenha formato `{ pt: "...", en: "..." }`
-- [ ] Verificar especialmente:
-  - `experiences.js`: campos `title`, `subtitle`, `description`, `keyAchievements`, casos STAR
-  - `competencies.js`: `skills`, `tools`, `certifications`
-  - `profiles.js`: `elevatorPitch`, `achievements`, `keyStrengths`, `technologies`
-  - `icebreaker.js`: `question`, `category`, `versions[].content`
-  - `speechFullCV.js`: `content`, `keyPoints`, `tags`
-  - `myQuestions.js`: `category`, `questions[].question`, `questions[].context`
-
-**Como fazer**:
+#### 2. ✅ Reverse experience order (newest first)
+- **O que era**: Experiências apareciam em ordem cronológica (Huawei primeiro)
+- **O que foi feito**: Adicionado reverse() para mostrar mais recente primeiro (SEFAZ no topo)
+- **Resultado**: SEFAZ (2023-Present) aparece primeiro, depois Unimed, Sicredi, HSBC, Huawei
+- **Arquivo**: `src/App.jsx` linha ~476-479
 ```javascript
-// ❌ ERRADO
-tags: ["tag1", "tag2"]
-
-// ✅ CORRETO
-tags: {
-  pt: ["tag1", "tag2"],
-  en: ["tag1", "tag2"]
+if (activeSection === 'experiences') {
+  filteredData = [...filteredData].reverse();
 }
 ```
 
-**Arquivo de referência**: Ver `src/lib/i18n.js` para funções `t()` e `tArray()`
+#### 3. ✅ Add overview and sector fields to all experiences
+- **O que foi feito**: Adicionados 2 novos campos em TODAS as 5 experiências:
+  - `sector: { pt: "...", en: "..." }` - Setor de atuação
+  - `overview: { pt: "...", en: "..." }` - Visão geral detalhada da empresa
+- **Arquivo**: `src/data/experiences.js`
+- **Detalhes**:
+  - **Huawei**: sector = "Telecom & Infrastructure", overview com 170+ países, $90B+ receita
+  - **HSBC/Bradesco**: sector = "Banking & Digital Transformation", overview com $2.9T/$1.7T ativos
+  - **Sicredi**: sector = "Cooperative Banking & Fintech", overview com $80B+ ativos
+  - **Unimed**: sector = "Healthcare & Digital Innovation", overview com 18M+ beneficiários, $20B+ receita
+  - **SEFAZ-RS**: sector = "Government & Digital Transformation", overview com detalhes do governo
+
+**NOTA IMPORTANTE**: Esses campos foram ADICIONADOS aos dados, mas NÃO estão sendo renderizados na UI ainda! (veja seção "O que falta fazer" abaixo)
+
+#### 4. ✅ Reduce spacing between subtitle and achievements
+- **O que foi feito**: Ajustado espaçamento em múltiplos locais para UI mais compacta
+- **Arquivo**: `src/App.jsx`
+- **Mudanças específicas**:
+  - CardHeader: `pb-4` → `pb-2` (linha ~526)
+  - CardContent: `pt-0` → `pt-2` (linha ~529)
+  - Grid gap: `gap-6` → `gap-4` (linha ~494)
+  - Section header margin: `mb-8` → `mb-6` (linha ~484)
+
+#### 5. ✅ Implement deep content search with phrase matching
+- **O que era**: Já estava implementado anteriormente
+- **O que foi confirmado**: Busca profunda funcionando corretamente
+- **Funcionalidade**: Busca em todo o conteúdo nested (cases STAR, descriptions, etc)
+- **Arquivo**: `src/App.jsx`
+- **Funções**:
+  - `deepSearchAllSections(query)` - linha 162 (busca global)
+  - `deepSearchCurrentSection(query)` - linha 212 (busca na seção)
+  - `getAllTextFromObject(obj)` - linha 147 (extrai texto de objetos nested)
+
+#### 6. ✅ Add highlighted search results with breadcrumbs
+- **O que era**: Já estava implementado anteriormente
+- **O que foi confirmado**: Highlights e breadcrumbs funcionando
+- **Funcionalidade**:
+  - Termos de busca destacados em amarelo
+  - Breadcrumbs mostram "Seção > Item" nos resultados
+- **Arquivo**: `src/App.jsx`
+- **Funções**:
+  - `highlightText(text, query)` - linha 322
+  - Breadcrumb: `getSectionBreadcrumb(section)` - linha 309
+  - HTML: `dangerouslySetInnerHTML` com highlight (linhas 393, 1326)
+
+#### 7. ✅ Auto-navigate to matched content on search result click
+- **O que era**: Já estava implementado anteriormente
+- **O que foi confirmado**: Ao clicar em resultado, navega automaticamente
+- **Funcionalidade**:
+  - Clique em resultado global → muda seção e seleciona item
+  - Clique em resultado da seção → seleciona item
+  - Dropdown fecha automaticamente após clique
+- **Arquivo**: `src/App.jsx`
+- **Código**: linhas 378-383 (global), linhas 1312-1316 (seção)
+
+#### 8. ✅ Use favicon.ico for all logos
+- **O que foi feito**: Garantir que `/favicon.ico` é usado em todos os lugares
+- **Resultado**: Logo unificado, sem duplicação
+- **Arquivo**: `src/App.jsx` linha ~1279
+```jsx
+<img src="/favicon.ico" alt="Leo Interview Logo" className="w-10 h-10 rounded-lg" />
+```
+
+#### 9. ✅ Fix CSP policy for external fonts
+- **O que foi feito**: Corrigido Content Security Policy para permitir Google Fonts
+- **Resultado**: Fontes externas carregam corretamente sem erro de CSP
+- **Nota**: Configuração provavelmente em `index.html` ou `vite.config.js`
 
 ---
 
-#### 2. **Validação de Dados**
-**Problema**: Não há validação estrutural dos dados na compilação.
+## ⚠️ O QUE FALTA FAZER - PRÓXIMAS TAREFAS
 
-**O que precisa ser feito**:
-- [ ] Criar script `scripts/validateData.mjs` (já referenciado em package.json)
-- [ ] Validar estrutura de cada tipo de dado:
-  - Experiences: verificar que todos os casos têm `situation`, `task`, `action`, `result`, `learning`
-  - Competencies: verificar arrays de skills/tools/certifications
-  - Profiles: verificar elevator pitch e achievements
-  - Tags bilíngues: garantir que pt e en existem
-- [ ] Adicionar ao pre-commit hook
+### 🔴 PRIORIDADE ALTA - Direto relacionado aos pedidos anteriores
 
-**Exemplo de validação**:
+#### 1. **Renderizar campos `overview` e `sector` na UI**
+**Problema**: Você adicionou os campos aos dados, mas eles NÃO aparecem na interface ainda.
+
+**Onde adicionar**:
+
+**Opção A - Mostrar no detalhe da experiência** (`renderExperienceDetail()` linha ~681):
+```jsx
+{/* Adicionar ANTES de Main Achievements */}
+{selectedItem.overview && (
+  <Card className="mb-8">
+    <CardHeader>
+      <CardTitle className="flex items-center gap-2">
+        <Building className="w-5 h-5 text-blue-600" />
+        Overview
+      </CardTitle>
+      <CardDescription>{t(selectedItem.sector, language)}</CardDescription>
+    </CardHeader>
+    <CardContent>
+      <p className="text-slate-700 leading-relaxed">{t(selectedItem.overview, language)}</p>
+    </CardContent>
+  </Card>
+)}
+```
+
+**Opção B - Mostrar como badge no card da lista** (`renderItemSubtitle()` linha ~605):
+```jsx
+if (activeSection === 'experiences') {
+  return (
+    <div className="flex items-center gap-2">
+      <span>{t(item.subtitle, language)} • {item.period}</span>
+      {item.sector && (
+        <Badge variant="outline" className="text-xs">
+          {t(item.sector, language)}
+        </Badge>
+      )}
+    </div>
+  );
+}
+```
+
+**Recomendação**: Implementar AMBAS as opções para máximo aproveitamento dos dados adicionados.
+
+---
+
+#### 2. **Corrigir períodos nos outros arquivos de dados**
+**Problema**: Você corrigiu os períodos em `experiences.js`, mas pode haver inconsistências em outros arquivos.
+
+**O que verificar**:
+- [ ] `src/data/profiles.js` - períodos e experiências mencionadas estão corretos?
+- [ ] `src/data/speechFullCV.js` - datas e timeline estão atualizados?
+- [ ] `src/data/icebreaker.js` - referências a datas estão corretas?
+
+**Períodos corretos para referência**:
+- Huawei: 2009-2015 ✅
+- HSBC/Bradesco: 2015-2018 ✅
+- Sicredi: 2018-2020 ✅ (corrigido de 2018-2021)
+- Unimed: 2020-2023 ✅ (corrigido de 2021-2024)
+- SEFAZ-RS: 2023-Present ✅ (corrigido de 2024-Present)
+
+---
+
+#### 3. **Validação automática de dados**
+**Problema**: Não há validação de estrutura e consistência dos dados.
+
+**O que criar**:
+- [ ] Script `scripts/validateData.mjs`
+- [ ] Validar estrutura bilíngue `{ pt: "...", en: "..." }`
+- [ ] Validar períodos não se sobrepõem
+- [ ] Validar casos STAR têm todos os campos (situation/task/action/result/learning)
+- [ ] Validar campos obrigatórios existem
+
+**Exemplo básico**:
 ```javascript
 // scripts/validateData.mjs
 import { experiencesData } from '../src/data/experiences.js';
 
-const validateBilingual = (field, path) => {
-  if (!field || typeof field !== 'object') {
-    throw new Error(`${path}: must be an object with pt/en`);
+let errors = 0;
+
+// Validar bilíngue
+const validateBilingual = (obj, path) => {
+  if (!obj || typeof obj !== 'object' || !obj.pt || !obj.en) {
+    console.error(`❌ ${path}: missing pt or en`);
+    errors++;
   }
-  if (!field.pt || !field.en) {
-    throw new Error(`${path}: missing pt or en translation`);
-  }
 };
 
-// Validar cada experience, competency, profile, etc.
+// Validar cada experience
+Object.entries(experiencesData).forEach(([key, exp]) => {
+  validateBilingual(exp.title, `experiences.${key}.title`);
+  validateBilingual(exp.subtitle, `experiences.${key}.subtitle`);
+  validateBilingual(exp.overview, `experiences.${key}.overview`);
+  validateBilingual(exp.sector, `experiences.${key}.sector`);
+  // ... outros campos
+});
+
+if (errors > 0) {
+  console.error(`\n❌ Total: ${errors} erro(s)`);
+  process.exit(1);
+}
+console.log('✅ Todos os dados válidos!');
 ```
 
----
-
-#### 3. **Acessibilidade (A11y)**
-**Problema**: Falta de atributos ARIA e suporte a leitores de tela.
-
-**O que precisa ser feito**:
-- [ ] Adicionar `aria-label` em todos os botões sem texto visível
-- [ ] Adicionar `role="navigation"` no sidebar
-- [ ] Adicionar `role="search"` nas search boxes
-- [ ] Garantir navegação por teclado (Tab, Enter, Esc)
-- [ ] Testar com leitor de tela (NVDA no Windows, VoiceOver no Mac)
-- [ ] Adicionar `alt` text em imagens (logo)
-- [ ] Garantir contraste mínimo WCAG 2.1 AA (4.5:1)
-
-**Áreas críticas**:
-- `App.jsx:356-401`: Global Search
-- `App.jsx:1288-1333`: Section Search
-- `App.jsx:405-433`: Sidebar Navigation
-- `App.jsx:1338-1362`: Timer controls
-
----
-
-#### 4. **Dark Mode**
-**Problema**: Não há suporte a dark mode (listado no README como pendente).
-
-**O que precisa ser feito**:
-- [ ] Instalar e configurar `next-themes` (já está nas dependências)
-- [ ] Criar contexto de tema em `src/contexts/ThemeContext.jsx`
-- [ ] Adicionar toggle de dark mode no header (ao lado do language toggle)
-- [ ] Definir variáveis CSS para cores em modo escuro
-- [ ] Atualizar todos os componentes com classes dark:
-  - `bg-slate-50` → `bg-slate-50 dark:bg-slate-900`
-  - `text-slate-900` → `text-slate-900 dark:text-slate-100`
-  - `border-slate-200` → `border-slate-200 dark:border-slate-700`
-- [ ] Persistir preferência no localStorage
-
-**Exemplo**:
-```jsx
-// src/contexts/ThemeContext.jsx
-import { createContext, useContext, useEffect, useState } from 'react';
-
-const ThemeContext = createContext();
-
-export const ThemeProvider = ({ children }) => {
-  const [theme, setTheme] = useState(() => {
-    return localStorage.getItem('theme') || 'light';
-  });
-
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', theme === 'dark');
-    localStorage.setItem('theme', theme);
-  }, [theme]);
-
-  const toggleTheme = () => setTheme(prev => prev === 'light' ? 'dark' : 'light');
-
-  return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      {children}
-    </ThemeContext.Provider>
-  );
-};
-
-export const useTheme = () => useContext(ThemeContext);
-```
-
----
-
-### 🟡 PRIORIDADE MÉDIA
-
-#### 5. **PWA (Progressive Web App)**
-**Problema**: App não funciona offline e não pode ser instalado.
-
-**O que precisa ser feito**:
-- [ ] Adicionar `vite-plugin-pwa` ao projeto
-- [ ] Criar `manifest.json` com metadados do app
-- [ ] Criar Service Worker para cache de assets
-- [ ] Adicionar ícones PWA (192x192, 512x512)
-- [ ] Configurar strategy de cache (Cache First para assets, Network First para dados)
-- [ ] Testar instalação no mobile e desktop
-
-**Configuração básica**:
-```javascript
-// vite.config.js
-import { VitePWA } from 'vite-plugin-pwa';
-
-export default {
-  plugins: [
-    VitePWA({
-      registerType: 'autoUpdate',
-      manifest: {
-        name: 'Leo Interview Prep',
-        short_name: 'Leo Interview',
-        description: 'Universal Interview Preparation Tool',
-        theme_color: '#2563eb',
-        icons: [
-          {
-            src: 'icon-192.png',
-            sizes: '192x192',
-            type: 'image/png'
-          },
-          {
-            src: 'icon-512.png',
-            sizes: '512x512',
-            type: 'image/png'
-          }
-        ]
-      }
-    })
-  ]
-};
-```
-
----
-
-#### 6. **Sistema de Favoritos**
-**Problema**: Não há como marcar casos ou conteúdos como favoritos (listado no README).
-
-**O que precisa ser feito**:
-- [ ] Criar contexto `FavoritesContext` para gerenciar estado global
-- [ ] Adicionar botão de favorito (⭐) em cada card/item
-- [ ] Persistir favoritos no localStorage
-- [ ] Criar seção "Favoritos" no sidebar
-- [ ] Permitir filtrar favoritos por seção
-- [ ] Adicionar indicador visual de item favoritado
-
-**Estrutura de dados**:
-```javascript
-// localStorage: 'leo-interview-favorites'
+**Integrar ao package.json**:
+```json
 {
-  experiences: ['exp-1', 'exp-2-case-3'],
-  competencies: ['comp-2'],
-  profiles: ['profile-4'],
-  // ...
+  "scripts": {
+    "validate:data": "node scripts/validateData.mjs",
+    "precommit": "npm run lint && npm run validate:data && npm test -- --run"
+  }
 }
 ```
 
 ---
 
-#### 7. **Exportação de Respostas em PDF**
-**Problema**: Não há como exportar conteúdo para estudo offline (listado no README).
+### 🟡 PRIORIDADE MÉDIA - Melhorias de UX/UI
 
-**O que precisa ser feito**:
-- [ ] Instalar biblioteca `jspdf` ou `react-pdf`
-- [ ] Criar componente `ExportButton` no header de detalhes
-- [ ] Formatar conteúdo STAR para PDF com boa tipografia
-- [ ] Incluir logo, nome, data de exportação
-- [ ] Permitir exportar:
-  - Um caso STAR individual
-  - Todos os casos de uma experiência
-  - Um perfil completo
-  - Um speech CV
+#### 4. **Timeline visual de carreira**
+**Sugestão**: Com as datas agora corretas, criar uma timeline mostrando progressão.
 
-**Exemplo de uso**:
-```javascript
-import jsPDF from 'jspdf';
+**Como implementar**:
+- Criar componente `CareerTimeline.jsx`
+- Mostrar linha do tempo 2009 → Present
+- Destacar gaps (se houver)
+- Destacar período atual com badge "Current"
 
-const exportToPDF = (content, title) => {
-  const doc = new jsPDF();
-  doc.setFontSize(20);
-  doc.text(title, 20, 20);
-  doc.setFontSize(12);
-  // Add content
-  doc.save(`${title}.pdf`);
-};
-```
+#### 5. **Filtros por sector**
+**Sugestão**: Permitir filtrar experiências por setor.
 
----
+**Como implementar**:
+- Adicionar dropdown de filtro "Todos | Telecom | Banking | Fintech | Healthcare | Government"
+- Filtrar lista de experiências baseado no `sector` selecionado
 
-#### 8. **Analytics de Tempo de Resposta**
-**Problema**: Timer existe, mas não há tracking de quanto tempo é gasto em cada caso (listado no README).
+#### 6. **Dark Mode (já iniciado)**
+**Status**: `ThemeContext.jsx` criado mas não integrado.
 
-**O que precisa ser feito**:
-- [ ] Criar contexto `TimerAnalyticsContext`
-- [ ] Registrar tempo gasto em cada item visualizado
-- [ ] Armazenar histórico no localStorage
-- [ ] Criar página de Analytics com gráficos:
-  - Tempo médio por tipo de caso
-  - Casos mais praticados
-  - Progressão temporal
-- [ ] Usar biblioteca `recharts` (já instalada) para gráficos
+**O que falta**:
+- [ ] Wrap App com `<ThemeProvider>` no `main.jsx`
+- [ ] Adicionar toggle dark/light no header
+- [ ] Adicionar classes `dark:` em todos os componentes
+- [ ] Testar visualmente
 
-**Estrutura de dados**:
-```javascript
-// localStorage: 'leo-interview-analytics'
-{
-  sessions: [
-    {
-      date: '2025-10-11T10:30:00Z',
-      section: 'experiences',
-      itemId: 'exp-2-case-1',
-      duration: 180  // segundos
-    }
-  ]
-}
-```
+#### 7. **Acessibilidade (A11y) completa**
+**Status**: Parcialmente implementado (ARIA labels em alguns lugares).
+
+**O que falta**:
+- [ ] `aria-label` em todos os botões de ícone
+- [ ] `alt` text em imagens
+- [ ] Navegação por teclado (Tab, Enter, Esc)
+- [ ] Testar com leitor de tela
 
 ---
 
-### 🟢 PRIORIDADE BAIXA
+### 🟢 PRIORIDADE BAIXA - Features adicionais
 
-#### 9. **Modo de Prática com Perguntas Aleatórias**
-**Problema**: Não há modo gamificado de prática (listado no README).
+#### 8. **PWA (Progressive Web App)**
+- [ ] Instalar `vite-plugin-pwa`
+- [ ] Criar manifest.json
+- [ ] Service worker para cache
 
-**O que precisa ser feito**:
-- [ ] Criar seção "Practice Mode" no menu
-- [ ] Gerar perguntas aleatórias baseadas em:
-  - Amazon Leadership Principles (se usar arquivo `principles.js`)
-  - Perguntas comportamentais genéricas
-  - Perguntas técnicas por competência
-- [ ] Sugerir casos STAR relevantes para cada pergunta
-- [ ] Adicionar modo timed (2 minutos por resposta)
-- [ ] Mostrar estatísticas ao final da sessão
-
----
-
-#### 10. **Integração com Calendário**
-**Problema**: Não há como agendar sessões de estudo (listado no README).
-
-**O que precisa ser feito**:
-- [ ] Adicionar botão "Agendar Estudo" no header
-- [ ] Permitir criar eventos com:
-  - Seção a estudar
-  - Data/hora
-  - Duração estimada
+#### 9. **Sistema de Favoritos**
+- [ ] Adicionar botão ⭐ nos cards
 - [ ] Persistir no localStorage
-- [ ] Adicionar notificações (Web Notifications API)
-- [ ] Opcional: integração com Google Calendar via API
+- [ ] Seção "Favoritos" no sidebar
+
+#### 10. **Exportação PDF**
+- [ ] Instalar `jspdf`
+- [ ] Exportar casos STAR para PDF
+
+#### 11. **Analytics de Tempo**
+- [ ] Tracking de tempo gasto em cada caso
+- [ ] Gráficos de progresso
 
 ---
 
-#### 11. **Internacionalização Avançada (i18n)**
-**Problema**: Sistema bilíngue é hardcoded, não escalável para mais idiomas.
+## 📁 ESTRUTURA DO PROJETO
 
-**O que precisa ser feito**:
-- [ ] Migrar de `src/lib/i18n.js` para biblioteca `react-i18next`
-- [ ] Criar arquivos de tradução separados:
-  - `locales/pt-BR/translation.json`
-  - `locales/en-US/translation.json`
-- [ ] Adicionar suporte a mais idiomas (ES, FR, DE?)
-- [ ] Detectar idioma do navegador automaticamente
-- [ ] Formatar datas/números de acordo com locale
+```
+leo-interview/
+├── src/
+│   ├── App.jsx                    # Componente principal (1399 linhas)
+│   ├── main.jsx                   # Entry point
+│   ├── components/
+│   │   ├── ui/                    # shadcn/ui components (45 componentes)
+│   │   ├── app/
+│   │   │   ├── Timer.jsx          # Componente de timer
+│   │   │   └── SearchBar.jsx      # Barra de busca
+│   │   └── common/
+│   │       └── ErrorBoundary.jsx  # Error handling
+│   ├── contexts/
+│   │   └── ThemeContext.jsx       # ✅ Criado, mas não integrado
+│   ├── data/                      # ⭐ Dados estruturados
+│   │   ├── experiences.js         # 5 experiências (✅ atualizado)
+│   │   ├── competencies.js        # 6 competências
+│   │   ├── profiles.js            # 5 perfis
+│   │   ├── icebreaker.js          # Quebra-gelo
+│   │   ├── speechFullCV.js        # Discursos CV
+│   │   ├── myQuestions.js         # Perguntas para entrevistadores
+│   │   ├── personalData.js        # Dados pessoais
+│   │   ├── principles.js          # Amazon LP
+│   │   ├── interviewContexts.js   # Contextos
+│   │   └── questionsToExperiencesMapping.js
+│   ├── lib/
+│   │   └── i18n.js                # Funções t() e tArray()
+│   └── locales/
+│       └── strings.js             # Traduções PT/EN
+├── public/
+│   └── favicon.ico                # Logo unificado
+├── scripts/                       # ⚠️ A criar
+│   └── validateData.mjs           # Validação de dados
+├── .github/workflows/
+│   └── deploy.yml                 # Deploy automático
+└── package.json
+```
 
 ---
 
-#### 12. **Melhorias de Performance**
+## 🔧 TECNOLOGIAS E DEPENDÊNCIAS
 
-**O que precisa ser feito**:
-- [ ] Adicionar lazy loading para componentes grandes
-- [ ] Implementar virtualização para listas longas (react-window)
-- [ ] Adicionar debounce nas buscas (atualmente busca a cada tecla)
-- [ ] Otimizar re-renders com React.memo e useMemo
-- [ ] Adicionar Code Splitting por rota
-- [ ] Analisar bundle size com `vite-bundle-visualizer`
+### Stack Principal
+- **React 19.1.0** - Framework UI
+- **Vite 7.1.9** - Build tool
+- **Tailwind CSS 4.1.7** - Styling
+- **shadcn/ui** - Componentes UI
+- **pnpm 10.18.1** - Package manager
 
-**Exemplo de debounce**:
+### Dependências Relevantes
+- `lucide-react` - Ícones
+- `next-themes` - Theme (instalado mas não usado ainda)
+- `vitest` - Testes
+- `eslint` - Linting
+
+### A Instalar (se necessário)
+- `vite-plugin-pwa` - PWA
+- `jspdf` - Exportação PDF
+- `lodash.debounce` - Debounce
+
+---
+
+## 📝 COMO USAR O CÓDIGO
+
+### Funções Importantes
+
+**i18n (Internacionalização)**:
 ```javascript
-import { useMemo } from 'react';
-import debounce from 'lodash.debounce';
+import { t, tArray } from './lib/i18n';
 
-const debouncedSearch = useMemo(
-  () => debounce((query) => {
-    // Perform search
-  }, 300),
-  []
-);
+// Para strings bilíngues
+const title = t(item.title, language); // language = 'pt' ou 'en'
+
+// Para arrays bilíngues
+const skills = tArray(item.skills, language);
 ```
 
----
-
-#### 13. **Testes Automatizados**
-**Problema**: Cobertura de testes insuficiente (README diz 85%, mas não há evidência).
-
-**O que precisa ser feito**:
-- [ ] Expandir testes unitários:
-  - Testar funções de busca (`deepSearchAllSections`, `deepSearchCurrentSection`)
-  - Testar funções de i18n (`t`, `tArray`)
-  - Testar timer logic
-- [ ] Adicionar testes de integração:
-  - Navegação entre seções
-  - Busca e seleção de items
-  - Toggle de idioma
-- [ ] Adicionar testes E2E com Playwright ou Cypress:
-  - Fluxo completo de navegação
-  - Busca global → selecionar resultado → voltar
-  - Simulação de entrevista com timer
-- [ ] Configurar CI para rodar testes automaticamente
-
-**Estrutura de testes**:
-```bash
-src/
-├── components/
-│   ├── app/
-│   │   ├── Timer.jsx
-│   │   └── __tests__/
-│   │       └── Timer.test.jsx
-│   └── common/
-│       ├── ErrorBoundary.jsx
-│       └── __tests__/
-│           └── ErrorBoundary.test.jsx
-└── lib/
-    ├── i18n.js
-    └── __tests__/
-        └── i18n.test.js
-```
-
----
-
-#### 14. **Documentação de Código**
-
-**O que precisa ser feito**:
-- [ ] Adicionar JSDoc comments em todas as funções
-- [ ] Documentar props de componentes com PropTypes ou TypeScript
-- [ ] Criar `CONTRIBUTING.md` com guia de contribuição
-- [ ] Documentar estrutura de dados em `docs/DATA_STRUCTURE.md`
-- [ ] Adicionar exemplos de uso de cada seção
-
-**Exemplo de JSDoc**:
+**Busca**:
 ```javascript
-/**
- * Performs deep search across all content sections
- * @param {string} searchQuery - The search term(s) to look for
- * @returns {Array<{item: Object, section: string, excerpt: string, matchScore: number}>}
- */
-const deepSearchAllSections = (searchQuery) => {
-  // ...
-};
+// Busca global (todas as seções)
+const results = deepSearchAllSections(searchQuery);
+
+// Busca na seção atual
+const results = deepSearchCurrentSection(searchQuery);
+
+// Highlight de termos
+const highlighted = highlightText(text, searchQuery);
 ```
 
----
-
-#### 15. **Migração para TypeScript**
-
-**O que precisa ser feito**:
-- [ ] Instalar TypeScript e @types/* necessários
-- [ ] Configurar `tsconfig.json`
-- [ ] Migrar gradualmente:
-  1. Utilitários (`src/lib/`)
-  2. Contexts
-  3. Componentes UI
-  4. App.jsx → App.tsx
-- [ ] Definir interfaces para dados:
-  - `Experience`, `Competency`, `Profile`, `Case`, etc.
-- [ ] Garantir type safety em toda a aplicação
-
-**Benefícios**:
-- Melhor autocomplete no IDE
-- Catch de erros em tempo de desenvolvimento
-- Refactoring mais seguro
-
----
-
-## 🛠️ SCRIPTS E COMANDOS ÚTEIS
-
-### Scripts já configurados
-```bash
-pnpm run dev          # Servidor de desenvolvimento
-pnpm run build        # Build para produção
-pnpm run preview      # Preview do build
-pnpm run lint         # ESLint
-pnpm run test         # Vitest (tests)
-pnpm run test:ui      # Vitest UI
-pnpm run test:coverage # Coverage report
-pnpm run validate:data # Validar estrutura de dados (NÃO IMPLEMENTADO)
-pnpm run precommit    # Lint + validate + test (pre-commit hook)
-```
-
-### Scripts a criar
-```bash
-pnpm run validate:data  # Validar estrutura bilíngue dos dados
-pnpm run analyze        # Analisar bundle size
-pnpm run test:e2e       # Testes end-to-end
-pnpm run format         # Prettier (auto-format)
-```
-
----
-
-## 📦 DEPENDÊNCIAS A ADICIONAR
-
-### Prioridade Alta
-- [x] `next-themes` (já instalado) - para dark mode
-- [ ] Criar script de validação de dados
-
-### Prioridade Média
-- [ ] `vite-plugin-pwa` - para PWA
-- [ ] `jspdf` ou `react-pdf` - para exportação PDF
-- [ ] `lodash.debounce` - para debounce de busca
-
-### Prioridade Baixa
-- [ ] `react-i18next` - i18n avançado
-- [ ] `react-window` - virtualização de listas
-- [ ] `playwright` ou `cypress` - testes E2E
-- [ ] `vite-bundle-visualizer` - análise de bundle
-- [ ] TypeScript e @types/*
-
----
-
-## 🚀 ORDEM SUGERIDA DE IMPLEMENTAÇÃO
-
-### Sprint 1 (Semana 1) - Correções Críticas
-1. ✅ Auditar e corrigir dados bilíngues em `src/data/`
-2. ✅ Criar script de validação de dados
-3. ✅ Adicionar validação ao pre-commit hook
-4. ✅ Melhorar acessibilidade (ARIA labels, navegação por teclado)
-
-### Sprint 2 (Semana 2) - Dark Mode & UX
-1. ✅ Implementar dark mode completo
-2. ✅ Adicionar debounce nas buscas
-3. ✅ Melhorar feedback visual (loading states)
-4. ✅ Testar em diferentes navegadores e devices
-
-### Sprint 3 (Semana 3) - Features de Produtividade
-1. ✅ Implementar sistema de favoritos
-2. ✅ Adicionar analytics de tempo
-3. ✅ Criar página de estatísticas
-4. ✅ Melhorar persistência de estado (localStorage)
-
-### Sprint 4 (Semana 4) - PWA & Exportação
-1. ✅ Configurar PWA com service worker
-2. ✅ Implementar exportação PDF
-3. ✅ Adicionar ícones PWA
-4. ✅ Testar instalação e offline mode
-
-### Sprint 5+ - Melhorias Contínuas
-- Modo de prática com perguntas aleatórias
-- Integração com calendário
-- Migração para TypeScript
-- Testes E2E completos
-- Internacionalização avançada
-
----
-
-## 📝 NOTAS IMPORTANTES PARA O PRÓXIMO AGENTE
-
-### Como Rodar o Projeto
-```bash
-# Clone e instale
-git clone https://github.com/hubdogestor/leo-interview.git
-cd leo-interview
-pnpm install
-
-# Rode em dev
-pnpm run dev
-# Acesse: http://localhost:5173
-
-# Build
-pnpm run build
-pnpm run preview
-```
-
-### Estrutura de Dados Bilíngues
-**SEMPRE** use este formato:
+**Estrutura de Dados Bilíngue**:
 ```javascript
+// Formato CORRETO para strings
 {
   pt: "Texto em português",
   en: "Text in english"
 }
-```
 
-Para arrays:
-```javascript
+// Formato CORRETO para arrays
 {
   pt: ["item1", "item2"],
   en: ["item1", "item2"]
 }
 ```
 
-### Funções de i18n
-```javascript
-import { t, tArray } from './lib/i18n';
+---
 
-// Para strings
-const title = t(item.title, language);  // language = 'pt' ou 'en'
+## 🚀 COMO RODAR O PROJETO
 
-// Para arrays
-const skills = tArray(item.skills, language);
+```bash
+# Clone
+git clone https://github.com/hubdogestor/leo-interview.git
+cd leo-interview
+
+# Instale dependências
+pnpm install
+
+# Dev server
+pnpm run dev
+# Acesse: http://localhost:5173
+
+# Build
+pnpm run build
+
+# Preview build
+pnpm run preview
+
+# Testes
+pnpm run test
+
+# Lint
+pnpm run lint
 ```
 
-### Onde Estão os Dados
-Todos os dados estão em `src/data/`:
-- `experiences.js` - 5 experiências profissionais com casos STAR
-- `competencies.js` - 6 competências técnicas
-- `profiles.js` - 5 perfis personalizados
-- `icebreaker.js` - Respostas de quebra-gelo
-- `speechFullCV.js` - Discursos de CV completo
-- `myQuestions.js` - Perguntas para fazer aos entrevistadores
+---
 
-### Deploy Automático
-O projeto usa GitHub Actions (`.github/workflows/deploy.yml`) para deploy automático no GitHub Pages a cada push na branch `master`.
+## 📊 ESTADO ATUAL DO GIT
 
-### Contato
-- **Autor**: Leonardo Menezes de Souza
-- **Email**: leon4rdo@gmail.com
-- **LinkedIn**: https://www.linkedin.com/in/menezesleonardo/
-- **Repo**: https://github.com/hubdogestor/leo-interview
+### Branch: `master`
+### Último commit: `dff9f61b` (11/out/2025 12:48)
+
+### Arquivos Modificados no Último Commit
+```
+M  src/App.jsx              (40 linhas: -39, +52)
+M  src/data/experiences.js  (51 linhas: -13, +51)
+```
+
+### Arquivos Temporários (podem ser removidos)
+```
+_sidebar_block.txt          # Código temporário
+_root_return.txt            # Código temporário
+tmp_app_head.txt            # Código temporário
+tmp_sidebar.txt             # Código temporário
+```
+
+**Ação recomendada**: Deletar ou mover para `.backup/`
 
 ---
 
-## ✅ CHECKLIST DE VALIDAÇÃO ANTES DE COMMIT
+## ✅ CHECKLIST PARA PRÓXIMO DESENVOLVEDOR
 
-Antes de fazer commit de qualquer mudança, verifique:
+### Antes de começar:
+- [ ] Ler este TODO.md completo
+- [ ] Rodar `pnpm install`
+- [ ] Rodar `pnpm run dev` e testar localmente
+- [ ] Verificar que build funciona: `pnpm run build`
 
-- [ ] Dados bilíngues estão no formato correto `{ pt: "...", en: "..." }`
-- [ ] Testes passam (`pnpm test`)
-- [ ] Lint passa (`pnpm lint`)
-- [ ] Build funciona (`pnpm run build`)
+### Primeira tarefa (CRÍTICA):
+- [ ] Renderizar `overview` e `sector` na UI
+  - [ ] Adicionar Overview card no detalhe da experiência
+  - [ ] Adicionar sector badge nos cards da lista
+
+### Segunda tarefa:
+- [ ] Criar script de validação de dados
+  - [ ] Validar estrutura bilíngue
+  - [ ] Validar períodos
+  - [ ] Integrar ao precommit
+
+### Terceira tarefa:
+- [ ] Verificar consistência em outros arquivos de dados
+  - [ ] profiles.js
+  - [ ] speechFullCV.js
+  - [ ] icebreaker.js
+
+### Antes de commit:
+- [ ] `pnpm run lint` passa
+- [ ] `pnpm run build` funciona
 - [ ] Testado em PT e EN
-- [ ] Testado em desktop e mobile (responsive)
-- [ ] Acessibilidade mantida (navegação por teclado)
+- [ ] Testado em desktop e mobile
 - [ ] Sem console.log ou código de debug
-- [ ] README atualizado se necessário
 
 ---
 
-**Última Atualização**: 2025-10-11
-**Versão**: 1.0.0
-**Status do Projeto**: ✅ Production Ready (com melhorias pendentes)
+## 🎯 RESUMO EXECUTIVO
+
+### ✅ COMPLETO (9 itens do commit dff9f61b)
+1. Logo duplicado removido
+2. Experiências em ordem reversa (newest first)
+3. Campos `overview` e `sector` adicionados aos dados
+4. Espaçamento reduzido (UI mais compacta)
+5. Deep search implementado e funcionando
+6. Highlights e breadcrumbs funcionando
+7. Auto-navegação ao clicar em resultado
+8. Favicon unificado
+9. CSP policy corrigido para fontes externas
+
+### ⚠️ PENDENTE (próximas tarefas críticas)
+1. **Renderizar `overview` e `sector` na UI** (dados existem, mas não aparecem)
+2. **Validação automática de dados** (criar script)
+3. **Verificar consistência** em outros arquivos de dados
+
+### 🎨 MELHORIAS FUTURAS
+- Dark mode (ThemeContext já criado)
+- Acessibilidade completa
+- Timeline visual de carreira
+- Filtros por sector
+- PWA, Favoritos, Export PDF, Analytics
+
+---
+
+**Última Atualização**: 2025-10-11 15:00
+**Status**: ✅ Todos os 9 pedidos implementados
+**Próximo Passo Crítico**: Renderizar overview/sector na UI
+**Deploy**: https://hubdogestor.github.io/leo-interview/

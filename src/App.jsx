@@ -347,6 +347,23 @@ function App() {
 
     return (
       <div className="w-80 bg-gradient-to-b from-slate-50 to-white border-r border-slate-200 flex flex-col h-screen">
+        {/* Logo and Title */}
+        <div className="p-4 border-b border-slate-200">
+          <div className="flex items-center gap-3">
+            <img
+              src="/favicon.ico"
+              alt="Leo Interview Logo"
+              className="w-10 h-10 rounded-lg"
+            />
+            <div>
+              <h1 className="text-lg font-bold text-slate-900">{tr('app_title', language)}</h1>
+              <p className="text-xs text-slate-600">
+                {language === 'pt' ? 'Preparação para Entrevistas' : 'Interview Preparation'}
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* Global Search */}
         <div className="p-6 border-b border-slate-200">
           <label className="text-xs font-semibold text-slate-500 tracking-wide mb-2 block">
@@ -482,7 +499,7 @@ function App() {
       <div className="flex-1 overflow-hidden">
         <ScrollArea className="h-full">
           <div className="p-8">
-            <div className="mb-6">
+            <div className="mb-4">
               <h2 className="text-3xl font-bold text-slate-900 mb-2">
                 {getSectionTitle()}
               </h2>
@@ -491,7 +508,7 @@ function App() {
               </p>
             </div>
 
-            <div className="grid gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
               {filteredData.map((item, index) => (
                 <Card
                   key={item.id}
@@ -499,25 +516,25 @@ function App() {
                   onClick={() => setSelectedItem(item)}
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
-                  <CardHeader className="pb-2">
+                  <CardHeader className="pb-1">
                     <div className="flex items-start justify-between">
-                      <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-3">
                         {renderItemIcon(item)}
                         <div>
-                          <CardTitle className="text-xl text-slate-900 group-hover:text-blue-600 transition-colors">
+                          <CardTitle className="text-lg text-slate-900 group-hover:text-blue-600 transition-colors">
                             {item.name || (typeof item.title === 'string' ? item.title : t(item.title, language)) || (typeof item.question === 'string' ? item.question : t(item.question, language))}
                           </CardTitle>
-                          <CardDescription className="text-slate-600 mt-1">
+                          <CardDescription className="text-slate-600 mt-0.5 text-sm">
                             {renderItemSubtitle(item)}
                           </CardDescription>
                         </div>
                       </div>
-                      <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-blue-600 transition-colors" />
+                      <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-blue-600 transition-colors flex-shrink-0" />
                     </div>
                   </CardHeader>
 
-                  <CardContent className="pt-2">
-                    <p className="text-slate-700 mb-4 line-clamp-3">
+                  <CardContent className="pt-1">
+                    <p className="text-slate-700 mb-2 line-clamp-2 text-sm">
                       {(() => {
                         // Safely compute a preview text supporting bilingual structures
                         const direct = typeof item.description === 'string' ? item.description : t(item.description, language);
@@ -586,8 +603,8 @@ function App() {
   };
 
   const renderItemIcon = (item) => {
-    const iconClass = "w-12 h-12 rounded-lg flex items-center justify-center text-white font-bold text-lg";
-    
+    const iconClass = "w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold text-base flex-shrink-0";
+
     if (activeSection === 'experiences') {
       return <div className={`${iconClass} bg-gradient-to-br from-blue-600 to-blue-700`}>🏢</div>;
     } else if (activeSection === 'competencies') {
